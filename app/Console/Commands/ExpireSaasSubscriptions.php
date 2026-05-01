@@ -13,10 +13,12 @@ class ExpireSaasSubscriptions extends Command
 
     public function handle(): void
     {
-        // Expire active paid subscriptions
+        $graceDays = 3;
+
+        // Subscriptions past grace period → expire and deactivate club
         $expiredPaid = ClubSaasSubscription::query()
             ->where('status', 'active')
-            ->where('ends_at', '<', now()->toDateString())
+            ->where('ends_at', '<', now()->subDays($graceDays)->toDateString())
             ->get();
 
         foreach ($expiredPaid as $sub) {
@@ -24,7 +26,21 @@ class ExpireSaasSubscriptions extends Command
             $sub->syncClubStatus();
         }
 
-        // Expire trials — club goes inactive, awaiting paid subscription
+        // Subscriptions within grace period → mark as past_due (club stays active)
+        $pastDue = ClubSaasSubscription::query()
+            ->where('status', 'active')
+            ->whereBetween('ends_at', [
+                now()->subDays($graceDays)->toDateString(),
+                now()->toDateString(),
+            ])
+            ->get();
+
+        foreach ($pastDue as $sub) {
+            $sub->update(['status' => 'past_due']);
+            $sub->club()->update(['subscription_status' => 'active']); // still active during grace
+        }
+
+        // Expire trials — no grace period for trials
         $expiredTrials = ClubSaasSubscription::query()
             ->where('status', 'trial')
             ->where('ends_at', '<', now()->toDateString())
@@ -35,7 +51,6 @@ class ExpireSaasSubscriptions extends Command
             $sub->club()->update(['subscription_status' => 'inactive']);
         }
 
-        $total = $expiredPaid->count() + $expiredTrials->count();
-        $this->info("Marked {$expiredPaid->count()} paid and {$expiredTrials->count()} trial subscription(s) as expired. Total: {$total}.");
+        $this->info("Expired: {$expiredPaid->count()} paid, {$expiredTrials->count()} trial. Past-due (grace): {$pastDue->count()}.");
     }
 }

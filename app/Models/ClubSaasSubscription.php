@@ -61,6 +61,7 @@ class ClubSaasSubscription extends Model
     {
         $status = match (true) {
             $this->status === 'trial'     => 'trial',
+            $this->status === 'past_due'  => 'active',   // grace period — still active
             $this->status === 'cancelled' => 'inactive',
             $this->isExpired()            => 'inactive',
             $this->isActive()             => 'active',
