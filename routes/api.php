@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\ClubController;
 use App\Http\Controllers\Api\ClubRegistrationController;
 use App\Http\Controllers\Api\ClubStaffController;
+use App\Http\Controllers\Api\CoachApplicationController;
 use App\Http\Controllers\Api\CourtController;
 use App\Http\Controllers\Api\CourtSlotController;
 use App\Http\Controllers\Api\MatchmakingController;
@@ -44,6 +45,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('clubs/{club}/academy-sessions', [AcademySessionController::class, 'index']);
     Route::post('clubs/{club}/academy-sessions', [AcademySessionController::class, 'store']);
     Route::post('academy-sessions/{academySession}/enroll', [AcademySessionController::class, 'enroll']);
+    Route::post('academy-sessions/{academySession}/coach-apply', [CoachApplicationController::class, 'apply']);
+    Route::delete('coach-applications/{coachApplication}', [CoachApplicationController::class, 'withdraw']);
+    Route::get('academy-sessions/{academySession}/coach-applications', [CoachApplicationController::class, 'index']);
+    Route::patch('coach-applications/{coachApplication}', [CoachApplicationController::class, 'respond']);
     Route::put('slots/{courtSlot}', [CourtSlotController::class, 'update']);
     Route::delete('slots/{courtSlot}', [CourtSlotController::class, 'destroy']);
     Route::apiResource('clubs', ClubController::class)->except(['index', 'show']);

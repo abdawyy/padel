@@ -27,10 +27,21 @@ class MatchmakingController extends Controller
             })
             ->when($request->filled('club_id'), function ($query) use ($request) {
                 $clubId = (int) $request->query('club_id');
-
                 $query->whereHas('court', function ($courtQuery) use ($clubId) {
                     $courtQuery->where('club_id', $clubId);
                 });
+            })
+            // Skill-level filter: only show matches the player is eligible for
+            ->when($request->filled('skill_level'), function ($query) use ($request) {
+                $skill = (int) $request->query('skill_level');
+                $query->where(function ($q) use ($skill) {
+                    $q->whereNull('skill_min')->orWhere('skill_min', '<=', $skill);
+                })->where(function ($q) use ($skill) {
+                    $q->whereNull('skill_max')->orWhere('skill_max', '>=', $skill);
+                });
+            })
+            ->when($request->filled('sport_type'), function ($query) use ($request) {
+                $query->where('sport_type', (string) $request->query('sport_type'));
             })
             ->withCount('participants')
             ->havingRaw('participants_count < max_players')
@@ -60,6 +71,17 @@ class MatchmakingController extends Controller
 
         if (Carbon::parse($booking->start_time)->lte(now())) {
             return response()->json(['message' => 'This match has already started.'], 422);
+        }
+
+        // Skill-level gate
+        $userSkill = (int) ($user->skill_level ?? 0);
+        if ($userSkill > 0 && ! $booking->isSkillCompatible($userSkill)) {
+            return response()->json([
+                'message'    => 'Your skill level does not meet the requirements for this match.',
+                'skill_min'  => $booking->skill_min,
+                'skill_max'  => $booking->skill_max,
+                'your_level' => $userSkill,
+            ], 403);
         }
 
         try {
