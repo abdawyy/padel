@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\User;
+use App\Notifications\BookingConfirmedNotification;
 use App\Models\PaymentTransaction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -91,6 +93,15 @@ class WebhookController extends Controller
                         'status' => 'confirmed',
                         'updated_at' => now(),
                     ]);
+
+                $booking = Booking::with('court.club')->find($bookingId);
+                if ($booking) {
+                    $participantIds = DB::table('booking_participants')
+                        ->where('booking_id', $bookingId)
+                        ->pluck('user_id');
+                    User::whereIn('id', $participantIds)->get()
+                        ->each(fn (User $u) => $u->notify(new BookingConfirmedNotification($booking)));
+                }
             }
         });
 

@@ -25,6 +25,7 @@ Route::get('academy-sessions/{academySession}', [AcademySessionController::class
 Route::get('matches/open', [MatchmakingController::class, 'index']);
 Route::get('saas-plans', [SaasPlanController::class, 'index']);
 Route::apiResource('clubs', ClubController::class)->only(['index', 'show']);
+Route::get('clubs/{club}/sport-rules/{sport}', [ClubController::class, 'sportRules']);
 Route::apiResource('courts', CourtController::class)->only(['index', 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {

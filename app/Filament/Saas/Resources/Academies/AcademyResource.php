@@ -8,6 +8,7 @@ use App\Filament\Saas\Resources\Academies\Pages\ListAcademies;
 use App\Filament\Saas\Resources\Academies\Pages\ViewAcademy;
 use App\Models\Club;
 use App\Models\SaasPlan;
+use App\Notifications\AcademyStatusNotification;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -240,6 +241,10 @@ class AcademyResource extends Resource
                             'notes'         => 'Auto-generated 14-day free trial on academy approval.',
                         ]);
 
+                        // Notify the academy owner
+                        $record->users()->whereHas('clubUsers', fn ($q) => $q->where('role', 'owner'))->get()
+                            ->each(fn ($owner) => $owner->notify(new AcademyStatusNotification($record, 'approved')));
+
                         Notification::make()
                             ->title("Academy \"{$record->name}\" approved with 14-day free trial.")
                             ->success()
@@ -268,6 +273,10 @@ class AcademyResource extends Resource
                             ->latest()
                             ->first()
                             ?->update(['status' => 'cancelled']);
+
+                        // Notify the academy owner
+                        $record->users()->whereHas('clubUsers', fn ($q) => $q->where('role', 'owner'))->get()
+                            ->each(fn ($owner) => $owner->notify(new AcademyStatusNotification($record, 'rejected')));
 
                         Notification::make()
                             ->title("Academy \"{$record->name}\" rejected.")
