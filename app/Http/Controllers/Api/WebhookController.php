@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AcademySession;
 use App\Models\Booking;
 use App\Models\User;
 use App\Notifications\BookingConfirmedNotification;
@@ -37,6 +38,8 @@ class WebhookController extends Controller
             return response()->json(['message' => 'Invalid merchant_order_id payload.'], 422);
         }
 
+        $isSessionPayment = str_starts_with($merchantOrderId, 'session_');
+
         $existingTransaction = PaymentTransaction::query()
             ->where('paymob_transaction_id', $paymobTransactionId)
             ->first();
@@ -69,6 +72,26 @@ class WebhookController extends Controller
 
         if (! $isSuccess) {
             return response()->json(['status' => 'ignored']);
+        }
+
+        if ($isSessionPayment) {
+            // Enroll the player in the academy session upon successful payment
+            DB::transaction(function () use ($bookingId, $userId) {
+                $session = AcademySession::find($bookingId);
+                if (! $session) {
+                    return;
+                }
+
+                $alreadyEnrolled = $session->players()->where('users.id', $userId)->exists();
+                if (! $alreadyEnrolled) {
+                    $session->players()->attach($userId, [
+                        'status' => 'registered',
+                        'notes'  => 'Enrolled via payment.',
+                    ]);
+                }
+            });
+
+            return response()->json(['status' => 'session_enrolled']);
         }
 
         DB::transaction(function () use ($bookingId, $userId) {
@@ -166,10 +189,10 @@ class WebhookController extends Controller
 
     private function extractBookingAndUserIds(string $merchantOrderId): array
     {
-        preg_match('/booking_(\d+)_user_(\d+)/', $merchantOrderId, $matches);
+        preg_match('/(?:booking|session)_(\d+)_user_(\d+)/', $merchantOrderId, $matches);
 
         $bookingId = isset($matches[1]) ? (int) $matches[1] : null;
-        $userId = isset($matches[2]) ? (int) $matches[2] : null;
+        $userId    = isset($matches[2]) ? (int) $matches[2] : null;
 
         return [$bookingId, $userId];
     }

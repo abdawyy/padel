@@ -8,6 +8,7 @@ use App\Models\AcademySession;
 use App\Models\Booking;
 use App\Models\Club;
 use App\Models\Court;
+use App\Services\PaymobService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -236,6 +237,20 @@ class AcademySessionController extends Controller
 
         if ($this->playerHasConflict($playerId, Carbon::parse($academySession->start_time), Carbon::parse($academySession->end_time))) {
             return response()->json(['message' => 'This player already has a conflicting booking or training session.'], 422);
+        }
+
+        // If the session has a fee, return a payment link instead of enrolling directly
+        $fee = (float) ($academySession->price_per_player ?? 0);
+        if ($isSelfEnrollment && $fee > 0) {
+            $paymob = app(PaymobService::class);
+            $paymentData = $paymob->createPaymentSessionForEnrollment($academySession, $user, $fee);
+
+            return response()->json([
+                'message'      => 'Payment required to complete enrollment.',
+                'payment'      => $paymentData,
+                'session_id'   => $academySession->id,
+                'amount_due'   => $fee,
+            ], 402);
         }
 
         $academySession->players()->attach($playerId, [

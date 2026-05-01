@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AcademySession;
 use App\Models\Booking;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
@@ -114,5 +115,32 @@ class PaymobService
     protected function endpoint(string $path): string
     {
         return rtrim(config('services.paymob.base_url'), '/') . $path;
+    }
+
+    /**
+     * Create a Paymob payment session for a session enrollment (academy session fee).
+     */
+    public function createPaymentSessionForEnrollment(AcademySession $session, User $user, float $amountDue): array
+    {
+        $amountCents     = (int) round($amountDue * 100);
+        $merchantOrderId = sprintf('session_%d_user_%d', $session->id, $user->id);
+
+        $authToken  = $this->authenticate();
+        $orderId    = $this->registerOrder($authToken, $amountCents, $merchantOrderId);
+        $paymentKey = $this->generatePaymentKey($authToken, $orderId, $amountCents, $user, $merchantOrderId);
+
+        return [
+            'payment_key'       => $paymentKey,
+            'iframe_url'        => sprintf(
+                '%s/acceptance/iframes/%s?payment_token=%s',
+                rtrim(config('services.paymob.base_url'), '/api'),
+                config('services.paymob.iframe_id'),
+                $paymentKey,
+            ),
+            'order_id'          => $orderId,
+            'merchant_order_id' => $merchantOrderId,
+            'amount_due'        => $amountDue,
+            'currency'          => config('services.paymob.currency', 'EGP'),
+        ];
     }
 }
