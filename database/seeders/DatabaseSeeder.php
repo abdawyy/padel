@@ -23,6 +23,9 @@ class DatabaseSeeder extends Seeder
         // ── SaaS Plans ───────────────────────────────────────────────
         $this->call(SaasPlanSeeder::class);
 
+        // ── Fixed admin / demo accounts ──────────────────────────────
+        $this->call(AdminSeeder::class);
+
         // ── Super Admin ──────────────────────────────────────────────
         User::factory()->create([
             'name'     => 'Super Admin',
