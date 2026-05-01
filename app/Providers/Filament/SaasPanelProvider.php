@@ -26,7 +26,7 @@ class SaasPanelProvider extends PanelProvider
             ->id('saas')
             ->path('saas')
             ->login()
-            ->brandName('Padel SaaS Portal')
+            ->brandName(config('app.name') . ' — SaaS')
             ->colors([
                 'primary' => Color::Violet,
             ])
