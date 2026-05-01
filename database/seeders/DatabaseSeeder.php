@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
         // ── Fixed admin / demo accounts ──────────────────────────────
         $this->call(AdminSeeder::class);
 
-        // ── Super Admin ──────────────────────────────────────────────
+        // ── Super Admin ───────────────────────────────────────────────
         User::factory()->create([
             'name'     => 'Super Admin',
             'email'    => 'admin@padel.test',
@@ -125,6 +125,9 @@ class DatabaseSeeder extends Seeder
                 });
             }
         }
+
+        // ── New-flows dummy data ──────────────────────────────────────
+        $this->call(NewFlowsSeeder::class);
     }
 }
 
