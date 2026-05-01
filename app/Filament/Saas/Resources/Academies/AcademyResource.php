@@ -217,20 +217,31 @@ class AcademyResource extends Resource
                     ->action(function (Club $record): void {
                         $record->update([
                             'registration_status' => 'approved',
-                            'subscription_status' => 'active',
+                            'subscription_status' => 'trial',
                             'approved_at'         => now(),
                             'approved_by'         => auth()->id(),
                             'rejection_reason'    => null,
                         ]);
-                        // Activate the pending subscription
+
+                        // Cancel any pending paid subscription — trial comes first
                         $record->saasSubscriptions()
                             ->where('status', 'pending')
-                            ->latest()
-                            ->first()
-                            ?->update(['status' => 'active']);
+                            ->update(['status' => 'cancelled']);
+
+                        // Create a 14-day free trial subscription
+                        \App\Models\ClubSaasSubscription::create([
+                            'club_id'       => $record->id,
+                            'saas_plan_id'  => null,
+                            'billing_cycle' => 'trial',
+                            'amount_paid'   => 0,
+                            'starts_at'     => now()->toDateString(),
+                            'ends_at'       => now()->addDays(14)->toDateString(),
+                            'status'        => 'trial',
+                            'notes'         => 'Auto-generated 14-day free trial on academy approval.',
+                        ]);
 
                         Notification::make()
-                            ->title("Academy \"{$record->name}\" approved.")
+                            ->title("Academy \"{$record->name}\" approved with 14-day free trial.")
                             ->success()
                             ->send();
                     }),
@@ -261,6 +272,42 @@ class AcademyResource extends Resource
                         Notification::make()
                             ->title("Academy \"{$record->name}\" rejected.")
                             ->danger()
+                            ->send();
+                    }),
+
+                Action::make('activate_plan')
+                    ->label('Activate Plan')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('info')
+                    ->visible(fn (Club $record) => $record->registration_status === 'approved'
+                        && $record->subscription_status === 'inactive'
+                        && $record->saasSubscriptions()->where('status', 'cancelled')->where('billing_cycle', '!=', 'trial')->exists()
+                    )
+                    ->requiresConfirmation()
+                    ->modalDescription('This will activate the academy\'s paid subscription.')
+                    ->action(function (Club $record): void {
+                        $sub = $record->saasSubscriptions()
+                            ->where('status', 'cancelled')
+                            ->where('billing_cycle', '!=', 'trial')
+                            ->latest()
+                            ->first();
+
+                        if ($sub) {
+                            $endsAt = $sub->billing_cycle === 'yearly'
+                                ? now()->addYear()
+                                : now()->addMonth();
+
+                            $sub->update([
+                                'status'    => 'active',
+                                'starts_at' => now()->toDateString(),
+                                'ends_at'   => $endsAt->toDateString(),
+                            ]);
+                            $sub->syncClubStatus();
+                        }
+
+                        Notification::make()
+                            ->title("Paid plan activated for \"{$record->name}\".")
+                            ->success()
                             ->send();
                     }),
 

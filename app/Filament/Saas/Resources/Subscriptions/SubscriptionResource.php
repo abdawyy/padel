@@ -51,7 +51,7 @@ class SubscriptionResource extends Resource
                             ->relationship('plan', 'name')
                             ->searchable()->preload()->nullable(),
                         Select::make('billing_cycle')
-                            ->options(['monthly' => 'Monthly', 'yearly' => 'Yearly'])
+                            ->options(['monthly' => 'Monthly', 'yearly' => 'Yearly', 'trial' => 'Trial'])
                             ->default('monthly')->required()->native(false),
                         Select::make('status')
                             ->options([

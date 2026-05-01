@@ -13,16 +13,29 @@ class ExpireSaasSubscriptions extends Command
 
     public function handle(): void
     {
-        $expired = ClubSaasSubscription::query()
+        // Expire active paid subscriptions
+        $expiredPaid = ClubSaasSubscription::query()
             ->where('status', 'active')
             ->where('ends_at', '<', now()->toDateString())
             ->get();
 
-        foreach ($expired as $sub) {
+        foreach ($expiredPaid as $sub) {
             $sub->update(['status' => 'expired']);
             $sub->syncClubStatus();
         }
 
-        $this->info("Marked {$expired->count()} subscription(s) as expired.");
+        // Expire trials — club goes inactive, awaiting paid subscription
+        $expiredTrials = ClubSaasSubscription::query()
+            ->where('status', 'trial')
+            ->where('ends_at', '<', now()->toDateString())
+            ->get();
+
+        foreach ($expiredTrials as $sub) {
+            $sub->update(['status' => 'expired']);
+            $sub->club()->update(['subscription_status' => 'inactive']);
+        }
+
+        $total = $expiredPaid->count() + $expiredTrials->count();
+        $this->info("Marked {$expiredPaid->count()} paid and {$expiredTrials->count()} trial subscription(s) as expired. Total: {$total}.");
     }
 }
