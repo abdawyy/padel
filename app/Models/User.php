@@ -74,6 +74,17 @@ class User extends Authenticatable implements FilamentUser
             return $this->is_active && $this->role === 'coach';
         }
 
+        if ($panel->getId() === 'saas') {
+            return $this->is_active && $this->role === 'super_admin';
+        }
+
+        // academy portal (admin panel) — super_admin uses /saas portal instead
+        if ($panel->getId() === 'admin') {
+            return $this->is_active
+                && $this->role !== 'super_admin'
+                && $this->hasAdminAccess();
+        }
+
         return $this->hasAdminAccess();
     }
 

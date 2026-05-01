@@ -25,6 +25,24 @@ class Club extends Model
         ];
     }
 
+    public function saasSubscriptions()
+    {
+        return $this->hasMany(ClubSaasSubscription::class);
+    }
+
+    public function activeSaasSubscription()
+    {
+        return $this->hasOne(ClubSaasSubscription::class)
+            ->where('status', 'active')
+            ->where('ends_at', '>=', now())
+            ->latestOfMany();
+    }
+
+    public function latestSaasSubscription()
+    {
+        return $this->hasOne(ClubSaasSubscription::class)->latestOfMany();
+    }
+
     public function users()
     {
         return $this->belongsToMany(User::class, 'club_users')->withPivot('role')->withTimestamps();

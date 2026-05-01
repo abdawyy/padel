@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        // ── SaaS Plans ───────────────────────────────────────────────
+        $this->call(SaasPlanSeeder::class);
+
         // ── Super Admin ──────────────────────────────────────────────
         User::factory()->create([
             'name'     => 'Super Admin',

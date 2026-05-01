@@ -5,4 +5,5 @@ return [
     App\Providers\Filament\AdminPanelProvider::class,
     App\Providers\Filament\CoachPanelProvider::class,
     App\Providers\Filament\PlayerPanelProvider::class,
+    App\Providers\Filament\SaasPanelProvider::class,
 ];

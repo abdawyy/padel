@@ -5,11 +5,13 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AvailabilityController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\ClubController;
+use App\Http\Controllers\Api\ClubRegistrationController;
 use App\Http\Controllers\Api\ClubStaffController;
 use App\Http\Controllers\Api\CourtController;
 use App\Http\Controllers\Api\CourtSlotController;
 use App\Http\Controllers\Api\MatchmakingController;
 use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\SaasPlanController;
 use App\Http\Controllers\Api\WebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,11 +22,15 @@ Route::post('webhooks/paymob/transaction-processed', [WebhookController::class, 
 Route::get('academy-sessions', [AcademySessionController::class, 'publicIndex']);
 Route::get('academy-sessions/{academySession}', [AcademySessionController::class, 'show']);
 Route::get('matches/open', [MatchmakingController::class, 'index']);
+Route::get('saas-plans', [SaasPlanController::class, 'index']);
 Route::apiResource('clubs', ClubController::class)->only(['index', 'show']);
 Route::apiResource('courts', CourtController::class)->only(['index', 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('register-club', [ClubRegistrationController::class, 'register']);
+    Route::get('clubs/{club}/saas-subscription', [ClubRegistrationController::class, 'show']);
+    Route::post('clubs/{club}/saas-subscription', [ClubRegistrationController::class, 'renew']);
     Route::get('user/bookings', [BookingController::class, 'userBookings']);
     Route::get('user/academy-sessions', [AcademySessionController::class, 'mySessions']);
     Route::get('clubs/{club}/availability', [AvailabilityController::class, 'index']);
