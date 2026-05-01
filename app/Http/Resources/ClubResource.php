@@ -20,6 +20,7 @@ class ClubResource extends JsonResource
             'sport_type' => $this->sport_type,
             'address' => $this->address,
             'subscription_status' => $this->subscription_status,
+            'registration_status' => $this->registration_status,
             'settings' => $this->settings,
             'courts_count' => (int) ($this->courts_count ?? $this->courts()->count()),
             'saas_subscription' => $this->whenLoaded('activeSaasSubscription', function () {

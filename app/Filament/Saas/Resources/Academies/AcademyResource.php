@@ -9,6 +9,7 @@ use App\Filament\Saas\Resources\Academies\Pages\ViewAcademy;
 use App\Models\Club;
 use App\Models\SaasPlan;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -18,6 +19,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -90,6 +92,18 @@ class AcademyResource extends Resource
                                 'inactive' => 'danger',
                                 default    => 'gray',
                             }),
+                        TextEntry::make('registration_status')->badge()
+                            ->color(fn (string $state) => match ($state) {
+                                'approved' => 'success',
+                                'pending'  => 'warning',
+                                'rejected' => 'danger',
+                                default    => 'gray',
+                            }),
+                        TextEntry::make('rejection_reason')
+                            ->placeholder('—')
+                            ->visible(fn (Club $record) => $record->registration_status === 'rejected'),
+                        TextEntry::make('approved_at')->dateTime()->placeholder('—'),
+                        TextEntry::make('approvedBy.name')->label('Approved By')->placeholder('—'),
                         TextEntry::make('courts_count')
                             ->label('Total Courts')
                             ->state(fn (Club $record) => $record->courts()->count()),
@@ -141,6 +155,15 @@ class AcademyResource extends Resource
             ->columns([
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('sport_type')->badge()->sortable(),
+                TextColumn::make('registration_status')
+                    ->label('Registration')
+                    ->badge()
+                    ->color(fn (string $state) => match ($state) {
+                        'approved' => 'success',
+                        'pending'  => 'warning',
+                        'rejected' => 'danger',
+                        default    => 'gray',
+                    }),
                 TextColumn::make('subscription_status')
                     ->badge()
                     ->color(fn (string $state) => match ($state) {
@@ -171,6 +194,12 @@ class AcademyResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
+                SelectFilter::make('registration_status')
+                    ->options([
+                        'pending'  => 'Pending',
+                        'approved' => 'Approved',
+                        'rejected' => 'Rejected',
+                    ]),
                 SelectFilter::make('subscription_status')
                     ->options([
                         'active'   => 'Active',
@@ -179,6 +208,62 @@ class AcademyResource extends Resource
                     ]),
             ])
             ->actions([
+                Action::make('approve')
+                    ->label('Approve')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn (Club $record) => $record->registration_status === 'pending')
+                    ->requiresConfirmation()
+                    ->action(function (Club $record): void {
+                        $record->update([
+                            'registration_status' => 'approved',
+                            'subscription_status' => 'active',
+                            'approved_at'         => now(),
+                            'approved_by'         => auth()->id(),
+                            'rejection_reason'    => null,
+                        ]);
+                        // Activate the pending subscription
+                        $record->saasSubscriptions()
+                            ->where('status', 'pending')
+                            ->latest()
+                            ->first()
+                            ?->update(['status' => 'active']);
+
+                        Notification::make()
+                            ->title("Academy \"{$record->name}\" approved.")
+                            ->success()
+                            ->send();
+                    }),
+
+                Action::make('reject')
+                    ->label('Reject')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->visible(fn (Club $record) => $record->registration_status === 'pending')
+                    ->form([
+                        Textarea::make('rejection_reason')
+                            ->label('Reason for rejection')
+                            ->required()
+                            ->rows(3),
+                    ])
+                    ->action(function (Club $record, array $data): void {
+                        $record->update([
+                            'registration_status' => 'rejected',
+                            'subscription_status' => 'inactive',
+                            'rejection_reason'    => $data['rejection_reason'],
+                        ]);
+                        $record->saasSubscriptions()
+                            ->where('status', 'pending')
+                            ->latest()
+                            ->first()
+                            ?->update(['status' => 'cancelled']);
+
+                        Notification::make()
+                            ->title("Academy \"{$record->name}\" rejected.")
+                            ->danger()
+                            ->send();
+                    }),
+
                 ViewAction::make(),
                 EditAction::make(),
             ])

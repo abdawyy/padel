@@ -37,14 +37,15 @@ class ClubRegistrationController extends Controller
                 'name'                => $validated['name'],
                 'sport_type'          => $validated['sport_type'] ?? 'padel',
                 'address'             => $validated['address'],
-                'subscription_status' => 'active',
+                'subscription_status' => 'inactive',   // inactive until approved
+                'registration_status' => 'pending',     // awaits super admin approval
                 'settings'            => $validated['settings'] ?? null,
             ]);
 
             // Attach the authenticated user as owner
             $request->user()->clubs()->attach($club->id, ['role' => 'owner']);
 
-            // Create SaaS subscription
+            // Create SaaS subscription (starts once approved)
             $endsAt = $cycle === 'yearly' ? now()->addYear() : now()->addMonth();
 
             ClubSaasSubscription::query()->create([
@@ -54,14 +55,14 @@ class ClubRegistrationController extends Controller
                 'amount_paid'   => $price,
                 'starts_at'     => now()->toDateString(),
                 'ends_at'       => $endsAt->toDateString(),
-                'status'        => 'active',
+                'status'        => 'pending',
             ]);
 
             return $club;
         });
 
         return response()->json([
-            'message' => 'Club registered successfully.',
+            'message' => 'Club registration submitted. Awaiting super admin approval.',
             'club'    => new ClubResource($club->load(['activeSaasSubscription.plan'])),
         ], 201);
     }

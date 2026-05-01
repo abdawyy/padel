@@ -15,14 +15,34 @@ class Club extends Model
         'sport_type',
         'address',
         'subscription_status',
+        'registration_status',
+        'rejection_reason',
+        'approved_at',
+        'approved_by',
         'settings',
     ];
 
     protected function casts(): array
     {
         return [
-            'settings' => 'array',
+            'settings'    => 'array',
+            'approved_at' => 'datetime',
         ];
+    }
+
+    public function isPending(): bool
+    {
+        return $this->registration_status === 'pending';
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->registration_status === 'approved';
+    }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function saasSubscriptions()
