@@ -14,15 +14,19 @@ class AuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'phone' => ['nullable', 'string', 'max:30'],
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'phone'    => ['nullable', 'string', 'max:30'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role'     => ['nullable', 'in:player,coach,academy_admin'],
         ]);
 
         $user = User::query()->create([
-            ...$validated,
-            'role' => 'player',
+            'name'      => $validated['name'],
+            'email'     => $validated['email'],
+            'phone'     => $validated['phone'] ?? null,
+            'password'  => $validated['password'],
+            'role'      => $validated['role'] ?? 'player',
             'is_active' => true,
         ]);
 

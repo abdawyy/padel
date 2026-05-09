@@ -30,6 +30,9 @@ class OpenMatchResource extends JsonResource
             'max_players' => $maxPlayers,
             'participants_count' => $participantsCount,
             'spots_left' => max(0, $maxPlayers - $participantsCount),
+            'skill_level' => $this->skill_level,
+            'skill_min'   => $this->skill_min,
+            'skill_max'   => $this->skill_max,
             'coach' => $this->coach ? [
                 'id' => $this->coach->id,
                 'name' => $this->coach->name,

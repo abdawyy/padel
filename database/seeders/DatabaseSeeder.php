@@ -20,7 +20,13 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // ── Super Admin ──────────────────────────────────────────────
+        // ── SaaS Plans ───────────────────────────────────────────────
+        $this->call(SaasPlanSeeder::class);
+
+        // ── Fixed admin / demo accounts ──────────────────────────────
+        $this->call(AdminSeeder::class);
+
+        // ── Super Admin ───────────────────────────────────────────────
         User::factory()->create([
             'name'     => 'Super Admin',
             'email'    => 'admin@padel.test',
@@ -119,6 +125,9 @@ class DatabaseSeeder extends Seeder
                 });
             }
         }
+
+        // ── New-flows dummy data ──────────────────────────────────────
+        $this->call(NewFlowsSeeder::class);
     }
 }
 

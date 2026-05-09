@@ -23,9 +23,22 @@ class Booking extends Model
         'session_type',
         'max_players',
         'skill_level',
+        'skill_min',
+        'skill_max',
         'status',
         'notes',
     ];
+
+    public function isSkillCompatible(int $userSkillLevel): bool
+    {
+        if ($this->skill_min !== null && $userSkillLevel < $this->skill_min) {
+            return false;
+        }
+        if ($this->skill_max !== null && $userSkillLevel > $this->skill_max) {
+            return false;
+        }
+        return true;
+    }
 
     protected function casts(): array
     {

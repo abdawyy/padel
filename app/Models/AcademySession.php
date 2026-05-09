@@ -18,6 +18,8 @@ class AcademySession extends Model
         'sport_type',
         'session_type',
         'skill_level',
+        'skill_min',
+        'skill_max',
         'start_time',
         'end_time',
         'max_players',
@@ -76,5 +78,10 @@ class AcademySession extends Model
         return $this->belongsToMany(User::class, 'academy_session_user')
             ->withPivot('status', 'notes')
             ->withTimestamps();
+    }
+
+    public function coachApplications()
+    {
+        return $this->hasMany(CoachApplication::class);
     }
 }
