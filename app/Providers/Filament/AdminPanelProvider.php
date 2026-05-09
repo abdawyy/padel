@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName(config('app.name') . ' — Academy Portal')
+            ->brandName('Padel Admin Portal')
             ->colors([
                 'primary' => Color::Amber,
             ])

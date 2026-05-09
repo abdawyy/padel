@@ -105,16 +105,4 @@ class ClubController extends Controller
 
         return response()->json([], 204);
     }
-
-    /**
-     * Return sport-specific rules for a club.
-     * GET /api/clubs/{club}/sport-rules/{sport}
-     */
-    public function sportRules(Club $club, string $sport): JsonResponse
-    {
-        return response()->json([
-            'sport' => $sport,
-            'rules' => $club->getRulesForSport($sport),
-        ]);
-    }
 }

@@ -31,7 +31,7 @@ class PlayerPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Blue,
             ])
-            ->brandName(config('app.name') . ' — Player Portal')
+            ->brandName('Padel Player Portal')
             ->pages([
                 PlayerDashboard::class,
                 MyPackages::class,

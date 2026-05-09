@@ -27,7 +27,7 @@ class CoachPanelProvider extends PanelProvider
             ->id('coach')
             ->path('coach')
             ->login()
-            ->brandName(config('app.name') . ' — Coach Portal')
+            ->brandName('Padel Coach Portal')
             ->colors([
                 'primary' => Color::Emerald,
             ])
