@@ -36,11 +36,19 @@ class PackageInfolist
                             ->label('Sessions Included')
                             ->numeric()
                             ->placeholder('-'),
+                        TextEntry::make('max_players')
+                            ->label('Players Included')
+                            ->numeric()
+                            ->placeholder('-'),
                         TextEntry::make('duration_days')
                             ->label('Duration (days)')
                             ->numeric()
                             ->placeholder('-'),
                         TextEntry::make('price')
+                            ->label('Total Price')
+                            ->money('EGP'),
+                        TextEntry::make('price_per_player')
+                            ->label('Price Per Player')
                             ->money('EGP'),
                         TextEntry::make('description')
                             ->placeholder('-')

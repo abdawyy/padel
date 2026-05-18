@@ -16,8 +16,10 @@ class Package extends Model
         'sport_type',
         'type',
         'session_count',
+        'max_players',
         'duration_days',
         'price',
+        'price_per_player',
         'description',
         'is_active',
     ];
@@ -26,10 +28,24 @@ class Package extends Model
     {
         return [
             'price'            => 'decimal:2',
+            'price_per_player' => 'decimal:2',
             'session_count'    => 'integer',
+            'max_players'      => 'integer',
             'duration_days'    => 'integer',
             'is_active'        => 'boolean',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $package): void {
+            if ($package->max_players > 0 && (float) $package->price > 0 && (float) $package->price_per_player <= 0) {
+                $package->setAttribute(
+                    'price_per_player',
+                    sprintf('%.2f', ((float) $package->price / (int) $package->max_players))
+                );
+            }
+        });
     }
 
     public function club()

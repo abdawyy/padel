@@ -45,12 +45,21 @@ class PackagesTable
                     ->numeric()
                     ->placeholder('-')
                     ->sortable(),
+                TextColumn::make('max_players')
+                    ->label('Players')
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('duration_days')
                     ->label('Days')
                     ->numeric()
                     ->placeholder('-')
                     ->sortable(),
                 TextColumn::make('price')
+                    ->label('Total Price')
+                    ->money('EGP')
+                    ->sortable(),
+                TextColumn::make('price_per_player')
+                    ->label('Price / Player')
                     ->money('EGP')
                     ->sortable(),
                 TextColumn::make('subscriptions_count')

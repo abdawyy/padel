@@ -30,8 +30,10 @@ class PackageFactory extends Factory
             'sport_type'    => fake()->randomElement(['padel', 'tennis', 'squash']),
             'type'          => $type,
             'session_count' => $type === 'sessions' ? fake()->numberBetween(5, 30) : null,
+            'max_players'   => fake()->randomElement([2, 4, 6, 8, 10]),
             'duration_days' => $type === 'custom' ? fake()->randomElement([14, 30, 60, 90]) : null,
             'price'         => fake()->randomElement([100, 200, 350, 500, 750, 1000, 1500]),
+            'price_per_player' => fake()->randomElement([20, 30, 40, 50, 75, 100]),
             'description'   => fake()->optional()->sentence(),
             'is_active'     => fake()->boolean(85),
         ];

@@ -70,6 +70,12 @@ class PackageForm
                             ->minValue(1)
                             ->visible(fn ($get) => $get('type') === 'sessions')
                             ->required(fn ($get) => $get('type') === 'sessions'),
+                        TextInput::make('max_players')
+                            ->label('Players Included')
+                            ->numeric()
+                            ->minValue(1)
+                            ->default(4)
+                            ->helperText('Maximum number of players covered by this package.'),
                         TextInput::make('duration_days')
                             ->label('Duration (days)')
                             ->numeric()
@@ -77,10 +83,18 @@ class PackageForm
                             ->visible(fn ($get) => $get('type') === 'custom')
                             ->helperText('Leave blank for monthly/quarterly/yearly; they are calculated automatically.'),
                         TextInput::make('price')
+                            ->label('Total Price')
                             ->required()
                             ->numeric()
                             ->default(0)
-                            ->prefix('EGP'),
+                            ->prefix('EGP')
+                            ->helperText('Total package price, separate from per-player pricing.'),
+                        TextInput::make('price_per_player')
+                            ->label('Price Per Player')
+                            ->numeric()
+                            ->default(0)
+                            ->prefix('EGP')
+                            ->helperText('Amount charged for each player in the package.'),
                         Textarea::make('description')
                             ->columnSpanFull(),
                         Toggle::make('is_active')
