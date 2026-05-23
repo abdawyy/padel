@@ -25,7 +25,8 @@ Route::get('academy-sessions/{academySession}', [AcademySessionController::class
 Route::get('matches/open', [MatchmakingController::class, 'index']);
 Route::get('saas-plans', [SaasPlanController::class, 'index']);
 Route::apiResource('clubs', ClubController::class)->only(['index', 'show']);
-Route::get('clubs/{club}/sport-rules/{sport}', [ClubController::class, 'sportRules']);
+Route::get('clubs/{club}/sport-rules/{sport}', [ClubController::class, 'sportRules'])
+    ->middleware('throttle:30,1');
 Route::apiResource('courts', CourtController::class)->only(['index', 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -52,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('coach-applications/{coachApplication}', [CoachApplicationController::class, 'respond']);
     Route::put('slots/{courtSlot}', [CourtSlotController::class, 'update']);
     Route::delete('slots/{courtSlot}', [CourtSlotController::class, 'destroy']);
-    Route::apiResource('clubs', ClubController::class)->except(['index', 'show']);
+    Route::apiResource('clubs', ClubController::class)->except(['index', 'show', 'store']);
     Route::apiResource('courts', CourtController::class)->except(['index', 'show']);
     Route::apiResource('bookings', BookingController::class);
     Route::post('bookings/{booking}/pay', [PaymentController::class, 'pay']);

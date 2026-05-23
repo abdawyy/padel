@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\ExpirePendingBookingParticipants;
 use App\Console\Commands\ExpireSaasSubscriptions;
 use App\Console\Commands\NotifyExpiringSubscriptions;
 use Illuminate\Foundation\Inspiring;
@@ -12,3 +13,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command(ExpireSaasSubscriptions::class)->dailyAt('00:05');
 Schedule::command(NotifyExpiringSubscriptions::class)->dailyAt('09:00');
+Schedule::command(ExpirePendingBookingParticipants::class)->everyFifteenMinutes();

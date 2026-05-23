@@ -42,6 +42,22 @@ class AcademySession extends Model
         ];
     }
 
+    /**
+     * Status key for player UI CSS (DB "active" → display "ongoing").
+     */
+    public function getDisplayStatusAttribute(): string
+    {
+        return match ($this->status) {
+            'active' => 'ongoing',
+            default => (string) $this->status,
+        };
+    }
+
+    public function getDisplayStatusLabelAttribute(): string
+    {
+        return ucfirst(str_replace('_', ' ', $this->display_status));
+    }
+
     public function getTrainingVideoUrlsAttribute(): array
     {
         return collect($this->video_urls ?? [])

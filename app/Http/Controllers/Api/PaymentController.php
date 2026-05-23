@@ -22,6 +22,10 @@ class PaymentController extends Controller
             return response()->json(['message' => 'You are not a participant in this booking.'], 403);
         }
 
+        if ($booking->status === 'cancelled') {
+            return response()->json(['message' => 'Payments are not accepted for cancelled bookings.'], 422);
+        }
+
         if ($participant->pivot->payment_status === 'paid') {
             return response()->json(['message' => 'Your payment for this booking is already completed.'], 409);
         }

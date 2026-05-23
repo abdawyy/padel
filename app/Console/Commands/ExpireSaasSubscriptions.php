@@ -14,11 +14,13 @@ class ExpireSaasSubscriptions extends Command
     public function handle(): void
     {
         $graceDays = 3;
+        $graceCutoff = now()->subDays($graceDays)->toDateString();
+        $today = now()->toDateString();
 
-        // Subscriptions past grace period → expire and deactivate club
+        // Active or past_due subscriptions past grace → expired and deactivate club
         $expiredPaid = ClubSaasSubscription::query()
-            ->where('status', 'active')
-            ->where('ends_at', '<', now()->subDays($graceDays)->toDateString())
+            ->whereIn('status', ['active', 'past_due'])
+            ->where('ends_at', '<', $graceCutoff)
             ->get();
 
         foreach ($expiredPaid as $sub) {
@@ -26,31 +28,28 @@ class ExpireSaasSubscriptions extends Command
             $sub->syncClubStatus();
         }
 
-        // Subscriptions within grace period → mark as past_due (club stays active)
+        // Active subscriptions within grace → past_due (club stays active)
         $pastDue = ClubSaasSubscription::query()
             ->where('status', 'active')
-            ->whereBetween('ends_at', [
-                now()->subDays($graceDays)->toDateString(),
-                now()->toDateString(),
-            ])
+            ->whereBetween('ends_at', [$graceCutoff, $today])
             ->get();
 
         foreach ($pastDue as $sub) {
             $sub->update(['status' => 'past_due']);
-            $sub->club()->update(['subscription_status' => 'active']); // still active during grace
+            $sub->syncClubStatus();
         }
 
         // Expire trials — no grace period for trials
         $expiredTrials = ClubSaasSubscription::query()
             ->where('status', 'trial')
-            ->where('ends_at', '<', now()->toDateString())
+            ->where('ends_at', '<', $today)
             ->get();
 
         foreach ($expiredTrials as $sub) {
             $sub->update(['status' => 'expired']);
-            $sub->club()->update(['subscription_status' => 'inactive']);
+            $sub->syncClubStatus();
         }
 
-        $this->info("Expired: {$expiredPaid->count()} paid, {$expiredTrials->count()} trial. Past-due (grace): {$pastDue->count()}.");
+        $this->info("Expired: {$expiredPaid->count()} paid/past-due, {$expiredTrials->count()} trial. Past-due (grace): {$pastDue->count()}.");
     }
 }

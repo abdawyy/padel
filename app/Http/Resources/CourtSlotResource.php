@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Support\CourtSlotSessionTypeMapper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,6 +21,7 @@ class CourtSlotResource extends JsonResource
             'title' => $this->title,
             'sport_type' => $this->sport_type,
             'slot_type' => $this->slot_type,
+            'session_type' => CourtSlotSessionTypeMapper::toSessionType((string) $this->slot_type),
             'day_of_week' => (int) $this->day_of_week,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,

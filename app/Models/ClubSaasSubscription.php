@@ -41,17 +41,34 @@ class ClubSaasSubscription extends Model
 
     public function isActive(): bool
     {
-        return $this->status === 'active' && $this->ends_at->isFuture();
+        return $this->status === 'active'
+            && $this->ends_at !== null
+            && $this->ends_at->isFuture();
     }
 
     public function isExpired(): bool
     {
-        return $this->ends_at->isPast();
+        return $this->ends_at !== null && $this->ends_at->isPast();
     }
 
     public function daysRemaining(): int
     {
+        if ($this->ends_at === null) {
+            return 0;
+        }
+
         return max(0, (int) now()->startOfDay()->diffInDays($this->ends_at, false));
+    }
+
+    public function applyBillingPeriodFrom(?Carbon $start = null): void
+    {
+        $start = ($start ?? now())->copy()->startOfDay();
+        $endsAt = $this->billing_cycle === 'yearly'
+            ? $start->copy()->addYear()
+            : $start->copy()->addMonth();
+
+        $this->starts_at = $start->toDateString();
+        $this->ends_at = $endsAt->toDateString();
     }
 
     /**
@@ -62,8 +79,8 @@ class ClubSaasSubscription extends Model
         $status = match (true) {
             $this->status === 'trial'     => 'trial',
             $this->status === 'past_due'  => 'active',   // grace period — still active
+            $this->status === 'expired'   => 'inactive',
             $this->status === 'cancelled' => 'inactive',
-            $this->isExpired()            => 'inactive',
             $this->isActive()             => 'active',
             default                       => 'inactive',
         };

@@ -31,7 +31,7 @@ class MyTraining extends Page
             ->whereHas('players', fn (Builder $q) => $q->where('users.id', auth()->id()))
             ->with(['club', 'court', 'coach'])
             ->withCount('players')
-            ->orderByRaw("FIELD(status,'scheduled','ongoing','completed','cancelled')")
+            ->orderByRaw("FIELD(status,'scheduled','active','completed','cancelled')")
             ->orderBy('start_time')
             ->get();
     }
@@ -40,7 +40,7 @@ class MyTraining extends Page
     {
         $session = AcademySession::query()
             ->whereHas('players', fn (Builder $q) => $q->where('users.id', auth()->id()))
-            ->whereIn('status', ['scheduled'])
+            ->whereIn('status', ['scheduled', 'active'])
             ->findOrFail($sessionId);
 
         $session->players()->detach(auth()->id());

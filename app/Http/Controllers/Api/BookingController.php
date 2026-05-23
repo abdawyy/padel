@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller;
 use App\Models\AcademySession;
 use App\Models\Booking;
 use App\Models\Court;
+use App\Services\BookableCourtValidator;
+use App\Services\BookingPaymentSplit;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,7 +21,12 @@ class BookingController extends Controller
     public function userBookings(Request $request)
     {
         $user = $request->user();
-        $type = (string) $request->query('type', 'upcoming');
+
+        $validated = $request->validate([
+            'type' => ['sometimes', 'in:upcoming,past'],
+        ]);
+
+        $type = $validated['type'] ?? 'upcoming';
 
         $bookings = Booking::query()
             ->whereHas('participants', function ($query) use ($user) {
@@ -75,6 +82,10 @@ class BookingController extends Controller
 
         $court = Court::query()->with('club.users')->findOrFail($validated['court_id']);
 
+        if ($unavailable = BookableCourtValidator::bookingUnavailableResponse($court)) {
+            return $unavailable;
+        }
+
         if (! empty($validated['coach_user_id']) && ! $court->club?->users()->where('users.id', $validated['coach_user_id'])->exists()) {
             return response()->json([
                 'message' => 'The selected coach must belong to the same club as the court.',
@@ -84,29 +95,9 @@ class BookingController extends Controller
         $startTime = Carbon::parse($validated['start_time']);
         $endTime = Carbon::parse($validated['end_time']);
 
-        $hasOverlap = Booking::query()
-            ->where('court_id', $court->id)
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->where('start_time', '<', $endTime)
-            ->where('end_time', '>', $startTime)
-            ->exists();
-
-        $hasAcademyOverlap = AcademySession::query()
-            ->where('court_id', $court->id)
-            ->whereIn('status', ['scheduled', 'active'])
-            ->where('start_time', '<', $endTime)
-            ->where('end_time', '>', $startTime)
-            ->exists();
-
-        if ($hasOverlap || $hasAcademyOverlap) {
-            return response()->json([
-                'message' => 'This court is not available for the selected time range.',
-            ], 422);
-        }
-
         $durationMinutes = max($startTime->diffInMinutes($endTime), 1);
         $durationHours = $durationMinutes / 60;
-        $coachFee = (float) ($validated['coach_fee'] ?? 0);
+        $coachFee = $this->resolveCoachFee($court, $validated['coach_user_id'] ?? null, $durationHours);
         $totalPrice = round((((float) $court->price_per_hour) * $durationHours) + $coachFee, 2);
 
         $participantIds = $validated['participant_ids'] ?? [];
@@ -123,43 +114,159 @@ class BookingController extends Controller
             ], 422);
         }
 
-        $amountDue = round($totalPrice / max($allParticipantIds->count(), 1), 2);
+        $participantCount = max($allParticipantIds->count(), 1);
+        $splitAmounts = BookingPaymentSplit::split($totalPrice, $participantCount);
         $sessionType = $validated['session_type'] ?? (! empty($validated['coach_user_id'])
             ? ($validated['match_type'] === 'open_match' ? 'coached_match' : 'private_training')
             : ($validated['match_type'] === 'open_match' ? 'open_match' : 'standard'));
 
-        $booking = DB::transaction(function () use ($validated, $user, $court, $startTime, $endTime, $totalPrice, $coachFee, $allParticipantIds, $amountDue, $maxPlayers, $sessionType) {
-            $booking = Booking::query()->create([
-                'court_id' => $court->id,
-                'sport_type' => $validated['sport_type'] ?? $court->sport_type ?? 'padel',
-                'owner_user_id' => $user->id,
-                'coach_user_id' => $validated['coach_user_id'] ?? null,
-                'start_time' => $startTime,
-                'end_time' => $endTime,
-                'total_price' => $totalPrice,
-                'coach_fee' => $coachFee,
-                'match_type' => $validated['match_type'],
-                'session_type' => $sessionType,
-                'max_players' => $maxPlayers,
-                'skill_level' => $validated['skill_level'] ?? null,
-                'status' => 'pending',
-                'notes' => $validated['notes'] ?? null,
-            ]);
+        [$skillMin, $skillMax] = $this->resolveSkillRange($validated);
 
-            $participantPayload = [];
-            foreach ($allParticipantIds as $participantId) {
-                $participantPayload[$participantId] = [
-                    'amount_due' => $amountDue,
-                    'payment_status' => 'pending',
-                ];
+        foreach ($allParticipantIds as $participantId) {
+            if ($this->playerHasSchedulingConflict((int) $participantId, $startTime, $endTime)) {
+                return response()->json([
+                    'message' => 'One or more participants have a conflicting booking or training session.',
+                ], 422);
+            }
+        }
+
+        try {
+            $booking = DB::transaction(function () use ($validated, $user, $court, $startTime, $endTime, $totalPrice, $coachFee, $allParticipantIds, $splitAmounts, $maxPlayers, $sessionType, $skillMin, $skillMax) {
+                if ($this->courtHasSchedulingConflict($court->id, $startTime, $endTime)) {
+                    throw new \RuntimeException('scheduling_conflict');
+                }
+
+                $booking = Booking::query()->create([
+                    'court_id' => $court->id,
+                    'sport_type' => $validated['sport_type'] ?? $court->sport_type ?? 'padel',
+                    'owner_user_id' => $user->id,
+                    'coach_user_id' => $validated['coach_user_id'] ?? null,
+                    'start_time' => $startTime,
+                    'end_time' => $endTime,
+                    'total_price' => $totalPrice,
+                    'coach_fee' => $coachFee,
+                    'match_type' => $validated['match_type'],
+                    'session_type' => $sessionType,
+                    'max_players' => $maxPlayers,
+                    'skill_level' => $validated['skill_level'] ?? null,
+                    'skill_min' => $skillMin,
+                    'skill_max' => $skillMax,
+                    'status' => 'pending',
+                    'notes' => $validated['notes'] ?? null,
+                ]);
+
+                $participantPayload = [];
+                foreach ($allParticipantIds->values() as $index => $participantId) {
+                    $participantPayload[$participantId] = [
+                        'amount_due' => $splitAmounts[$index],
+                        'payment_status' => 'pending',
+                    ];
+                }
+
+                $booking->participants()->attach($participantPayload);
+
+                return $booking->load(['court', 'owner', 'coach', 'participants']);
+            });
+        } catch (\RuntimeException $exception) {
+            if ($exception->getMessage() === 'scheduling_conflict') {
+                return response()->json([
+                    'message' => 'This court is not available for the selected time range.',
+                ], 422);
             }
 
-            $booking->participants()->attach($participantPayload);
-
-            return $booking->load(['court', 'owner', 'coach', 'participants']);
-        });
+            throw $exception;
+        }
 
         return new BookingResource($booking);
+    }
+
+    /**
+     * @param  array<string, mixed>  $validated
+     * @return array{0: ?int, 1: ?int}
+     */
+    private function resolveCoachFee(Court $court, ?int $coachUserId, float $durationHours): float
+    {
+        if (empty($coachUserId)) {
+            return 0.0;
+        }
+
+        $ratePerHour = (float) data_get($court->club?->settings, 'coach_fee_per_hour', 0);
+
+        return round($ratePerHour * $durationHours, 2);
+    }
+
+    private function resolveSkillRange(array $validated): array
+    {
+        $skillMin = isset($validated['skill_min']) ? (int) $validated['skill_min'] : null;
+        $skillMax = isset($validated['skill_max']) ? (int) $validated['skill_max'] : null;
+
+        if ($skillMin === null && $skillMax === null && isset($validated['skill_level']) && is_numeric($validated['skill_level'])) {
+            $level = (int) $validated['skill_level'];
+            if ($level >= 1 && $level <= 7) {
+                $skillMin = $skillMax = $level;
+            }
+        }
+
+        return [$skillMin, $skillMax];
+    }
+
+    private function allParticipantsPaid(Booking $booking): bool
+    {
+        return ! DB::table('booking_participants')
+            ->where('booking_id', $booking->id)
+            ->where('payment_status', '!=', 'paid')
+            ->exists();
+    }
+
+    private function playerHasSchedulingConflict(int $playerId, Carbon $startTime, Carbon $endTime): bool
+    {
+        $bookingConflict = Booking::query()
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->where('start_time', '<', $endTime)
+            ->where('end_time', '>', $startTime)
+            ->where(function ($query) use ($playerId) {
+                $query->where('owner_user_id', $playerId)
+                    ->orWhereHas('participants', function ($participantQuery) use ($playerId) {
+                        $participantQuery->where('users.id', $playerId);
+                    });
+            })
+            ->exists();
+
+        if ($bookingConflict) {
+            return true;
+        }
+
+        return AcademySession::query()
+            ->whereIn('status', ['scheduled', 'active'])
+            ->where('start_time', '<', $endTime)
+            ->where('end_time', '>', $startTime)
+            ->whereHas('players', function ($query) use ($playerId) {
+                $query->where('users.id', $playerId);
+            })
+            ->exists();
+    }
+
+    private function courtHasSchedulingConflict(int $courtId, Carbon $startTime, Carbon $endTime): bool
+    {
+        $bookingOverlap = Booking::query()
+            ->where('court_id', $courtId)
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->where('start_time', '<', $endTime)
+            ->where('end_time', '>', $startTime)
+            ->lockForUpdate()
+            ->exists();
+
+        if ($bookingOverlap) {
+            return true;
+        }
+
+        return AcademySession::query()
+            ->where('court_id', $courtId)
+            ->whereIn('status', ['scheduled', 'active'])
+            ->where('start_time', '<', $endTime)
+            ->where('end_time', '>', $startTime)
+            ->lockForUpdate()
+            ->exists();
     }
 
     /**
@@ -202,9 +309,27 @@ class BookingController extends Controller
             'coach_user_id' => ['nullable', 'integer', 'exists:users,id'],
             'max_players' => ['sometimes', 'integer', 'min:1', 'max:32'],
             'skill_level' => ['nullable', 'string', 'max:100'],
-            'coach_fee' => ['sometimes', 'numeric', 'min:0'],
             'notes' => ['nullable', 'string'],
         ]);
+
+        unset($validated['coach_fee']);
+
+        if (array_key_exists('coach_user_id', $validated) && ! empty($validated['coach_user_id'])) {
+            $booking->loadMissing('court.club');
+            $club = $booking->court?->club;
+
+            if (! $club || ! $club->users()->where('users.id', $validated['coach_user_id'])->exists()) {
+                return response()->json([
+                    'message' => 'The selected coach must belong to the same club as the court.',
+                ], 422);
+            }
+        }
+
+        if (($validated['status'] ?? null) === 'confirmed' && ! $this->allParticipantsPaid($booking)) {
+            return response()->json([
+                'message' => 'Cannot confirm booking until all participants have completed payment.',
+            ], 422);
+        }
 
         $booking->update($validated);
 

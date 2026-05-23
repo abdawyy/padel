@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AcademySession;
 use App\Models\Booking;
+use App\Models\ClubSaasSubscription;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
@@ -88,7 +89,7 @@ class PaymobService
                     'first_name' => $user->name ?: 'Player',
                     'street' => 'NA',
                     'building' => 'NA',
-                    'phone_number' => 'NA',
+                    'phone_number' => $this->billingPhoneNumber($user),
                     'shipping_method' => 'NA',
                     'postal_code' => 'NA',
                     'city' => 'NA',
@@ -115,6 +116,52 @@ class PaymobService
     protected function endpoint(string $path): string
     {
         return rtrim(config('services.paymob.base_url'), '/') . $path;
+    }
+
+    protected function billingPhoneNumber(User $user): string
+    {
+        $digits = preg_replace('/\D+/', '', (string) $user->phone) ?? '';
+
+        if ($digits === '') {
+            return (string) config('services.paymob.default_billing_phone', '+201000000000');
+        }
+
+        if (str_starts_with($digits, '20')) {
+            return '+'.$digits;
+        }
+
+        if (str_starts_with($digits, '0')) {
+            return '+20'.ltrim($digits, '0');
+        }
+
+        return '+'.$digits;
+    }
+
+    /**
+     * Create a Paymob payment session for a SaaS subscription renewal.
+     */
+    public function createPaymentSessionForSaasSubscription(ClubSaasSubscription $subscription, User $user, float $amountDue): array
+    {
+        $amountCents     = (int) round($amountDue * 100);
+        $merchantOrderId = sprintf('saas_%d_user_%d', $subscription->id, $user->id);
+
+        $authToken  = $this->authenticate();
+        $orderId    = $this->registerOrder($authToken, $amountCents, $merchantOrderId);
+        $paymentKey = $this->generatePaymentKey($authToken, $orderId, $amountCents, $user, $merchantOrderId);
+
+        return [
+            'payment_key'       => $paymentKey,
+            'iframe_url'        => sprintf(
+                '%s/acceptance/iframes/%s?payment_token=%s',
+                rtrim(config('services.paymob.base_url'), '/api'),
+                config('services.paymob.iframe_id'),
+                $paymentKey,
+            ),
+            'order_id'          => $orderId,
+            'merchant_order_id' => $merchantOrderId,
+            'amount_due'        => $amountDue,
+            'currency'          => config('services.paymob.currency', 'EGP'),
+        ];
     }
 
     /**

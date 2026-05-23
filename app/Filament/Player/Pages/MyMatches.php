@@ -33,9 +33,20 @@ class MyMatches extends Page
                     ->orWhereHas('participants', fn (Builder $sub) => $sub->where('users.id', auth()->id()));
             })
             ->with(['court.club', 'owner', 'coach'])
-            ->orderByRaw("FIELD(status,'pending','confirmed','completed','cancelled')")
+            ->orderByRaw("FIELD(status,'pending','confirmed','cancelled')")
             ->orderBy('start_time')
-            ->get();
+            ->get()
+            ->sortBy([
+                fn (Booking $booking) => match ($booking->display_status) {
+                    'pending' => 0,
+                    'confirmed' => 1,
+                    'completed' => 2,
+                    'cancelled' => 3,
+                    default => 4,
+                },
+                fn (Booking $booking) => $booking->start_time?->timestamp ?? 0,
+            ])
+            ->values();
     }
 
     public function cancelBooking(int $bookingId): void

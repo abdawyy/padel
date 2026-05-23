@@ -242,7 +242,7 @@ class AcademyResource extends Resource
                         ]);
 
                         // Notify the academy owner
-                        $record->users()->whereHas('clubUsers', fn ($q) => $q->where('role', 'owner'))->get()
+                        $record->owners()->get()
                             ->each(fn ($owner) => $owner->notify(new AcademyStatusNotification($record, 'approved')));
 
                         Notification::make()
@@ -275,7 +275,7 @@ class AcademyResource extends Resource
                             ?->update(['status' => 'cancelled']);
 
                         // Notify the academy owner
-                        $record->users()->whereHas('clubUsers', fn ($q) => $q->where('role', 'owner'))->get()
+                        $record->owners()->get()
                             ->each(fn ($owner) => $owner->notify(new AcademyStatusNotification($record, 'rejected')));
 
                         Notification::make()

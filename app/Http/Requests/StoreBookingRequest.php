@@ -32,8 +32,9 @@ class StoreBookingRequest extends FormRequest
             'session_type' => ['nullable', 'in:standard,open_match,coached_match,group_training,private_training,academy_class'],
             'coach_user_id' => ['nullable', 'integer', 'exists:users,id'],
             'max_players' => ['nullable', 'integer', 'min:1', 'max:32'],
-            'skill_level' => ['nullable', 'string', 'max:100'],
-            'coach_fee' => ['nullable', 'numeric', 'min:0'],
+            'skill_level' => ['nullable'],
+            'skill_min' => ['nullable', 'integer', 'min:1', 'max:7'],
+            'skill_max' => ['nullable', 'integer', 'min:1', 'max:7', 'gte:skill_min'],
             'notes' => ['nullable', 'string'],
             'participant_ids' => ['nullable', 'array', 'max:31'],
             'participant_ids.*' => ['integer', 'distinct', 'exists:users,id'],
@@ -43,6 +44,13 @@ class StoreBookingRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
+            if ($this->filled('skill_level') && is_numeric($this->input('skill_level'))) {
+                $level = (int) $this->input('skill_level');
+                if ($level < 1 || $level > 7) {
+                    $validator->errors()->add('skill_level', 'Skill level must be between 1 and 7.');
+                }
+            }
+
             $participantIds = $this->input('participant_ids', []);
             $ownerId = $this->user()?->id;
             $matchType = (string) $this->input('match_type', 'private');

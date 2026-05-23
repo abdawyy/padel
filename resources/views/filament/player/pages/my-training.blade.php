@@ -37,8 +37,8 @@
             'type' => ucwords(str_replace('_', ' ', $session->session_type ?? '')),
             'sport' => ucfirst($session->sport_type ?? 'padel'),
             'level' => $session->skill_level ? 'Level ' . $session->skill_level : 'All levels',
-            'status' => ucfirst($session->status),
-            'status_key' => $session->status,
+            'status' => $session->display_status_label,
+            'status_key' => $session->display_status,
             'start' => $session->start_time?->format('D d M Y · H:i'),
             'end' => $session->end_time?->format('H:i'),
             'max_players' => $session->max_players,
@@ -46,7 +46,8 @@
             'price' => number_format((float) $session->price_per_player, 2),
             'session_plan' => $session->session_plan,
             'notes' => $session->notes,
-            'can_withdraw' => $session->status === 'scheduled',
+            'can_withdraw' => in_array($session->status, ['scheduled', 'active'], true)
+            && ($session->start_time?->isFuture() ?? false),
             'is_today' => $session->start_time?->isToday() ?? false,
             'is_this_week' => ($session->start_time?->isFuture() ?? false) && (($session->start_time?->diffInDays(now()) ?? 99) <= 7) && !($session->start_time?->isToday() ?? false),
             'videos' => $videos->all(),
@@ -77,7 +78,8 @@
 .dark .tr-row { color: #d1d5db; }
 .tr-chip { display: inline-flex; align-items: center; border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 700; }
 .tr-status-scheduled { background: #dbeafe; color: #1e40af; }
-.tr-status-ongoing { background: #fef3c7; color: #92400e; }
+.tr-status-ongoing,
+.tr-status-active { background: #fef3c7; color: #92400e; }
 .tr-status-completed { background: #d1fae5; color: #065f46; }
 .tr-status-cancelled { background: #ffe4e6; color: #9f1239; }
 .tr-plan-snippet { padding: 12px 14px; background: #f8fafc; border-radius: 12px; font-size: 12px; color: #334155; line-height: 1.6; }

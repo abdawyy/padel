@@ -17,37 +17,12 @@ class ClubController extends Controller
     {
         $clubs = Club::query()
             ->where('subscription_status', 'active')
+            ->where('registration_status', 'approved')
             ->withCount('courts')
             ->latest()
             ->paginate();
 
         return ClubResource::collection($clubs);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'sport_type' => ['nullable', 'string', 'max:100'],
-            'address' => ['required', 'string'],
-            'subscription_status' => ['nullable', 'string', 'max:100'],
-            'settings' => ['nullable', 'array'],
-        ]);
-
-        $club = Club::query()->create([
-            'name' => $validated['name'],
-            'sport_type' => $validated['sport_type'] ?? 'padel',
-            'address' => $validated['address'],
-            'subscription_status' => $validated['subscription_status'] ?? 'active',
-            'settings' => $validated['settings'] ?? null,
-        ]);
-
-        $request->user()->clubs()->attach($club->id, ['role' => 'owner']);
-
-        return new ClubResource($club);
     }
 
     /**
@@ -64,7 +39,10 @@ class ClubController extends Controller
         if ($user?->isSuperAdmin() || $user?->belongsToClub((int) $id)) {
             $club = $query->firstOrFail();
         } else {
-            $club = $query->where('subscription_status', 'active')->firstOrFail();
+            $club = $query
+                ->where('subscription_status', 'active')
+                ->where('registration_status', 'approved')
+                ->firstOrFail();
         }
 
         return new ClubResource($club);
@@ -95,7 +73,7 @@ class ClubController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(string $id)
     {
         $club = Club::query()->findOrFail($id);
 
@@ -103,7 +81,7 @@ class ClubController extends Controller
 
         $club->delete();
 
-        return response()->json([], 204);
+        return response()->noContent();
     }
 
     /**
@@ -112,6 +90,12 @@ class ClubController extends Controller
      */
     public function sportRules(Club $club, string $sport): JsonResponse
     {
+        $sport = strtolower($sport);
+
+        if (! in_array($sport, ['padel', 'tennis', 'pickleball', 'squash'], true)) {
+            return response()->json(['message' => 'Unsupported sport type.'], 422);
+        }
+
         return response()->json([
             'sport' => $sport,
             'rules' => $club->getRulesForSport($sport),

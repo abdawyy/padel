@@ -77,15 +77,14 @@ class AcademyRegistrationController extends Controller
             // Attach owner
             $user->clubs()->attach($club->id, ['role' => 'owner']);
 
-            // SaaS subscription (pending approval)
-            $endsAt = $cycle === 'yearly' ? now()->addYear() : now()->addMonth();
+            // SaaS subscription (pending approval; billing period starts after payment/approval)
             ClubSaasSubscription::create([
                 'club_id'       => $club->id,
                 'saas_plan_id'  => $plan->id,
                 'billing_cycle' => $cycle,
                 'amount_paid'   => $price,
-                'starts_at'     => now()->toDateString(),
-                'ends_at'       => $endsAt->toDateString(),
+                'starts_at'     => null,
+                'ends_at'       => null,
                 'status'        => 'pending',
             ]);
 

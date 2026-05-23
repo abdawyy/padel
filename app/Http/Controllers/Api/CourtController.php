@@ -18,7 +18,8 @@ class CourtController extends Controller
     {
         $courts = Court::query()
             ->whereHas('club', function ($query) {
-                $query->where('subscription_status', 'active');
+                $query->where('subscription_status', 'active')
+                    ->where('registration_status', 'approved');
             })
             ->when($request->filled('club_id'), function ($query) use ($request) {
                 $query->where('club_id', (int) $request->query('club_id'));

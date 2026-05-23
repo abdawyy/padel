@@ -94,6 +94,11 @@ class Club extends Model
         return $this->belongsToMany(User::class, 'club_users')->withPivot('role')->withTimestamps();
     }
 
+    public function owners()
+    {
+        return $this->users()->wherePivot('role', 'owner');
+    }
+
     public function courts()
     {
         return $this->hasMany(Court::class);

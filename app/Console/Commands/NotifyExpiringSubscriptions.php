@@ -23,8 +23,7 @@ class NotifyExpiringSubscriptions extends Command
         foreach ($subscriptions as $subscription) {
             $daysRemaining = $subscription->daysRemaining();
 
-            $subscription->club->users()
-                ->whereHas('clubUsers', fn ($q) => $q->where('role', 'owner'))
+            $subscription->club->owners()
                 ->get()
                 ->each(fn (User $owner) => $owner->notify(
                     new SubscriptionExpiringNotification($subscription, $daysRemaining)

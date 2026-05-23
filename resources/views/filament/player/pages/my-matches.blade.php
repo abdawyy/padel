@@ -123,7 +123,7 @@
 
                 <div style="display:flex; flex-wrap:wrap; gap:5px;">
                     <span class="mx-chip" style="background:{{ $bClr }}1a; color:{{ $bClr }};">{{ $typeLabel }}</span>
-                    <span class="mx-chip mx-status-{{ $match->status }}">{{ ucfirst($match->status) }}</span>
+                    <span class="mx-chip mx-status-{{ $match->display_status }}">{{ ucfirst($match->display_status) }}</span>
                     @if($isOwner)
                         <span class="mx-chip mx-owner-badge">Organiser</span>
                     @endif

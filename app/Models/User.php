@@ -180,6 +180,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Club::class, 'club_users')->withPivot('role')->withTimestamps();
     }
 
+    public function clubUsers()
+    {
+        return $this->hasMany(ClubUser::class);
+    }
+
     public function ownedBookings()
     {
         return $this->hasMany(Booking::class, 'owner_user_id');
