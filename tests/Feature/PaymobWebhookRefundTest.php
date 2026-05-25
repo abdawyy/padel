@@ -47,7 +47,7 @@ class PaymobWebhookRefundTest extends TestCase
         );
 
         $this->postJson(
-            '/api/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
+            '/api/v1/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
             ['obj' => $transaction],
         )
             ->assertOk()
@@ -84,7 +84,7 @@ class PaymobWebhookRefundTest extends TestCase
         );
 
         $this->postJson(
-            '/api/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
+            '/api/v1/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
             ['obj' => $transaction],
         )
             ->assertOk()
@@ -108,7 +108,7 @@ class PaymobWebhookRefundTest extends TestCase
             isRefunded: true,
         );
 
-        $this->postJson('/api/webhooks/paymob/transaction-processed?hmac=abc', ['obj' => $transaction])
+        $this->postJson('/api/v1/webhooks/paymob/transaction-processed?hmac=abc', ['obj' => $transaction])
             ->assertStatus(503)
             ->assertJsonFragment([
                 'message' => 'Paymob webhook is not configured. Set PAYMOB_HMAC_SECRET in your environment.',

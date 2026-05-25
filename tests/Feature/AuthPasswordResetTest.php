@@ -20,7 +20,7 @@ class AuthPasswordResetTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->postJson('/api/forgot-password', ['email' => $user->email])
+        $this->postJson('/api/v1/forgot-password', ['email' => $user->email])
             ->assertOk();
 
         Notification::assertSentTo($user, \App\Notifications\ResetPasswordNotification::class);
@@ -31,7 +31,7 @@ class AuthPasswordResetTest extends TestCase
         $user = User::factory()->create(['password' => 'old-password123']);
         $token = Password::createToken($user);
 
-        $this->postJson('/api/reset-password', [
+        $this->postJson('/api/v1/reset-password', [
             'email' => $user->email,
             'token' => $token,
             'password' => 'new-password123',
@@ -47,7 +47,7 @@ class AuthPasswordResetTest extends TestCase
         $user = User::factory()->create(['password' => 'old-password123']);
         Sanctum::actingAs($user);
 
-        $this->postJson('/api/user/password', [
+        $this->postJson('/api/v1/user/password', [
             'current_password' => 'old-password123',
             'password' => 'changed-password123',
             'password_confirmation' => 'changed-password123',

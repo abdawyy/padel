@@ -9,6 +9,7 @@ use App\Models\ClubSaasSubscription;
 use App\Models\Package;
 use App\Models\PackageSubscription;
 use App\Models\User;
+use App\Services\AuditLogService;
 use App\Services\PackageConsumptionService;
 use App\Notifications\BookingConfirmedNotification;
 use App\Models\PaymentTransaction;
@@ -104,6 +105,18 @@ class WebhookController extends Controller
         if (! $isSuccess) {
             return response()->json(['status' => 'ignored']);
         }
+
+        app(AuditLogService::class)->record(
+            'payment.success',
+            User::query()->find($order['user_id']),
+            null,
+            [
+                'type' => $order['type'],
+                'reference_id' => $order['reference_id'],
+                'amount' => $amount,
+                'paymob_transaction_id' => $paymobTransactionId,
+            ],
+        );
 
         if ($order['type'] === 'saas') {
             return $this->activateSaasSubscription($order['reference_id'], $paymobTransactionId);

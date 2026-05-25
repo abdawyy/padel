@@ -24,6 +24,8 @@
             gap: 16px;
             flex-wrap: wrap;
         }
+        .pd-locale form { display: flex; gap: 8px; align-items: center; }
+        .pd-locale select { border-radius: 8px; padding: 6px 10px; font-size: 13px; }
         .pd-avatar {
             width: 64px;
             height: 64px;
@@ -137,6 +139,16 @@
                         <div style="font-size:13px; opacity:.9;">{{ $user->phone }}</div>
                     @endif
                 </div>
+            </div>
+            <div class="pd-locale" style="text-align:right;">
+                <form method="post" action="{{ route('player.locale') }}">
+                    @csrf
+                    <label for="player-locale" class="text-sm">{{ __('player.language') }}</label>
+                    <select id="player-locale" name="locale" onchange="this.form.submit()">
+                        <option value="en" @selected(app()->getLocale() === 'en')>English</option>
+                        <option value="ar" @selected(app()->getLocale() === 'ar')>العربية</option>
+                    </select>
+                </form>
             </div>
             <div style="text-align:right; font-size:13px;">
                 <div style="font-weight:700;">{{ $skill }}</div>

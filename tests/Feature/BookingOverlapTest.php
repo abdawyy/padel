@@ -33,7 +33,7 @@ class BookingOverlapTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->postJson('/api/bookings', [
+        $this->postJson('/api/v1/bookings', [
             'court_id' => $court->id,
             'start_time' => $start->copy()->addMinutes(30)->toDateTimeString(),
             'end_time' => $end->copy()->addMinutes(30)->toDateTimeString(),
@@ -64,7 +64,7 @@ class BookingOverlapTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->postJson('/api/bookings', [
+        $this->postJson('/api/v1/bookings', [
             'court_id' => $court->id,
             'start_time' => $start->toDateTimeString(),
             'end_time' => $end->toDateTimeString(),
@@ -83,14 +83,14 @@ class BookingOverlapTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->postJson('/api/bookings', [
+        $this->postJson('/api/v1/bookings', [
             'court_id' => $court->id,
             'start_time' => '2026-06-03 10:00:00',
             'end_time' => '2026-06-03 11:00:00',
             'match_type' => 'private',
         ])->assertCreated();
 
-        $this->postJson('/api/bookings', [
+        $this->postJson('/api/v1/bookings', [
             'court_id' => $court->id,
             'start_time' => '2026-06-03 11:00:00',
             'end_time' => '2026-06-03 12:00:00',

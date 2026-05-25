@@ -12,7 +12,9 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class AcademySessionsTable
 {
@@ -67,7 +69,29 @@ class AcademySessionsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('club_id')
+                    ->relationship('club', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('status')
+                    ->options([
+                        'scheduled' => 'Scheduled',
+                        'active' => 'Active',
+                        'completed' => 'Completed',
+                        'cancelled' => 'Cancelled',
+                    ]),
+                SelectFilter::make('session_type')
+                    ->options([
+                        'group_training' => 'Group training',
+                        'private_training' => 'Private training',
+                        'academy_class' => 'Academy class',
+                    ]),
+                SelectFilter::make('session_date')
+                    ->form([\Filament\Forms\Components\DatePicker::make('on')->label('On date')])
+                    ->query(fn (Builder $query, array $data): Builder => $query->when(
+                        filled($data['on'] ?? null),
+                        fn (Builder $q) => $q->whereDate('start_time', $data['on'])
+                    )),
             ])
             ->recordActions([
                 ViewAction::make(),

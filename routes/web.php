@@ -14,3 +14,10 @@ Route::get('/forgot-password', [PasswordResetController::class, 'showForgotForm'
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
 Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.update');
+
+Route::post('/player/locale', function (\Illuminate\Http\Request $request) {
+    $locale = $request->validate(['locale' => 'required|in:en,ar'])['locale'];
+    $request->session()->put('player_locale', $locale);
+
+    return back();
+})->middleware('web')->name('player.locale');

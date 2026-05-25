@@ -10,6 +10,7 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -58,6 +59,23 @@ class CourtsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('club_id')
+                    ->relationship('club', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('sport_type')
+                    ->options([
+                        'padel' => 'Padel',
+                        'tennis' => 'Tennis',
+                        'squash' => 'Squash',
+                        'pickleball' => 'Pickleball',
+                    ]),
+                SelectFilter::make('is_active')
+                    ->options(['1' => 'Active', '0' => 'Inactive'])
+                    ->query(fn ($query, array $data) => $query->when(
+                        isset($data['value']) && $data['value'] !== '',
+                        fn ($q) => $q->where('is_active', (bool) $data['value'])
+                    )),
                 TrashedFilter::make(),
             ])
             ->recordActions([

@@ -10,6 +10,7 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -53,6 +54,20 @@ class UsersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('role')
+                    ->options([
+                        'admin' => 'Admin',
+                        'manager' => 'Manager',
+                        'coach' => 'Coach',
+                        'staff' => 'Staff',
+                        'player' => 'Player',
+                    ]),
+                SelectFilter::make('is_active')
+                    ->options(['1' => 'Active', '0' => 'Inactive'])
+                    ->query(fn ($query, array $data) => $query->when(
+                        isset($data['value']) && $data['value'] !== '',
+                        fn ($q) => $q->where('is_active', (bool) $data['value'])
+                    )),
                 TrashedFilter::make(),
             ])
             ->recordActions([

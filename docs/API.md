@@ -1,6 +1,8 @@
 # Padel API Reference
 
-Base URL: `{APP_URL}/api`
+Base URL: `{APP_URL}/api/v1`
+
+Legacy note: routes previously under `/api/*` are now versioned under `/api/v1/*`.
 
 Authentication: Laravel Sanctum (`Authorization: Bearer {token}`) or cookie session for SPA domains listed in `SANCTUM_STATEFUL_DOMAINS`.
 

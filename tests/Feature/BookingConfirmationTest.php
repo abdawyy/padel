@@ -37,7 +37,7 @@ class BookingConfirmationTest extends TestCase
 
         Sanctum::actingAs($owner);
 
-        $this->patchJson("/api/bookings/{$booking->id}", [
+        $this->patchJson("/api/v1/bookings/{$booking->id}", [
             'status' => 'confirmed',
         ])
             ->assertUnprocessable()
@@ -72,7 +72,7 @@ class BookingConfirmationTest extends TestCase
 
         Sanctum::actingAs($owner);
 
-        $this->patchJson("/api/bookings/{$booking->id}", [
+        $this->patchJson("/api/v1/bookings/{$booking->id}", [
             'status' => 'confirmed',
         ])->assertOk();
 

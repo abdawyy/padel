@@ -43,7 +43,7 @@ class MatchmakingJoinTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->postJson("/api/bookings/{$booking->id}/join")->assertServerError();
+        $this->postJson("/api/v1/bookings/{$booking->id}/join")->assertServerError();
 
         $this->assertDatabaseMissing('booking_participants', [
             'booking_id' => $booking->id,
@@ -80,7 +80,7 @@ class MatchmakingJoinTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->postJson("/api/bookings/{$booking->id}/join")->assertOk();
+        $this->postJson("/api/v1/bookings/{$booking->id}/join")->assertOk();
 
         $this->assertDatabaseHas('booking_participants', [
             'booking_id' => $booking->id,

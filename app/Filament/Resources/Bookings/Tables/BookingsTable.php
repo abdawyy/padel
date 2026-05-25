@@ -14,8 +14,10 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class BookingsTable
 {
@@ -68,6 +70,27 @@ class BookingsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'confirmed' => 'Confirmed',
+                        'cancelled' => 'Cancelled',
+                    ]),
+                SelectFilter::make('match_type')
+                    ->options([
+                        'private' => 'Private',
+                        'open_match' => 'Open match',
+                    ]),
+                SelectFilter::make('court')
+                    ->relationship('court', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('start_date')
+                    ->form([\Filament\Forms\Components\DatePicker::make('from')->label('From')])
+                    ->query(fn (Builder $query, array $data): Builder => $query->when(
+                        filled($data['from'] ?? null),
+                        fn (Builder $q) => $q->whereDate('start_time', '>=', $data['from'])
+                    )),
                 TrashedFilter::make(),
             ])
             ->recordActions([

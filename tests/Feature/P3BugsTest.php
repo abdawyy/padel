@@ -25,7 +25,7 @@ class P3BugsTest extends TestCase
 
         Sanctum::actingAs($manager);
 
-        $this->deleteJson("/api/clubs/{$club->id}")
+        $this->deleteJson("/api/v1/clubs/{$club->id}")
             ->assertNoContent();
 
         $this->assertSoftDeleted('clubs', ['id' => $club->id]);
@@ -36,7 +36,7 @@ class P3BugsTest extends TestCase
         $user = User::factory()->create(['is_active' => true]);
         Sanctum::actingAs($user);
 
-        $this->getJson('/api/user/bookings?type=invalid')
+        $this->getJson('/api/v1/user/bookings?type=invalid')
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['type']);
     }
@@ -46,7 +46,7 @@ class P3BugsTest extends TestCase
         $user = User::factory()->create(['is_active' => true]);
         Sanctum::actingAs($user);
 
-        $this->getJson('/api/user/academy-sessions?type=soon')
+        $this->getJson('/api/v1/user/academy-sessions?type=soon')
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['type']);
     }
@@ -77,7 +77,7 @@ class P3BugsTest extends TestCase
             'title' => 'Future Session',
         ]);
 
-        $titles = collect($this->getJson('/api/academy-sessions')->json('data'))->pluck('title')->all();
+        $titles = collect($this->getJson('/api/v1/academy-sessions')->json('data'))->pluck('title')->all();
 
         $this->assertNotContains('Yesterday Session', $titles);
         $this->assertContains('Future Session', $titles);
@@ -87,7 +87,7 @@ class P3BugsTest extends TestCase
     {
         $club = Club::factory()->create();
 
-        $this->getJson("/api/clubs/{$club->id}/sport-rules/cricket")
+        $this->getJson("/api/v1/clubs/{$club->id}/sport-rules/cricket")
             ->assertUnprocessable();
     }
 
@@ -105,7 +105,7 @@ class P3BugsTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->postJson('/api/register-club', [
+        $this->postJson('/api/v1/register-club', [
             'name' => 'Date Test Academy',
             'address' => '789 Road',
             'plan_id' => $plan->id,
@@ -139,7 +139,7 @@ class P3BugsTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->postJson('/api/register-club', [
+        $this->postJson('/api/v1/register-club', [
             'name' => 'Second Academy',
             'address' => '999 Lane',
             'plan_id' => $plan->id,

@@ -24,7 +24,7 @@ class EmailVerificationTest extends TestCase
     {
         Notification::fake();
 
-        $response = $this->postJson('/api/register', [
+        $response = $this->postJson('/api/v1/register', [
             'name' => 'Verify Me',
             'email' => 'verify@example.com',
             'password' => 'password123',
@@ -39,7 +39,7 @@ class EmailVerificationTest extends TestCase
         $user = User::query()->where('email', 'verify@example.com')->firstOrFail();
         Sanctum::actingAs($user);
 
-        $this->postJson('/api/bookings', [])
+        $this->postJson('/api/v1/bookings', [])
             ->assertForbidden()
             ->assertJsonPath('message', 'Your email address is not verified.');
     }
@@ -66,7 +66,7 @@ class EmailVerificationTest extends TestCase
         $user = User::factory()->create(['email_verified_at' => now()]);
         Sanctum::actingAs($user);
 
-        $this->postJson('/api/bookings', [])
+        $this->postJson('/api/v1/bookings', [])
             ->assertUnprocessable();
     }
 }

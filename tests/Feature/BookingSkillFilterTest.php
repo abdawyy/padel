@@ -31,8 +31,8 @@ class BookingSkillFilterTest extends TestCase
             'skill_max' => 5,
         ]);
 
-        $eligible = $this->getJson('/api/matches/open?skill_level=4')->assertOk();
-        $ineligible = $this->getJson('/api/matches/open?skill_level=7')->assertOk();
+        $eligible = $this->getJson('/api/v1/matches/open?skill_level=4')->assertOk();
+        $ineligible = $this->getJson('/api/v1/matches/open?skill_level=7')->assertOk();
 
         $this->assertCount(1, $eligible->json('data'));
         $this->assertCount(0, $ineligible->json('data'));
@@ -45,7 +45,7 @@ class BookingSkillFilterTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->postJson('/api/bookings', [
+        $this->postJson('/api/v1/bookings', [
             'court_id' => $court->id,
             'start_time' => Carbon::now()->addDays(2)->setTime(10, 0)->toDateTimeString(),
             'end_time' => Carbon::now()->addDays(2)->setTime(11, 0)->toDateTimeString(),

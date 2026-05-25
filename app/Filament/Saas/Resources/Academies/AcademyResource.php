@@ -7,6 +7,8 @@ use App\Filament\Saas\Resources\Academies\Pages\EditAcademy;
 use App\Filament\Saas\Resources\Academies\Pages\ListAcademies;
 use App\Filament\Saas\Resources\Academies\Pages\ViewAcademy;
 use App\Models\Club;
+use App\Services\AuditLogService;
+use App\Support\ClubSubscriptionStatus;
 use App\Models\SaasPlan;
 use App\Notifications\AcademyStatusNotification;
 use BackedEnum;
@@ -65,11 +67,7 @@ class AcademyResource extends Resource
                             ->native(false),
                         Textarea::make('address')->required()->rows(3)->columnSpanFull(),
                         Select::make('subscription_status')
-                            ->options([
-                                'active'   => 'Active',
-                                'inactive' => 'Inactive',
-                                'trial'    => 'Trial',
-                            ])
+                            ->options(ClubSubscriptionStatus::options())
                             ->required()
                             ->native(false),
                     ]),
@@ -202,11 +200,7 @@ class AcademyResource extends Resource
                         'rejected' => 'Rejected',
                     ]),
                 SelectFilter::make('subscription_status')
-                    ->options([
-                        'active'   => 'Active',
-                        'trial'    => 'Trial',
-                        'inactive' => 'Inactive',
-                    ]),
+                    ->options(ClubSubscriptionStatus::options()),
             ])
             ->actions([
                 Action::make('approve')
@@ -245,6 +239,13 @@ class AcademyResource extends Resource
                         $record->owners()->get()
                             ->each(fn ($owner) => $owner->notify(new AcademyStatusNotification($record, 'approved')));
 
+                        app(AuditLogService::class)->record(
+                            'saas.academy.approved',
+                            auth()->user(),
+                            $record,
+                            ['club_id' => $record->id, 'trial_days' => 14],
+                        );
+
                         Notification::make()
                             ->title("Academy \"{$record->name}\" approved with 14-day free trial.")
                             ->success()
@@ -277,6 +278,13 @@ class AcademyResource extends Resource
                         // Notify the academy owner
                         $record->owners()->get()
                             ->each(fn ($owner) => $owner->notify(new AcademyStatusNotification($record, 'rejected')));
+
+                        app(AuditLogService::class)->record(
+                            'saas.academy.rejected',
+                            auth()->user(),
+                            $record,
+                            ['club_id' => $record->id, 'reason' => $data['rejection_reason']],
+                        );
 
                         Notification::make()
                             ->title("Academy \"{$record->name}\" rejected.")

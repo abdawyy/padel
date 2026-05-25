@@ -20,7 +20,7 @@ class ClubStaffPasswordTest extends TestCase
 
         Sanctum::actingAs($manager);
 
-        $this->postJson("/api/clubs/{$club->id}/staff", [
+        $this->postJson("/api/v1/clubs/{$club->id}/staff", [
             'name' => 'New Coach',
             'email' => 'newcoach@example.com',
             'role' => 'coach',

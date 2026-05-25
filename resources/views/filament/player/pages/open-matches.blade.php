@@ -19,9 +19,9 @@
 
 <div class="om-filters">
     <div>
-        <label class="text-sm font-medium">Club</label>
+        <label class="text-sm font-medium">{{ __('player.club') }}</label>
         <select wire:model.live="clubId" class="mt-1 block w-48 rounded-lg border-gray-300 text-sm">
-            <option value="">All clubs</option>
+            <option value="">{{ __('player.all_clubs') }}</option>
             @foreach($clubs as $club)
                 <option value="{{ $club->id }}">{{ $club->name }}</option>
             @endforeach
@@ -52,7 +52,7 @@
     <div class="om-pay-overlay">
         <div class="om-pay-box">
             <div class="flex justify-between items-center mb-3">
-                <h3 class="text-lg font-bold">Complete payment</h3>
+                <h3 class="text-lg font-bold">{{ __('player.complete_payment') }}</h3>
                 <button wire:click="closePayment" type="button" class="text-sm text-gray-500">Close</button>
             </div>
             <iframe src="{{ $paymentIframeUrl }}" title="Paymob checkout"></iframe>
@@ -62,7 +62,7 @@
 
 @if($matches->isEmpty())
     <div class="rounded-xl border border-dashed border-gray-300 p-10 text-center text-gray-500">
-        No open matches match your filters right now.
+        {{ __('player.no_matches') }}
     </div>
 @else
     <div class="om-grid">
@@ -80,7 +80,7 @@
                     type="button"
                     class="mt-4 w-full rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white"
                 >
-                    Join match
+                    {{ __('player.join_match') }}
                 </button>
             </div>
         @endforeach

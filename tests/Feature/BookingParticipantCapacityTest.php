@@ -76,7 +76,7 @@ class BookingParticipantCapacityTest extends TestCase
             'updated_at' => now()->subHours(2),
         ]);
 
-        $this->getJson('/api/matches/open')
+        $this->getJson('/api/v1/matches/open')
             ->assertOk()
             ->assertJsonCount(1, 'data');
     }
@@ -131,7 +131,7 @@ class BookingParticipantCapacityTest extends TestCase
 
         Sanctum::actingAs($joiner);
 
-        $this->postJson("/api/bookings/{$booking->id}/join")->assertOk();
+        $this->postJson("/api/v1/bookings/{$booking->id}/join")->assertOk();
 
         $this->assertDatabaseHas('booking_participants', [
             'booking_id' => $booking->id,

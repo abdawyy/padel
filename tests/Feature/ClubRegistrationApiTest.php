@@ -18,7 +18,7 @@ class ClubRegistrationApiTest extends TestCase
         $user = User::factory()->create(['is_active' => true]);
         Sanctum::actingAs($user);
 
-        $this->postJson('/api/clubs', [
+        $this->postJson('/api/v1/clubs', [
             'name' => 'Rogue Academy',
             'address' => '123 Test St',
         ])->assertNotFound();
@@ -38,7 +38,7 @@ class ClubRegistrationApiTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $response = $this->postJson('/api/register-club', [
+        $response = $this->postJson('/api/v1/register-club', [
             'name' => 'New Academy',
             'address' => '456 Main St',
             'plan_id' => $plan->id,
@@ -74,7 +74,7 @@ class ClubRegistrationApiTest extends TestCase
             'registration_status' => 'approved',
         ]);
 
-        $response = $this->getJson('/api/clubs');
+        $response = $this->getJson('/api/v1/clubs');
 
         $response->assertOk();
 

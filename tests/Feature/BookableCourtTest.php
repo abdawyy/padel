@@ -28,7 +28,7 @@ class BookableCourtTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->postJson('/api/bookings', [
+        $this->postJson('/api/v1/bookings', [
             'court_id' => $court->id,
             'start_time' => Carbon::now()->addDays(2)->setTime(10, 0)->toDateTimeString(),
             'end_time' => Carbon::now()->addDays(2)->setTime(11, 0)->toDateTimeString(),
@@ -53,7 +53,7 @@ class BookableCourtTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->postJson('/api/bookings', [
+        $this->postJson('/api/v1/bookings', [
             'court_id' => $court->id,
             'start_time' => Carbon::now()->addDays(2)->setTime(10, 0)->toDateTimeString(),
             'end_time' => Carbon::now()->addDays(2)->setTime(11, 0)->toDateTimeString(),

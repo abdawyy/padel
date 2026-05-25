@@ -33,7 +33,7 @@ class AcademySessionCapacityTest extends TestCase
 
         Sanctum::actingAs($admin);
 
-        $this->postJson("/api/academy-sessions/{$session->id}/enroll", [
+        $this->postJson("/api/v1/academy-sessions/{$session->id}/enroll", [
             'player_id' => $player->id,
         ])
             ->assertUnprocessable()

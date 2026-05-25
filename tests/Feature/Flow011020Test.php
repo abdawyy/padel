@@ -22,7 +22,7 @@ class Flow011020Test extends TestCase
         $user = User::factory()->create(['role' => 'player']);
 
         $this->actingAs($user, 'sanctum')
-            ->getJson("/api/clubs/{$club->id}/player-availability?date=".now()->toDateString())
+            ->getJson("/api/v1/clubs/{$club->id}/player-availability?date=".now()->toDateString())
             ->assertStatus(422);
     }
 
@@ -38,7 +38,7 @@ class Flow011020Test extends TestCase
         $user = User::factory()->create(['role' => 'player']);
 
         $this->actingAs($user, 'sanctum')
-            ->getJson("/api/clubs/{$club->id}/player-availability?date=".now()->toDateString())
+            ->getJson("/api/v1/clubs/{$club->id}/player-availability?date=".now()->toDateString())
             ->assertOk()
             ->assertJsonStructure(['data']);
     }
@@ -46,7 +46,7 @@ class Flow011020Test extends TestCase
     public function test_login_is_throttled(): void
     {
         for ($i = 0; $i < 11; $i++) {
-            $response = $this->postJson('/api/login', [
+            $response = $this->postJson('/api/v1/login', [
                 'email' => 'nobody@example.com',
                 'password' => 'wrong',
             ]);
@@ -59,7 +59,7 @@ class Flow011020Test extends TestCase
     {
         config(['services.paymob.webhook_allowed_ips' => ['203.0.113.1']]);
 
-        $this->postJson('/api/webhooks/paymob/transaction-processed', [])
+        $this->postJson('/api/v1/webhooks/paymob/transaction-processed', [])
             ->assertForbidden();
     }
 }

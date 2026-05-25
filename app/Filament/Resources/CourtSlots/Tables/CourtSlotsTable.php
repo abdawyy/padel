@@ -15,6 +15,7 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Illuminate\Support\Collection;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class CourtSlotsTable
@@ -67,7 +68,24 @@ class CourtSlotsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('court_id')
+                    ->relationship('court', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('slot_type')
+                    ->options([
+                        'open_match' => 'Open match',
+                        'coached_match' => 'Coached match',
+                        'training' => 'Training',
+                        'academy_class' => 'Academy class',
+                        'private_training' => 'Private training',
+                    ]),
+                SelectFilter::make('is_active')
+                    ->options(['1' => 'Active', '0' => 'Inactive'])
+                    ->query(fn ($query, array $data) => $query->when(
+                        isset($data['value']) && $data['value'] !== '',
+                        fn ($q) => $q->where('is_active', (bool) $data['value'])
+                    )),
             ])
             ->recordActions([
                 ViewAction::make(),

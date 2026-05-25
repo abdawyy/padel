@@ -53,7 +53,7 @@ class SaasRenewTest extends TestCase
 
         Sanctum::actingAs($owner);
 
-        $response = $this->postJson("/api/clubs/{$club->id}/saas-subscription", [
+        $response = $this->postJson("/api/v1/clubs/{$club->id}/saas-subscription", [
             'plan_id' => $plan->id,
             'billing_cycle' => 'monthly',
         ]);

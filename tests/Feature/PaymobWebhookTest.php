@@ -43,7 +43,7 @@ class PaymobWebhookTest extends TestCase
         );
 
         $response = $this->postJson(
-            '/api/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
+            '/api/v1/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
             ['obj' => $transaction],
         );
 
@@ -88,7 +88,7 @@ class PaymobWebhookTest extends TestCase
         );
 
         $response = $this->postJson(
-            '/api/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
+            '/api/v1/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
             ['obj' => $transaction],
         );
 
@@ -141,7 +141,7 @@ class PaymobWebhookTest extends TestCase
         );
 
         $this->postJson(
-            '/api/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
+            '/api/v1/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
             ['obj' => $transaction],
         )->assertOk()->assertJson(['status' => 'saas_activated']);
 
@@ -179,7 +179,7 @@ class PaymobWebhookTest extends TestCase
         );
 
         $this->postJson(
-            '/api/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
+            '/api/v1/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
             ['obj' => $transaction],
         )->assertUnprocessable();
 
@@ -200,7 +200,7 @@ class PaymobWebhookTest extends TestCase
         );
 
         $this->postJson(
-            '/api/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
+            '/api/v1/webhooks/paymob/transaction-processed?hmac='.$this->computeHmac($transaction),
             ['obj' => $transaction],
         )->assertUnprocessable();
     }

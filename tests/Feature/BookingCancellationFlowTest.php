@@ -70,7 +70,7 @@ class BookingCancellationFlowTest extends TestCase
 
         Sanctum::actingAs($owner);
 
-        $this->postJson("/api/bookings/{$booking->id}/cancel", ['reason' => 'Schedule conflict'])
+        $this->postJson("/api/v1/bookings/{$booking->id}/cancel", ['reason' => 'Schedule conflict'])
             ->assertOk()
             ->assertJsonPath('booking.status', 'cancelled');
 
@@ -108,7 +108,7 @@ class BookingCancellationFlowTest extends TestCase
 
         Sanctum::actingAs($guest);
 
-        $this->postJson("/api/bookings/{$booking->id}/leave")
+        $this->postJson("/api/v1/bookings/{$booking->id}/leave")
             ->assertOk();
 
         $this->assertDatabaseMissing('booking_participants', [

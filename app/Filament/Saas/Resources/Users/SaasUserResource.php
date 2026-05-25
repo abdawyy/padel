@@ -2,10 +2,15 @@
 
 namespace App\Filament\Saas\Resources\Users;
 
+use App\Filament\Resources\Users\Schemas\UserForm;
+use App\Filament\Resources\Users\Schemas\UserInfolist;
+use App\Filament\Saas\Resources\Users\Pages\EditSaasUser;
 use App\Filament\Saas\Resources\Users\Pages\ListSaasUsers;
+use App\Filament\Saas\Resources\Users\Pages\ViewSaasUser;
 use App\Models\User;
 use BackedEnum;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -31,7 +36,12 @@ class SaasUserResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema->components([]);
+        return UserForm::configure($schema);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return UserInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
@@ -58,6 +68,10 @@ class SaasUserResource extends Resource
                 TextColumn::make('created_at')->date()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'desc')
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+            ])
             ->filters([
                 SelectFilter::make('role')
                     ->options([
@@ -75,6 +89,8 @@ class SaasUserResource extends Resource
     {
         return [
             'index' => ListSaasUsers::route('/'),
+            'view' => ViewSaasUser::route('/{record}'),
+            'edit' => EditSaasUser::route('/{record}/edit'),
         ];
     }
 }

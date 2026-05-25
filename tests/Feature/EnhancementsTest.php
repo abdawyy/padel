@@ -51,7 +51,7 @@ class EnhancementsTest extends TestCase
         $user = User::factory()->create(['role' => 'player']);
 
         $this->actingAs($user, 'sanctum')
-            ->postJson('/api/bookings', [
+            ->postJson('/api/v1/bookings', [
                 'court_id' => $court->id,
                 'start_time' => now()->addDay()->setTime(10, 0)->toIso8601String(),
                 'end_time' => now()->addDay()->setTime(11, 0)->toIso8601String(),
@@ -121,7 +121,7 @@ class EnhancementsTest extends TestCase
         $booking->participants()->attach($owner->id, ['amount_due' => 50, 'payment_status' => 'pending']);
 
         $this->actingAs($other, 'sanctum')
-            ->postJson("/api/bookings/{$booking->id}/pay")
+            ->postJson("/api/v1/bookings/{$booking->id}/pay")
             ->assertForbidden();
     }
 }

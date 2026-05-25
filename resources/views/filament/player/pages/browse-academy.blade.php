@@ -16,32 +16,32 @@
     <div class="ba-pay-overlay">
         <div class="ba-pay-box">
             <div class="flex justify-between mb-3">
-                <h3 class="text-lg font-bold">Complete payment</h3>
-                <button wire:click="closePayment" type="button" class="text-sm text-gray-500">Close</button>
+                <h3 class="text-lg font-bold">{{ __('player.complete_payment') }}</h3>
+                <button wire:click="closePayment" type="button" class="text-sm text-gray-500">{{ __('player.close') }}</button>
             </div>
-            <iframe src="{{ $paymentIframeUrl }}" title="Paymob checkout"></iframe>
+            <iframe src="{{ $paymentIframeUrl }}" title="{{ __('player.complete_payment') }}"></iframe>
         </div>
     </div>
 @endif
 
 <div class="flex flex-wrap gap-4 mb-6">
     <div>
-        <label class="text-sm font-medium">Club</label>
+        <label class="text-sm font-medium">{{ __('player.club') }}</label>
         <select wire:model.live="clubId" class="mt-1 block w-48 rounded-lg border-gray-300 text-sm">
-            <option value="">All clubs</option>
+            <option value="">{{ __('player.all_clubs') }}</option>
             @foreach($clubs as $club)
                 <option value="{{ $club->id }}">{{ $club->name }}</option>
             @endforeach
         </select>
     </div>
     <div>
-        <label class="text-sm font-medium">Date</label>
+        <label class="text-sm font-medium">{{ __('player.date') }}</label>
         <input type="date" wire:model.live="sessionDate" class="mt-1 block rounded-lg border-gray-300 text-sm" />
     </div>
 </div>
 
 @if($sessions->isEmpty())
-    <div class="rounded-xl border border-dashed p-10 text-center text-gray-500">No upcoming sessions found.</div>
+    <div class="rounded-xl border border-dashed p-10 text-center text-gray-500">{{ __('player.no_sessions') }}</div>
 @else
     <div class="ba-grid">
         @foreach($sessions as $session)
@@ -59,7 +59,7 @@
                     class="mt-4 w-full rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white"
                     @if($session->players_count >= $session->max_players) disabled @endif
                 >
-                    {{ (float) $session->price_per_player > 0 ? 'Enroll & pay' : 'Enroll free' }}
+                    {{ (float) $session->price_per_player > 0 ? __('player.enroll_pay') : __('player.enroll_free') }}
                 </button>
             </div>
         @endforeach

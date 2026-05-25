@@ -28,7 +28,7 @@ class CoachApplicationTest extends TestCase
 
         Sanctum::actingAs($coach);
 
-        $this->postJson("/api/academy-sessions/{$session->id}/coach-apply")
+        $this->postJson("/api/v1/academy-sessions/{$session->id}/coach-apply")
             ->assertForbidden();
     }
 
@@ -65,7 +65,7 @@ class CoachApplicationTest extends TestCase
 
         Sanctum::actingAs($manager);
 
-        $this->patchJson("/api/coach-applications/{$appA->id}", [
+        $this->patchJson("/api/v1/coach-applications/{$appA->id}", [
             'status' => 'accepted',
         ])->assertOk();
 
@@ -104,7 +104,7 @@ class CoachApplicationTest extends TestCase
 
         Sanctum::actingAs($manager);
 
-        $this->patchJson("/api/coach-applications/{$application->id}", [
+        $this->patchJson("/api/v1/coach-applications/{$application->id}", [
             'status' => 'accepted',
         ])->assertConflict();
     }

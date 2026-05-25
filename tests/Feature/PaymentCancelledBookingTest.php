@@ -42,7 +42,7 @@ class PaymentCancelledBookingTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->postJson("/api/bookings/{$booking->id}/pay")
+        $this->postJson("/api/v1/bookings/{$booking->id}/pay")
             ->assertUnprocessable()
             ->assertJson([
                 'message' => 'Payments are not accepted for cancelled bookings.',

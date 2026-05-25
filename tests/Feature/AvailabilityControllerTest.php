@@ -22,7 +22,7 @@ class AvailabilityControllerTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->getJson("/api/clubs/{$club->id}/availability")
+        $this->getJson("/api/v1/clubs/{$club->id}/availability")
             ->assertForbidden();
     }
 
@@ -48,7 +48,7 @@ class AvailabilityControllerTest extends TestCase
 
         Sanctum::actingAs($manager);
 
-        $response = $this->getJson("/api/clubs/{$club->id}/availability?date={$targetDate->toDateString()}");
+        $response = $this->getJson("/api/v1/clubs/{$club->id}/availability?date={$targetDate->toDateString()}");
 
         $response->assertOk();
 

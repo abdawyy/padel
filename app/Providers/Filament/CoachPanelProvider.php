@@ -12,7 +12,6 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -22,16 +21,15 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class CoachPanelProvider extends PanelProvider
 {
+    use SharedPanelConfiguration;
+
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel = $panel
             ->id('coach')
             ->path('coach')
             ->login()
-            ->brandName(config('app.name') . ' — Coach Portal')
-            ->colors([
-                'primary' => Color::Emerald,
-            ])
+            ->brandName(config('app.name').' — Coach Portal')
             ->pages([
                 CoachDashboard::class,
                 CoachSessions::class,
@@ -52,5 +50,7 @@ class CoachPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+
+        return $this->applyBrand($panel);
     }
 }

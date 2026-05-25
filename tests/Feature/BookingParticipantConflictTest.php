@@ -41,7 +41,7 @@ class BookingParticipantConflictTest extends TestCase
 
         Sanctum::actingAs($owner);
 
-        $this->postJson('/api/bookings', [
+        $this->postJson('/api/v1/bookings', [
             'court_id' => Court::factory()->create([
                 'is_active' => true,
                 'club_id' => $court->club_id,

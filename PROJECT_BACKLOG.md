@@ -506,30 +506,32 @@
 
 **Status (ENH-001–010):** Implemented — policies, payment services, `BookingPriceCalculator`, composite indexes migration, scheduled `withoutOverlapping()`, idempotency header, admin club switcher + scope, queued notifications, expanded tests (`EnhancementsTest`), README.
 
+**Status (ENH-011–025):** [x] All done — see table below.
+
 ## P2 — Medium enhancements
 
-| ID | Title | Difficulty |
-|----|-------|------------|
-| ENH-011 | Booking participants relation manager (payment_status, amounts) | Medium |
-| ENH-012 | Academy session enrolled players relation manager | Medium |
-| ENH-013 | Admin table filters (bookings, courts, users, packages, sessions, slots) | Medium |
-| ENH-014 | Custom admin dashboard widgets (today's bookings, revenue) | Medium |
-| ENH-015 | SaaS dashboard: click-through to expiring subscriptions list | Easy |
-| ENH-016 | SaaS user resource: enable view/edit | Medium |
-| ENH-017 | Align `subscription_status` enums (admin vs SaaS: paused/inactive) | Easy |
-| ENH-018 | API versioning prefix `/api/v1` | Medium |
-| ENH-019 | Audit log for SaaS approve/reject and payment events | Hard |
-| ENH-020 | Localisation (AR/EN) for player-facing strings | Hard |
+| ID | Title | Difficulty | Done |
+|----|-------|------------|------|
+| ENH-011 | Booking participants relation manager (payment_status, amounts) | Medium | [x] |
+| ENH-012 | Academy session enrolled players relation manager | Medium | [x] |
+| ENH-013 | Admin table filters (bookings, courts, users, packages, sessions, slots) | Medium | [x] |
+| ENH-014 | Custom admin dashboard widgets (today's bookings, revenue) | Medium | [x] |
+| ENH-015 | SaaS dashboard: click-through to expiring subscriptions list | Easy | [x] |
+| ENH-016 | SaaS user resource: enable view/edit | Medium | [x] |
+| ENH-017 | Align `subscription_status` enums (admin vs SaaS: paused/inactive) | Easy | [x] |
+| ENH-018 | API versioning prefix `/api/v1` | Medium | [x] |
+| ENH-019 | Audit log for SaaS approve/reject and payment events | Hard | [x] |
+| ENH-020 | Localisation (AR/EN) for player-facing strings | Hard | [x] |
 
 ## P3 — Low enhancements
 
-| ID | Title | Difficulty |
-|----|-------|------------|
-| ENH-021 | Remove `FilamentInfoWidget` from production admin | Easy |
-| ENH-022 | Shared logo + favicon across 4 panels + web | Easy |
-| ENH-023 | Unified Filament theme (single primary + CSS variables) | Medium |
-| ENH-024 | Replace `welcome.blade.php` or remove dead route | Easy |
-| ENH-025 | README: replace Laravel default with project setup | Easy |
+| ID | Title | Difficulty | Done |
+|----|-------|------------|------|
+| ENH-021 | Remove `FilamentInfoWidget` from production admin | Easy | [x] |
+| ENH-022 | Shared logo + favicon across 4 panels + web | Easy | [x] |
+| ENH-023 | Unified Filament theme (single primary + CSS variables) | Medium | [x] |
+| ENH-024 | Replace `welcome.blade.php` or remove dead route | Easy | [x] |
+| ENH-025 | README: replace Laravel default with project setup | Easy | [x] |
 
 ---
 

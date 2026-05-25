@@ -37,11 +37,11 @@ class AcademySessionUpdateCancelTest extends TestCase
 
         Sanctum::actingAs($manager);
 
-        $this->patchJson("/api/academy-sessions/{$session->id}", [
+        $this->patchJson("/api/v1/academy-sessions/{$session->id}", [
             'title' => 'Updated Title',
         ])->assertOk()->assertJsonPath('data.title', 'Updated Title');
 
-        $this->postJson("/api/academy-sessions/{$session->id}/cancel", [
+        $this->postJson("/api/v1/academy-sessions/{$session->id}/cancel", [
             'reason' => 'Weather',
         ])->assertOk()->assertJsonPath('session.status', 'cancelled');
 

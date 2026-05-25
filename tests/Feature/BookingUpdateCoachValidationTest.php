@@ -29,7 +29,7 @@ class BookingUpdateCoachValidationTest extends TestCase
 
         Sanctum::actingAs($owner);
 
-        $this->patchJson("/api/bookings/{$booking->id}", [
+        $this->patchJson("/api/v1/bookings/{$booking->id}", [
             'coach_user_id' => $outsiderCoach->id,
         ])
             ->assertUnprocessable()

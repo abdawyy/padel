@@ -9,7 +9,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -20,16 +19,15 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class SaasPanelProvider extends PanelProvider
 {
+    use SharedPanelConfiguration;
+
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel = $panel
             ->id('saas')
             ->path('saas')
             ->login()
-            ->brandName(config('app.name') . ' — SaaS')
-            ->colors([
-                'primary' => Color::Violet,
-            ])
+            ->brandName(config('app.name').' — SaaS')
             ->discoverResources(in: app_path('Filament/Saas/Resources'), for: 'App\Filament\Saas\Resources')
             ->discoverPages(in: app_path('Filament/Saas/Pages'), for: 'App\Filament\Saas\Pages')
             ->discoverWidgets(in: app_path('Filament/Saas/Widgets'), for: 'App\Filament\Saas\Widgets')
@@ -53,5 +51,7 @@ class SaasPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+
+        return $this->applyBrand($panel);
     }
 }

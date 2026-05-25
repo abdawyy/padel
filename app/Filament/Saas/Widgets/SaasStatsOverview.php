@@ -2,6 +2,7 @@
 
 namespace App\Filament\Saas\Widgets;
 
+use App\Filament\Saas\Resources\Subscriptions\SubscriptionResource;
 use App\Models\Club;
 use App\Models\ClubSaasSubscription;
 use Filament\Widgets\StatsOverviewWidget;
@@ -51,7 +52,12 @@ class SaasStatsOverview extends StatsOverviewWidget
             Stat::make('Expiring in 7 Days', $expiringSoon)
                 ->description('Subscriptions needing renewal')
                 ->descriptionIcon('heroicon-o-clock')
-                ->color($expiringSoon > 0 ? 'warning' : 'success'),
+                ->color($expiringSoon > 0 ? 'warning' : 'success')
+                ->url($expiringSoon > 0
+                    ? SubscriptionResource::getUrl('index', [
+                        'tableFilters' => ['expiring_within_days' => ['value' => '7']],
+                    ])
+                    : null),
 
             Stat::make('Revenue This Month', '$' . number_format((float) $revenueThisMonth, 2))
                 ->description('Year total: $' . number_format((float) $revenueThisYear, 2))

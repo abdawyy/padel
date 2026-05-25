@@ -45,7 +45,7 @@ class AcademySessionPublicIndexTest extends TestCase
             'title' => 'Visible Session',
         ]);
 
-        $response = $this->getJson('/api/academy-sessions');
+        $response = $this->getJson('/api/v1/academy-sessions');
 
         $response->assertOk();
 
