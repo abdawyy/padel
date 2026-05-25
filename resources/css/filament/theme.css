@@ -1,0 +1,9 @@
+@import '../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../app/Filament/**/*';
+@source '../../../resources/views/filament/**/*';
+
+:root {
+    --brand-primary: #d97706;
+    --app-currency: EGP;
+}
