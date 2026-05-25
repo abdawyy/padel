@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\AcademySession;
 use App\Models\Booking;
 use App\Models\ClubSaasSubscription;
+use App\Models\Package;
+use App\Models\PackageSubscription;
 use App\Models\User;
+use App\Services\PackageConsumptionService;
 use App\Notifications\BookingConfirmedNotification;
 use App\Models\PaymentTransaction;
 use Illuminate\Http\JsonResponse;
@@ -84,6 +87,7 @@ class WebhookController extends Controller
             'booking_id' => $order['type'] === 'booking' ? $order['reference_id'] : null,
             'academy_session_id' => $order['type'] === 'session' ? $order['reference_id'] : null,
             'club_saas_subscription_id' => $order['type'] === 'saas' ? $order['reference_id'] : null,
+            'package_subscription_id' => $order['type'] === 'package' ? $order['reference_id'] : null,
             'user_id' => $order['user_id'],
             'paymob_transaction_id' => $paymobTransactionId,
             'amount' => $amount,
@@ -107,6 +111,10 @@ class WebhookController extends Controller
 
         if ($order['type'] === 'session') {
             return $this->enrollPlayerInSession($order['reference_id'], $order['user_id']);
+        }
+
+        if ($order['type'] === 'package') {
+            return $this->activatePackageSubscription($order['reference_id'], $order['user_id']);
         }
 
         return $this->processBookingPayment($order['reference_id'], $order['user_id']);
@@ -164,6 +172,11 @@ class WebhookController extends Controller
                 'notes'  => 'Enrolled via payment.',
             ]);
 
+            $player = User::query()->find($userId);
+            if ($player && $session->club_id) {
+                app(PackageConsumptionService::class)->consumeSessionForUser($player, (int) $session->club_id);
+            }
+
             return true;
         });
 
@@ -202,8 +215,13 @@ class WebhookController extends Controller
                     $participantIds = DB::table('booking_participants')
                         ->where('booking_id', $bookingId)
                         ->pluck('user_id');
-                    User::whereIn('id', $participantIds)->get()
-                        ->each(fn (User $u) => $u->notify(new BookingConfirmedNotification($booking)));
+                    $users = User::whereIn('id', $participantIds)->get();
+                    $users->each(fn (User $u) => $u->notify(new BookingConfirmedNotification($booking)));
+
+                    if ($booking->court?->club_id) {
+                        $users->each(fn (User $u) => app(PackageConsumptionService::class)
+                            ->consumeSessionForUser($u, (int) $booking->court->club_id));
+                    }
                 }
             }
         });
@@ -310,8 +328,41 @@ class WebhookController extends Controller
             'booking' => $this->expectedBookingParticipantAmount($order['reference_id'], $order['user_id']),
             'session' => $this->expectedSessionEnrollmentAmount($order['reference_id']),
             'saas' => $this->expectedSaasSubscriptionAmount($order['reference_id']),
+            'package' => $this->expectedPackageSubscriptionAmount($order['reference_id']),
             default => null,
         };
+    }
+
+    private function expectedPackageSubscriptionAmount(int $subscriptionId): ?float
+    {
+        $subscription = PackageSubscription::query()->with('package')->find($subscriptionId);
+
+        return $subscription?->package ? (float) $subscription->package->price : null;
+    }
+
+    private function activatePackageSubscription(int $subscriptionId, int $userId): JsonResponse
+    {
+        DB::transaction(function () use ($subscriptionId) {
+            $subscription = PackageSubscription::query()->lockForUpdate()->find($subscriptionId);
+            if (! $subscription || $subscription->status !== 'suspended') {
+                return;
+            }
+
+            $package = Package::query()->find($subscription->package_id);
+            if (! $package) {
+                return;
+            }
+
+            $subscription->update([
+                'status' => 'active',
+                'starts_at' => now()->toDateString(),
+                'expires_at' => now()->addDays(max((int) $package->duration_days, 30))->toDateString(),
+                'sessions_remaining' => $package->session_count,
+                'notes' => null,
+            ]);
+        });
+
+        return response()->json(['status' => 'package_activated']);
     }
 
     private function expectedBookingParticipantAmount(int $bookingId, int $userId): ?float
@@ -413,6 +464,14 @@ class WebhookController extends Controller
         if (preg_match('/^saas_(\d+)_user_(\d+)$/', $merchantOrderId, $matches)) {
             return [
                 'type' => 'saas',
+                'reference_id' => (int) $matches[1],
+                'user_id' => (int) $matches[2],
+            ];
+        }
+
+        if (preg_match('/^package_(\d+)_user_(\d+)$/', $merchantOrderId, $matches)) {
+            return [
+                'type' => 'package',
                 'reference_id' => (int) $matches[1],
                 'user_id' => (int) $matches[2],
             ];

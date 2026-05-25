@@ -11,6 +11,7 @@ use App\Filament\Resources\Packages\Schemas\PackageForm;
 use App\Filament\Resources\Packages\Schemas\PackageInfolist;
 use App\Filament\Resources\Packages\Tables\PackagesTable;
 use App\Models\Package;
+use App\Support\AdminClubQuery;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -78,15 +79,7 @@ class PackageResource extends Resource
             return $query->whereRaw('1 = 0');
         }
 
-        if ($user->isSuperAdmin()) {
-            return $query;
-        }
-
-        $clubIds = $user->accessibleClubIds();
-
-        return empty($clubIds)
-            ? $query->whereRaw('1 = 0')
-            : $query->whereIn('club_id', $clubIds);
+        return AdminClubQuery::forUser($query, $user, 'club_id');
     }
 
     public static function getRecordRouteBindingEloquentQuery(): Builder

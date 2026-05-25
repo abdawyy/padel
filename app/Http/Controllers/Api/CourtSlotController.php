@@ -5,12 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AcademySessionResource;
 use App\Http\Resources\CourtSlotResource;
-use App\Models\AcademySession;
-use App\Models\Booking;
 use App\Models\Club;
 use App\Models\Court;
 use App\Models\CourtSlot;
-use App\Support\CourtSlotSessionTypeMapper;
+use App\Services\CourtSlotSchedulingService;
 use App\Support\CourtSlotTimeValidation;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -22,7 +20,7 @@ class CourtSlotController extends Controller
 {
     public function index(Request $request, Club $club)
     {
-        $this->abortIfUnauthorized($request, $club);
+        $this->authorizeClub($club);
 
         $dayOfWeek = $request->filled('date')
             ? Carbon::parse((string) $request->query('date'))->dayOfWeek
@@ -51,7 +49,7 @@ class CourtSlotController extends Controller
 
     public function store(Request $request, Club $club): CourtSlotResource|JsonResponse
     {
-        $this->abortIfUnauthorized($request, $club);
+        $this->authorizeClub($club, 'create');
 
         $validator = Validator::make($request->all(), [
             'court_id' => ['required', 'integer', 'exists:courts,id'],
@@ -101,7 +99,7 @@ class CourtSlotController extends Controller
     public function update(Request $request, CourtSlot $courtSlot): CourtSlotResource|JsonResponse
     {
         $club = $courtSlot->court()->with('club')->firstOrFail()->club;
-        $this->abortIfUnauthorized($request, $club);
+        $this->authorize('update', $courtSlot);
 
         $validator = Validator::make($request->all(), [
             'title' => ['sometimes', 'string', 'max:255'],
@@ -139,8 +137,7 @@ class CourtSlotController extends Controller
 
     public function destroy(Request $request, CourtSlot $courtSlot): JsonResponse
     {
-        $club = $courtSlot->court()->with('club')->firstOrFail()->club;
-        $this->abortIfUnauthorized($request, $club);
+        $this->authorize('delete', $courtSlot);
 
         $courtSlot->delete();
 
@@ -149,7 +146,7 @@ class CourtSlotController extends Controller
 
     public function schedule(Request $request, Club $club, CourtSlot $courtSlot): AcademySessionResource|JsonResponse
     {
-        $this->abortIfUnauthorized($request, $club);
+        $this->authorize('schedule', [$club, $courtSlot]);
 
         if ($courtSlot->court?->club_id !== $club->id) {
             return response()->json(['message' => 'The selected slot does not belong to this club.'], 422);
@@ -166,128 +163,38 @@ class CourtSlotController extends Controller
         ]);
 
         $date = Carbon::parse($validated['date']);
-        if ($date->dayOfWeek !== (int) $courtSlot->day_of_week) {
-            return response()->json(['message' => 'The selected date does not match the slot day of week.'], 422);
-        }
-
-        $startTime = Carbon::parse($date->toDateString().' '.$courtSlot->start_time);
-        $endTime = Carbon::parse($date->toDateString().' '.$courtSlot->end_time);
-
-        if ($endTime->lte($startTime)) {
-            $endTime->addDay();
-        }
-
-        $playerIds = collect($validated['player_ids'] ?? [])->unique()->take($courtSlot->max_players);
-
-        foreach ($playerIds as $playerId) {
-            if ($this->playerHasConflict((int) $playerId, $startTime, $endTime)) {
-                return response()->json([
-                    'message' => 'One or more players have a conflicting booking or training session.',
-                ], 422);
-            }
-        }
 
         try {
-            $session = DB::transaction(function () use ($validated, $request, $club, $courtSlot, $startTime, $endTime, $playerIds) {
-                if ($this->hasCourtConflict($courtSlot->court_id, $startTime, $endTime)) {
-                    throw new \RuntimeException('scheduling_conflict');
-                }
-
-                $session = AcademySession::query()->create([
-                    'club_id' => $club->id,
-                    'court_id' => $courtSlot->court_id,
-                    'coach_user_id' => $courtSlot->coach_user_id,
-                    'created_by_user_id' => $request->user()->id,
-                    'title' => $validated['title'] ?? $courtSlot->title,
-                    'sport_type' => $courtSlot->sport_type,
-                    'session_type' => CourtSlotSessionTypeMapper::toSessionType($courtSlot->slot_type),
-                    'skill_level' => $courtSlot->skill_level,
-                    'start_time' => $startTime,
-                    'end_time' => $endTime,
-                    'max_players' => $courtSlot->max_players,
-                    'price_per_player' => $validated['price_per_player'] ?? $courtSlot->price,
+            $session = app(CourtSlotSchedulingService::class)->schedule(
+                $courtSlot,
+                $club,
+                $request->user(),
+                $date,
+                [
+                    'title' => $validated['title'] ?? null,
                     'status' => $validated['status'] ?? 'scheduled',
                     'notes' => $validated['notes'] ?? null,
-                ]);
-
-                if ($playerIds->isNotEmpty()) {
-                    $session->players()->attach(
-                        $playerIds->mapWithKeys(fn (int $playerId) => [$playerId => ['status' => 'assigned', 'notes' => null]])->all()
-                    );
-                }
-
-                return $session->load(['court:id,club_id,name,sport_type,price_per_hour', 'coach:id,name,email', 'players:id,name,email'])->loadCount('players');
-            });
+                    'price_per_player' => $validated['price_per_player'] ?? null,
+                    'player_ids' => $validated['player_ids'] ?? [],
+                ],
+            )->load(['court:id,club_id,name,sport_type,price_per_hour', 'coach:id,name,email', 'players:id,name,email'])
+                ->loadCount('players');
+        } catch (\InvalidArgumentException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
         } catch (\RuntimeException $exception) {
-            if ($exception->getMessage() === 'scheduling_conflict') {
-                return response()->json([
-                    'message' => 'This court already has a booking or training session in the selected slot.',
-                ], 422);
-            }
-
-            throw $exception;
+            return match ($exception->getMessage()) {
+                'day_mismatch' => response()->json(['message' => 'The selected date does not match the slot day of week.'], 422),
+                'player_conflict' => response()->json(['message' => 'One or more players have a conflicting booking or training session.'], 422),
+                'scheduling_conflict' => response()->json(['message' => 'This court already has a booking or training session in the selected slot.'], 422),
+                default => throw $exception,
+            };
         }
 
         return new AcademySessionResource($session);
     }
 
-    private function hasCourtConflict(int $courtId, Carbon $startTime, Carbon $endTime): bool
+    private function authorizeClub(Club $club, string $ability = 'viewAny'): void
     {
-        $bookingConflict = Booking::query()
-            ->where('court_id', $courtId)
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->where('start_time', '<', $endTime)
-            ->where('end_time', '>', $startTime)
-            ->lockForUpdate()
-            ->exists();
-
-        if ($bookingConflict) {
-            return true;
-        }
-
-        return AcademySession::query()
-            ->where('court_id', $courtId)
-            ->whereIn('status', ['scheduled', 'active'])
-            ->where('start_time', '<', $endTime)
-            ->where('end_time', '>', $startTime)
-            ->lockForUpdate()
-            ->exists();
-    }
-
-    private function playerHasConflict(int $playerId, Carbon $startTime, Carbon $endTime): bool
-    {
-        $bookingConflict = Booking::query()
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->where('start_time', '<', $endTime)
-            ->where('end_time', '>', $startTime)
-            ->where(function ($query) use ($playerId) {
-                $query->where('owner_user_id', $playerId)
-                    ->orWhereHas('participants', function ($participantQuery) use ($playerId) {
-                        $participantQuery->where('users.id', $playerId);
-                    });
-            })
-            ->exists();
-
-        if ($bookingConflict) {
-            return true;
-        }
-
-        return AcademySession::query()
-            ->whereIn('status', ['scheduled', 'active'])
-            ->where('start_time', '<', $endTime)
-            ->where('end_time', '>', $startTime)
-            ->whereHas('players', function ($query) use ($playerId) {
-                $query->where('users.id', $playerId);
-            })
-            ->exists();
-    }
-
-    private function abortIfUnauthorized(Request $request, Club $club): void
-    {
-        abort_if(
-            ! $request->user()?->hasAdminAccess($club),
-            403,
-            'Unauthorized club access.'
-        );
+        $this->authorize($ability, [$club]);
     }
 }

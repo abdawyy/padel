@@ -44,6 +44,7 @@ return [
         'hmac_secret' => env('PAYMOB_HMAC_SECRET'),
         'currency' => env('PAYMOB_CURRENCY', 'EGP'),
         'default_billing_phone' => env('PAYMOB_DEFAULT_BILLING_PHONE', '+201000000000'),
+        'webhook_allowed_ips' => array_filter(array_map('trim', explode(',', (string) env('PAYMOB_WEBHOOK_ALLOWED_IPS', '')))),
     ],
 
 ];

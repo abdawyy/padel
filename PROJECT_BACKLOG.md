@@ -311,10 +311,10 @@
 - **Priority:** P1 | **Difficulty:** Medium | **Area:** API / Auth
 - **Problem:** `password_reset_tokens` table exists; no routes.
 - **Deliverables:**
-  - [ ] `POST /api/forgot-password` (email)
-  - [ ] `POST /api/reset-password` (token, password)
-  - [ ] `POST /api/user/password` (authenticated change)
-  - [ ] Feature tests
+  - [x] `POST /api/forgot-password` (email)
+  - [x] `POST /api/reset-password` (token, password)
+  - [x] `POST /api/user/password` (authenticated change)
+  - [x] Feature tests
 - **Files to add:** routes in `api.php`, controller methods, notifications
 
 ---
@@ -323,13 +323,13 @@
 - **Priority:** P1 | **Difficulty:** Hard | **Area:** Payments / API / UI
 - **Problem:** Cancel/leave/detach do not reverse Paymob or pivot payment state.
 - **Deliverables:**
-  - [ ] `POST /api/bookings/{id}/cancel` with rules (time window, fees)
-  - [ ] Paymob refund API in `PaymobService` (or manual admin mark)
+  - [x] `POST /api/bookings/{id}/cancel` with rules (time window, fees)
+  - [x] Paymob refund API in `PaymobService` (or manual admin mark)
   - [x] Webhook handling for `is_refunded`
-  - [ ] Player `MyMatches` / admin booking actions wired
+  - [x] Player `MyMatches` / admin booking actions wired
 - **Acceptance criteria:**
-  - [ ] Cancelled booking releases court; participants notified
-  - [ ] Refund recorded in `payment_transactions`
+  - [x] Cancelled booking releases court; participants notified
+  - [x] Refund recorded in `payment_transactions`
 
 ---
 
@@ -337,9 +337,9 @@
 - **Priority:** P2 | **Difficulty:** Medium | **Area:** Auth
 - **Problem:** `MustVerifyEmail` commented out; register issues token immediately.
 - **Deliverables:**
-  - [ ] Enable `MustVerifyEmail` on `User` (configurable)
-  - [ ] `GET /api/email/verify/{id}/{hash}` + resend
-  - [ ] Block sensitive actions until verified (optional)
+  - [x] Enable `MustVerifyEmail` on `User` (configurable)
+  - [x] `GET /api/email/verify/{id}/{hash}` + resend
+  - [x] Block sensitive actions until verified (optional)
 
 ---
 
@@ -347,9 +347,9 @@
 - **Priority:** P1 | **Difficulty:** Medium | **Area:** API
 - **Problem:** Only create, list, show, enroll — no update/cancel.
 - **Deliverables:**
-  - [ ] `PUT/PATCH /api/academy-sessions/{id}` (staff)
-  - [ ] `POST /api/academy-sessions/{id}/cancel` with enrolled player notify
-  - [ ] Filament actions mirror API
+  - [x] `PUT/PATCH /api/academy-sessions/{id}` (staff)
+  - [x] `POST /api/academy-sessions/{id}/cancel` with enrolled player notify
+  - [x] Filament actions mirror API
 
 ---
 
@@ -357,10 +357,10 @@
 - **Priority:** P1 | **Difficulty:** Hard | **Area:** API / Domain
 - **Problem:** Packages only in admin Filament; `sessions_remaining` never decrements.
 - **Deliverables:**
-  - [ ] `GET /api/clubs/{club}/packages`, `POST subscribe`, Paymob pay
-  - [ ] Decrement sessions on booking/session attendance
-  - [ ] Scheduled `packages:expire` command
-  - [ ] `PackageExpiringNotification`
+  - [x] `GET /api/clubs/{club}/packages`, `POST subscribe`, Paymob pay
+  - [x] Decrement sessions on booking/session attendance
+  - [x] Scheduled `packages:expire` command
+  - [x] `PackageExpiringNotification`
 
 ---
 
@@ -368,24 +368,24 @@
 - **Priority:** P1 | **Difficulty:** Hard | **Area:** Payments / Web
 - **Problem:** Web registration creates pending sub without Paymob; renew trusts reference string.
 - **Deliverables:**
-  - [ ] Paymob checkout on register-academy (or invoice later)
-  - [ ] Webhook activates subscription + club on payment
+  - [x] Paymob checkout on register-academy (or invoice later)
+  - [x] Webhook activates subscription + club on payment
 
 ---
 
 ### FLOW-007 — Booking reminder notifications
 - **Priority:** P2 | **Difficulty:** Medium | **Area:** Notifications / Schedule
 - **Deliverables:**
-  - [ ] `booking:remind` command (24h / 2h before `start_time`)
-  - [ ] Mail + optional database notification channel
+  - [x] `booking:remind` command (24h / 2h before `start_time`)
+  - [x] Mail + optional database notification channel
 
 ---
 
 ### FLOW-008 — Coach application notifications
 - **Priority:** P2 | **Difficulty:** Easy | **Area:** Notifications
 - **Deliverables:**
-  - [ ] Notify club managers on apply
-  - [ ] Notify coach on accept/reject
+  - [x] Notify club managers on apply
+  - [x] Notify coach on accept/reject
 - **Files:** `CoachApplicationController.php`, new notification classes
 
 ---
@@ -393,8 +393,8 @@
 ### FLOW-009 — Club registration status emails
 - **Priority:** P2 | **Difficulty:** Easy | **Area:** Notifications
 - **Deliverables:**
-  - [ ] Email on pending submission (owner)
-  - [ ] Fix `AcademyStatusNotification` + owner lookup (see BUG-003)
+  - [x] Email on pending submission (owner)
+  - [x] Fix `AcademyStatusNotification` + owner lookup (see BUG-003)
 
 ---
 
@@ -402,88 +402,88 @@
 - **Priority:** P1 | **Difficulty:** Hard | **Area:** Player UI / API
 - **Problem:** API has `GET /matches/open` and `POST join`; player panel only lists own bookings.
 - **Deliverables:**
-  - [ ] Browse/filter open matches page
-  - [ ] Join → Paymob iframe or redirect
-  - [ ] Skill/sport/club filters
+  - [x] Browse/filter open matches page
+  - [x] Join → Paymob iframe or redirect
+  - [x] Skill/sport/club filters
 
 ---
 
 ### FLOW-011 — Court booking flow in Player panel
 - **Priority:** P1 | **Difficulty:** Hard | **Area:** Player UI
 - **Deliverables:**
-  - [ ] Club/court picker, availability calendar
-  - [ ] Create private/open booking
-  - [ ] Payment for owner share
+  - [x] Club/court picker, availability calendar
+  - [x] Create private/open booking
+  - [x] Payment for owner share
 
 ---
 
 ### FLOW-012 — Academy browse + enroll in Player panel
 - **Priority:** P1 | **Difficulty:** Medium | **Area:** Player UI
 - **Deliverables:**
-  - [ ] Public sessions list (approved clubs)
-  - [ ] Enroll + Paymob when fee > 0
+  - [x] Public sessions list (approved clubs)
+  - [x] Enroll + Paymob when fee > 0
 
 ---
 
 ### FLOW-013 — Coach apply to sessions in Coach panel
 - **Priority:** P1 | **Difficulty:** Medium | **Area:** Coach UI
 - **Deliverables:**
-  - [ ] List open sessions needing coach
-  - [ ] Apply / withdraw
-  - [ ] Application status column
+  - [x] List open sessions needing coach
+  - [x] Apply / withdraw
+  - [x] Application status column
 
 ---
 
 ### FLOW-014 — Admin: coach applications Filament resource
 - **Priority:** P1 | **Difficulty:** Medium | **Area:** Admin UI
 - **Deliverables:**
-  - [ ] `CoachApplicationResource` with approve/reject actions
-  - [ ] Link from `AcademySession` view
+  - [x] `CoachApplicationResource` with approve/reject actions
+  - [x] Link from `AcademySession` view
 
 ---
 
 ### FLOW-015 — Admin: payment transactions resource
 - **Priority:** P1 | **Difficulty:** Medium | **Area:** Admin UI
 - **Deliverables:**
-  - [ ] Read-only `PaymentTransactionResource` with filters (status, booking, user)
-  - [ ] Link from booking infolist
+  - [x] Read-only `PaymentTransactionResource` with filters (status, booking, user)
+  - [x] Link from booking infolist
 
 ---
 
 ### FLOW-016 — Admin: club staff management UI
 - **Priority:** P1 | **Difficulty:** Medium | **Area:** Admin UI
 - **Deliverables:**
-  - [ ] Relation manager on `Club` for `club_users` (role: owner/manager/staff)
-  - [ ] Invite user by email or select existing
+  - [x] Relation manager on `Club` for `club_users` (role: owner/manager/staff)
+  - [x] Invite user by email or select existing
 
 ---
 
 ### FLOW-017 — Court slot → generate academy sessions (admin)
 - **Priority:** P2 | **Difficulty:** Medium | **Area:** Admin UI
 - **Deliverables:**
-  - [ ] Filament bulk action on `CourtSlot` calling `CourtSlotController::schedule` logic
+  - [x] Filament bulk action on `CourtSlot` calling `CourtSlotController::schedule` logic
 
 ---
 
 ### FLOW-018 — API documentation (OpenAPI / Scribe)
 - **Priority:** P2 | **Difficulty:** Medium | **Area:** DX
 - **Deliverables:**
-  - [ ] Install Scribe or L5-Swagger; document auth + main resources
+  - [x] Install Scribe or L5-Swagger; document auth + main resources
 
 ---
 
 ### FLOW-019 — Rate limiting on auth + webhook
 - **Priority:** P2 | **Difficulty:** Easy | **Area:** Security
 - **Deliverables:**
-  - [ ] `throttle` on login/register/forgot-password
-  - [ ] Optional IP allowlist middleware for Paymob webhook
+  - [x] `throttle` on login/register/forgot-password
+  - [x] Optional IP allowlist middleware for Paymob webhook
 
 ---
 
 ### FLOW-020 — `.env.example` with all required keys
 - **Priority:** P2 | **Difficulty:** Easy | **Area:** DX
 - **Deliverables:**
-  - [ ] Document Paymob, DB, queue, mail vars
+  - [x] Document Paymob, DB, queue, mail vars
 
 ---
 
@@ -503,6 +503,8 @@
 | ENH-008 | Multi-club context switcher in admin panel | Hard | Filament |
 | ENH-009 | Club-scoped global query scope for admin resources | Hard | Filament |
 | ENH-010 | Queue all notifications; document `composer dev` runs queue | Easy | Ops |
+
+**Status (ENH-001–010):** Implemented — policies, payment services, `BookingPriceCalculator`, composite indexes migration, scheduled `withoutOverlapping()`, idempotency header, admin club switcher + scope, queued notifications, expanded tests (`EnhancementsTest`), README.
 
 ## P2 — Medium enhancements
 

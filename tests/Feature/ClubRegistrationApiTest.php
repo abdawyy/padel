@@ -45,7 +45,7 @@ class ClubRegistrationApiTest extends TestCase
             'billing_cycle' => 'monthly',
         ]);
 
-        $response->assertCreated();
+        $response->assertStatus(402)->assertJsonStructure(['payment']);
 
         $club = Club::query()->where('name', 'New Academy')->first();
 

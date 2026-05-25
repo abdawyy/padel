@@ -2,7 +2,9 @@
 
 namespace App\Filament\Player\Pages;
 
+use App\Exceptions\BookingCancellationException;
 use App\Models\Booking;
+use App\Services\BookingCancellationService;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -56,13 +58,21 @@ class MyMatches extends Page
             ->whereIn('status', ['pending', 'confirmed'])
             ->findOrFail($bookingId);
 
-        $booking->update(['status' => 'cancelled']);
+        try {
+            app(BookingCancellationService::class)->cancel($booking, auth()->user());
 
-        Notification::make()
-            ->title('Match cancelled')
-            ->body('Your booking for "' . ($booking->court->name ?? 'court') . '" has been cancelled.')
-            ->success()
-            ->send();
+            Notification::make()
+                ->title('Match cancelled')
+                ->body('Your booking for "' . ($booking->court->name ?? 'court') . '" has been cancelled.')
+                ->success()
+                ->send();
+        } catch (BookingCancellationException $exception) {
+            Notification::make()
+                ->title('Cancellation failed')
+                ->body($exception->getMessage())
+                ->danger()
+                ->send();
+        }
     }
 
     public function leaveMatch(int $bookingId): void
@@ -72,12 +82,20 @@ class MyMatches extends Page
             ->whereIn('status', ['pending', 'confirmed'])
             ->findOrFail($bookingId);
 
-        $booking->participants()->detach(auth()->id());
+        try {
+            app(BookingCancellationService::class)->leave($booking, auth()->user());
 
-        Notification::make()
-            ->title('Left match')
-            ->body('You have left the match at "' . ($booking->court->name ?? 'court') . '".')
-            ->success()
-            ->send();
+            Notification::make()
+                ->title('Left match')
+                ->body('You have left the match at "' . ($booking->court->name ?? 'court') . '".')
+                ->success()
+                ->send();
+        } catch (BookingCancellationException $exception) {
+            Notification::make()
+                ->title('Could not leave match')
+                ->body($exception->getMessage())
+                ->danger()
+                ->send();
+        }
     }
 }

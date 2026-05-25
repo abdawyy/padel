@@ -13,6 +13,7 @@ class PaymentTransaction extends Model
         'booking_id',
         'academy_session_id',
         'club_saas_subscription_id',
+        'package_subscription_id',
         'user_id',
         'paymob_transaction_id',
         'amount',
@@ -38,6 +39,11 @@ class PaymentTransaction extends Model
     public function clubSaasSubscription()
     {
         return $this->belongsTo(ClubSaasSubscription::class);
+    }
+
+    public function packageSubscription()
+    {
+        return $this->belongsTo(PackageSubscription::class);
     }
 
     public function user()

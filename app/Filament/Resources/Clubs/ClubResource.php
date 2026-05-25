@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Clubs;
 
+use App\Filament\Resources\Clubs\RelationManagers\StaffMembersRelationManager;
 use App\Filament\Resources\Clubs\Pages\CreateClub;
 use App\Filament\Resources\Clubs\Pages\EditClub;
 use App\Filament\Resources\Clubs\Pages\ListClubs;
@@ -10,6 +11,7 @@ use App\Filament\Resources\Clubs\Schemas\ClubForm;
 use App\Filament\Resources\Clubs\Schemas\ClubInfolist;
 use App\Filament\Resources\Clubs\Tables\ClubsTable;
 use App\Models\Club;
+use App\Support\AdminClubQuery;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -52,7 +54,7 @@ class ClubResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            StaffMembersRelationManager::class,
         ];
     }
 
@@ -79,15 +81,7 @@ class ClubResource extends Resource
             return $query->whereRaw('1 = 0');
         }
 
-        if ($user->isSuperAdmin()) {
-            return $query;
-        }
-
-        $clubIds = $user->accessibleClubIds();
-
-        return empty($clubIds)
-            ? $query->whereRaw('1 = 0')
-            : $query->whereIn('clubs.id', $clubIds);
+        return AdminClubQuery::forUser($query, $user, 'clubs.id');
     }
 
     public static function getRecordRouteBindingEloquentQuery(): Builder

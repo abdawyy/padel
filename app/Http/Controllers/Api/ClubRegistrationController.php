@@ -7,6 +7,7 @@ use App\Http\Resources\ClubResource;
 use App\Models\Club;
 use App\Models\ClubSaasSubscription;
 use App\Models\SaasPlan;
+use App\Notifications\ClubRegistrationPendingNotification;
 use App\Services\PaymobService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class ClubRegistrationController extends Controller
      * Register a new academy/club and subscribe to a SaaS plan.
      * POST /api/register-club
      */
-    public function register(Request $request): JsonResponse
+    public function register(Request $request, PaymobService $paymobService): JsonResponse
     {
         $validated = $request->validate([
             'name'          => ['required', 'string', 'max:255'],
@@ -41,7 +42,7 @@ class ClubRegistrationController extends Controller
         $cycle = $validated['billing_cycle'];
         $price = $plan->priceFor($cycle);
 
-        $club = DB::transaction(function () use ($validated, $plan, $cycle, $price, $user) {
+        [$club, $subscription] = DB::transaction(function () use ($validated, $plan, $cycle, $price, $user) {
             $club = Club::query()->create([
                 'name'                => $validated['name'],
                 'sport_type'          => $validated['sport_type'] ?? 'padel',
@@ -53,7 +54,7 @@ class ClubRegistrationController extends Controller
 
             $user->clubs()->attach($club->id, ['role' => 'owner']);
 
-            ClubSaasSubscription::query()->create([
+            $subscription = ClubSaasSubscription::query()->create([
                 'club_id'       => $club->id,
                 'saas_plan_id'  => $plan->id,
                 'billing_cycle' => $cycle,
@@ -63,8 +64,20 @@ class ClubRegistrationController extends Controller
                 'status'        => 'pending',
             ]);
 
-            return $club;
+            return [$club, $subscription];
         });
+
+        $user->notify(new ClubRegistrationPendingNotification($club));
+
+        if ($price > 0) {
+            $payment = $paymobService->createPaymentSessionForSaasSubscription($subscription, $user, $price);
+
+            return response()->json([
+                'message' => 'Club registration submitted. Complete payment to secure your subscription.',
+                'club'    => new ClubResource($club),
+                'payment' => $payment,
+            ], 402);
+        }
 
         return response()->json([
             'message' => 'Club registration submitted. Awaiting super admin approval.',
@@ -78,7 +91,7 @@ class ClubRegistrationController extends Controller
      */
     public function show(Request $request, Club $club): JsonResponse
     {
-        abort_unless($request->user()?->canManageClub($club) || $request->user()?->isSuperAdmin(), 403);
+        $this->authorize('manageSubscription', $club);
 
         $sub = $club->latestSaasSubscription()->with('plan')->first();
 
@@ -111,7 +124,7 @@ class ClubRegistrationController extends Controller
      */
     public function renew(Request $request, Club $club, PaymobService $paymobService): JsonResponse
     {
-        abort_unless($request->user()?->canManageClub($club) || $request->user()?->isSuperAdmin(), 403);
+        $this->authorize('manageSubscription', $club);
 
         $validated = $request->validate([
             'plan_id'       => ['required', 'integer', 'exists:saas_plans,id'],

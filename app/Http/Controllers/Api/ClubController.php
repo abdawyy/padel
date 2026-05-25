@@ -55,7 +55,7 @@ class ClubController extends Controller
     {
         $club = Club::query()->findOrFail($id);
 
-        abort_unless($request->user()?->canManageClub($club), 403, 'Unauthorized club access.');
+        $this->authorize('update', $club);
 
         $validated = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
@@ -77,7 +77,7 @@ class ClubController extends Controller
     {
         $club = Club::query()->findOrFail($id);
 
-        abort_unless(request()->user()?->canManageClub($club), 403, 'Unauthorized club access.');
+        $this->authorize('delete', $club);
 
         $club->delete();
 

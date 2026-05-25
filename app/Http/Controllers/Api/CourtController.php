@@ -55,9 +55,7 @@ class CourtController extends Controller
 
         $club = Club::query()->findOrFail($validated['club_id']);
 
-        if (! $request->user()?->hasAdminAccess($club)) {
-            return response()->json(['message' => 'Unauthorized club access.'], 403);
-        }
+        $this->authorize('create', [$club]);
 
         $court = Court::query()->create($validated);
 
@@ -87,7 +85,7 @@ class CourtController extends Controller
     {
         $court = Court::query()->with('club')->findOrFail($id);
 
-        abort_unless($request->user()?->hasAdminAccess($court->club), 403, 'Unauthorized club access.');
+        $this->authorize('update', $court);
 
         $validated = $request->validate([
             'sport_type' => ['sometimes', 'string', 'max:100'],
@@ -111,7 +109,7 @@ class CourtController extends Controller
     {
         $court = Court::query()->with('club')->findOrFail($id);
 
-        abort_unless(request()->user()?->hasAdminAccess($court->club), 403, 'Unauthorized club access.');
+        $this->authorize('delete', $court);
 
         $court->delete();
 

@@ -38,6 +38,8 @@ class StoreBookingRequest extends FormRequest
             'notes' => ['nullable', 'string'],
             'participant_ids' => ['nullable', 'array', 'max:31'],
             'participant_ids.*' => ['integer', 'distinct', 'exists:users,id'],
+            'total_price' => ['prohibited'],
+            'coach_fee' => ['prohibited'],
         ];
     }
 

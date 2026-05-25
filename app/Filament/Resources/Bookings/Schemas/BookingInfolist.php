@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Bookings\Schemas;
 
+use App\Filament\Resources\PaymentTransactions\PaymentTransactionResource;
 use App\Models\Booking;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
@@ -39,6 +40,12 @@ class BookingInfolist
                     ->placeholder('-'),
                 TextEntry::make('status')
                     ->badge(),
+                TextEntry::make('payment_transactions_link')
+                    ->label('Payment transactions')
+                    ->state(fn (Booking $record): string => (string) $record->paymentTransactions()->count().' transaction(s)')
+                    ->url(fn (Booking $record): string => PaymentTransactionResource::getUrl('index', [
+                        'tableFilters' => ['booking_id' => ['value' => $record->id]],
+                    ])),
                 TextEntry::make('participants.name')
                     ->label('Assigned Players')
                     ->badge()

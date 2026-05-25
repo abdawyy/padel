@@ -137,7 +137,7 @@ class ClubStaffController extends Controller
 
     private function authorizeManagement(?User $user, Club $club): void
     {
-        abort_unless($user?->canManageClub($club), 403, 'You are not allowed to manage club staff.');
+        $this->authorize('manageStaff', $club);
     }
 
     private function defaultClubRole(string $role): string

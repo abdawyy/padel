@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ScopedToAdminClub;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AcademySession extends Model
 {
-    use HasFactory;
+    use HasFactory, ScopedToAdminClub;
 
     protected $fillable = [
         'club_id',

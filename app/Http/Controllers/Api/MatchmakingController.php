@@ -7,7 +7,6 @@ use App\Http\Resources\OpenMatchResource;
 use App\Models\Booking;
 use App\Services\BookingParticipantCapacity;
 use App\Services\BookingPaymentSplit;
-use App\Services\PaymobService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -58,7 +57,7 @@ class MatchmakingController extends Controller
         return OpenMatchResource::collection($matches);
     }
 
-    public function join(Request $request, Booking $booking, PaymobService $paymobService): JsonResponse
+    public function join(Request $request, Booking $booking): JsonResponse
     {
         $user = $request->user();
 
@@ -137,7 +136,11 @@ class MatchmakingController extends Controller
         }
 
         try {
-            $paymentSession = $paymobService->createPaymentSessionForParticipant($freshBooking, $user, $amountDue);
+            $paymentSession = app(\App\Services\BookingPaymentService::class)->createParticipantPayment(
+                $freshBooking,
+                $user,
+                $request->header('X-Idempotency-Key'),
+            );
         } catch (\Throwable $exception) {
             DB::table('booking_participants')
                 ->where('booking_id', $freshBooking->id)

@@ -2,11 +2,18 @@
 
 namespace App\Filament\Resources\CourtSlots\Tables;
 
+use App\Models\CourtSlot;
+use App\Services\CourtSlotSchedulingService;
+use Carbon\Carbon;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
+use Illuminate\Support\Collection;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -68,6 +75,47 @@ class CourtSlotsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    BulkAction::make('scheduleAcademySessions')
+                        ->label('Generate academy sessions')
+                        ->icon('heroicon-o-calendar-days')
+                        ->form([
+                            DatePicker::make('date')->required()->native(false),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            $date = Carbon::parse($data['date']);
+                            $service = app(CourtSlotSchedulingService::class);
+                            $created = 0;
+                            $failed = 0;
+
+                            foreach ($records as $courtSlot) {
+                                /** @var CourtSlot $courtSlot */
+                                $courtSlot->loadMissing('court.club');
+
+                                if (! $courtSlot->court?->club) {
+                                    $failed++;
+                                    continue;
+                                }
+
+                                try {
+                                    $service->schedule(
+                                        $courtSlot,
+                                        $courtSlot->court->club,
+                                        auth()->user(),
+                                        $date,
+                                    );
+                                    $created++;
+                                } catch (\Throwable) {
+                                    $failed++;
+                                }
+                            }
+
+                            Notification::make()
+                                ->title("Scheduled {$created} session(s)")
+                                ->body($failed > 0 ? "{$failed} slot(s) could not be scheduled (day mismatch or conflict)." : null)
+                                ->success()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
                     DeleteBulkAction::make(),
                 ]),
             ]);

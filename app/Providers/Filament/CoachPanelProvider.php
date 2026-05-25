@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Coach\Pages\CoachApplySessions;
 use App\Filament\Coach\Pages\CoachDashboard;
 use App\Filament\Coach\Pages\CoachMatches;
 use App\Filament\Coach\Pages\CoachSessions;
@@ -34,6 +35,7 @@ class CoachPanelProvider extends PanelProvider
             ->pages([
                 CoachDashboard::class,
                 CoachSessions::class,
+                CoachApplySessions::class,
                 CoachMatches::class,
             ])
             ->middleware([

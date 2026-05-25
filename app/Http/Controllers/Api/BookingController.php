@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\BookingCancellationException;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Http\Resources\UserBookingResource;
@@ -10,7 +11,9 @@ use App\Models\AcademySession;
 use App\Models\Booking;
 use App\Models\Court;
 use App\Services\BookableCourtValidator;
+use App\Services\BookingCancellationService;
 use App\Services\BookingPaymentSplit;
+use App\Services\BookingPriceCalculator;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -95,10 +98,14 @@ class BookingController extends Controller
         $startTime = Carbon::parse($validated['start_time']);
         $endTime = Carbon::parse($validated['end_time']);
 
-        $durationMinutes = max($startTime->diffInMinutes($endTime), 1);
-        $durationHours = $durationMinutes / 60;
-        $coachFee = $this->resolveCoachFee($court, $validated['coach_user_id'] ?? null, $durationHours);
-        $totalPrice = round((((float) $court->price_per_hour) * $durationHours) + $coachFee, 2);
+        $pricing = app(BookingPriceCalculator::class)->calculate(
+            $court,
+            $startTime,
+            $endTime,
+            $validated['coach_user_id'] ?? null,
+        );
+        $totalPrice = $pricing['total_price'];
+        $coachFee = $pricing['coach_fee'];
 
         $participantIds = $validated['participant_ids'] ?? [];
         $allParticipantIds = collect([$user->id])
@@ -184,17 +191,6 @@ class BookingController extends Controller
      * @param  array<string, mixed>  $validated
      * @return array{0: ?int, 1: ?int}
      */
-    private function resolveCoachFee(Court $court, ?int $coachUserId, float $durationHours): float
-    {
-        if (empty($coachUserId)) {
-            return 0.0;
-        }
-
-        $ratePerHour = (float) data_get($court->club?->settings, 'coach_fee_per_hour', 0);
-
-        return round($ratePerHour * $durationHours, 2);
-    }
-
     private function resolveSkillRange(array $validated): array
     {
         $skillMin = isset($validated['skill_min']) ? (int) $validated['skill_min'] : null;
@@ -334,6 +330,40 @@ class BookingController extends Controller
         $booking->update($validated);
 
         return new BookingResource($booking->load(['court', 'owner', 'coach', 'participants']));
+    }
+
+    public function cancel(Request $request, Booking $booking, BookingCancellationService $cancellationService): JsonResponse
+    {
+        try {
+            $result = $cancellationService->cancel(
+                $booking,
+                $request->user(),
+                $request->input('reason'),
+            );
+        } catch (BookingCancellationException $exception) {
+            return response()->json(['message' => $exception->getMessage()], $exception->status);
+        }
+
+        return response()->json([
+            'message' => 'Booking cancelled successfully.',
+            'booking' => new BookingResource($result['booking']),
+            'refunds' => $result['refunds'],
+        ]);
+    }
+
+    public function leave(Request $request, Booking $booking, BookingCancellationService $cancellationService): JsonResponse
+    {
+        try {
+            $result = $cancellationService->leave($booking, $request->user());
+        } catch (BookingCancellationException $exception) {
+            return response()->json(['message' => $exception->getMessage()], $exception->status);
+        }
+
+        return response()->json([
+            'message' => 'You have left the booking.',
+            'booking' => new BookingResource($result['booking']),
+            'refund' => $result['refund'],
+        ]);
     }
 
     /**

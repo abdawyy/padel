@@ -13,11 +13,7 @@ class AvailabilityController extends Controller
 {
     public function index(Request $request, Club $club): JsonResponse|mixed
     {
-        abort_unless(
-            $request->user()?->hasAdminAccess($club) || $request->user()?->belongsToClub($club),
-            403,
-            'Unauthorized club access.'
-        );
+        $this->authorize('viewAvailability', $club);
 
         $dateInput = (string) $request->query('date', now()->toDateString());
 

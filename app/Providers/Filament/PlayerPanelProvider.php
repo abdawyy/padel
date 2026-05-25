@@ -2,7 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Player\Pages\BookCourt;
+use App\Filament\Player\Pages\BrowseAcademy;
 use App\Filament\Player\Pages\MyMatches;
+use App\Filament\Player\Pages\OpenMatches;
 use App\Filament\Player\Pages\MyPackages;
 use App\Filament\Player\Pages\MyTraining;
 use App\Filament\Player\Pages\PlayerDashboard;
@@ -34,9 +37,12 @@ class PlayerPanelProvider extends PanelProvider
             ->brandName(config('app.name') . ' — Player Portal')
             ->pages([
                 PlayerDashboard::class,
+                BookCourt::class,
                 MyPackages::class,
                 MyTraining::class,
                 MyMatches::class,
+                OpenMatches::class,
+                BrowseAcademy::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -5,9 +5,10 @@ namespace App\Notifications;
 use App\Models\Club;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class AcademyStatusNotification extends Notification
+class AcademyStatusNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
