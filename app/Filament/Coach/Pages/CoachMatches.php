@@ -61,7 +61,7 @@ class CoachMatches extends Page implements HasTable
                     ->sortable(),
                 TextColumn::make('coach_fee')
                     ->label('Coach Fee')
-                    ->money('USD'),
+                    ->money(config('app.currency', 'EGP')),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {

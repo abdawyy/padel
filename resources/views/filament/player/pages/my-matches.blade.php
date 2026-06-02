@@ -2,6 +2,7 @@
 @php
     $matches = $this->getMatches();
     $userId  = auth()->id();
+    $currency = config('app.currency', 'EGP');
 @endphp
 
 <style>
@@ -80,14 +81,53 @@
     background: #f3f4f6; border: none; border-radius: 10px;
     font-weight: 700; cursor: pointer; font-size: 14px; color: #374151;
 }
+.mx-pay-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 99999;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.mx-pay-box { background:#fff; border-radius:16px; padding:16px; width:100%; max-width:760px; }
+.mx-pay-box iframe { width:100%; min-height:520px; border:0; border-radius:10px; }
+.mx-confirm-backdrop {
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:100000;
+    align-items:center; justify-content:center; padding:16px;
+}
+.mx-confirm-backdrop.open { display:flex; }
+.mx-confirm {
+    background:#fff; border-radius:14px; padding:18px; width:100%; max-width:420px;
+}
+.mx-confirm-actions { display:flex; gap:8px; margin-top:14px; }
+.mx-btn-secondary { background:#f3f4f6; color:#374151; }
 </style>
+
+@if($paymentIframeUrl)
+    <div class="mx-pay-overlay">
+        <div class="mx-pay-box">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-lg font-bold">Complete payment</h3>
+                <button wire:click="closePayment" type="button" class="text-sm text-gray-500">Close</button>
+            </div>
+            <iframe src="{{ $paymentIframeUrl }}" title="Paymob checkout"></iframe>
+        </div>
+    </div>
+@endif
 
 <!-- Detail Modal -->
 <div class="mx-modal-backdrop" id="mxModal" onclick="if(event.target===this)closeMxModal()">
-    <div class="mx-modal">
+    <div class="mx-modal" role="dialog" aria-modal="true" aria-labelledby="mxModalTitle">
         <div class="mx-modal-title" id="mxModalTitle"></div>
         <div id="mxModalBody"></div>
-        <button class="mx-modal-close" onclick="closeMxModal()">Close</button>
+        <button class="mx-modal-close" onclick="closeMxModal()" id="mxModalCloseBtn">Close</button>
+    </div>
+</div>
+
+<div class="mx-confirm-backdrop" id="mxConfirmModal" onclick="if(event.target===this)closeMxConfirm()">
+    <div class="mx-confirm" role="dialog" aria-modal="true" aria-labelledby="mxConfirmTitle">
+        <div id="mxConfirmTitle" class="mx-modal-title" style="font-size:16px; margin-bottom:8px;"></div>
+        <p id="mxConfirmBody" style="font-size:14px; color:#4b5563;"></p>
+        <div class="mx-confirm-actions">
+            <button type="button" class="mx-btn mx-btn-secondary" onclick="closeMxConfirm()">Keep</button>
+            <button type="button" class="mx-btn mx-btn-danger" id="mxConfirmActionBtn">Confirm</button>
+        </div>
     </div>
 </div>
 
@@ -108,6 +148,10 @@
             $bClr       = $match->match_type === 'private' ? '#8b5cf6' : '#0ea5e9';
             $dtFmt      = \Carbon\Carbon::parse($match->start_time)->format('D d M Y · H:i');
             $price      = number_format($match->total_price ?? 0, 2);
+            $participant = $match->participants->firstWhere('id', $userId);
+            $canPay = $participant
+                && $participant->pivot?->payment_status === 'pending'
+                && in_array($match->status, ['pending', 'confirmed'], true);
         @endphp
 
         <article class="mx-card">
@@ -137,7 +181,7 @@
 
                 <div class="mx-row">
                     <svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <span>${{ $price }}</span>
+                    <span>{{ $currency }} {{ $price }}</span>
                 </div>
 
                 <div class="mx-row">
@@ -148,18 +192,23 @@
             </div>
 
             <div class="mx-footer">
-                <button class="mx-btn mx-btn-outline" onclick="openMxModal('{{ addslashes($match->court->name ?? '') }}', '{{ addslashes($match->court->club->name ?? '') }}', '{{ addslashes($match->owner->name ?? '') }}', '{{ addslashes($match->coach->name ?? 'No coach') }}', '{{ $dtFmt }}', '{{ $typeLabel }}', '{{ $levelLabel }}', '{{ ucfirst($match->status) }}', '${{ $price }}')">
+                <button class="mx-btn mx-btn-outline" onclick="openMxModal(@js($match->court->name ?? ''), @js($match->court->club->name ?? ''), @js($match->owner->name ?? ''), @js($match->coach->name ?? 'No coach'), @js($dtFmt), @js($typeLabel), @js($levelLabel), @js(ucfirst($match->status)), @js($currency . ' ' . $price))">
                     View Details
                 </button>
+                @if($canPay)
+                    <button class="mx-btn" style="background:#dcfce7; color:#166534;" wire:click="payOutstanding({{ $match->id }})" type="button">
+                        Pay Share
+                    </button>
+                @endif
                 @if($canAct)
                     @if($isOwner)
                         <button class="mx-btn mx-btn-danger"
-                            onclick="confirmCancel({{ $match->id }}, '{{ addslashes($match->court->name ?? 'court') }}')">
+                            onclick="openMxConfirm('Cancel booking', 'Cancel this booking at {{ addslashes($match->court->name ?? 'court') }}? This cannot be undone.', () => @this.cancelBooking({{ $match->id }}))">
                             Cancel
                         </button>
                     @else
                         <button class="mx-btn mx-btn-danger"
-                            onclick="confirmLeave({{ $match->id }}, '{{ addslashes($match->court->name ?? 'match') }}')">
+                            onclick="openMxConfirm('Leave match', 'Leave the match at {{ addslashes($match->court->name ?? 'match') }}? This cannot be undone.', () => @this.leaveMatch({{ $match->id }}))">
                             Leave
                         </button>
                     @endif
@@ -171,6 +220,18 @@
 @endif
 
 <script>
+let mxAction = null;
+let mxLastFocused = null;
+
+function escHtml(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
+
 function openMxModal(court, club, owner, coach, dt, type, level, status, price) {
     document.getElementById('mxModalTitle').textContent = court;
     document.getElementById('mxModalBody').innerHTML = [
@@ -180,21 +241,32 @@ function openMxModal(court, club, owner, coach, dt, type, level, status, price) 
         mrow('Status', status), mrow('Price', price)
     ].join('');
     document.getElementById('mxModal').classList.add('open');
+    mxLastFocused = document.activeElement;
+    document.getElementById('mxModalCloseBtn')?.focus();
 }
 function mrow(label, value) {
-    return `<div class="mx-modal-row"><span class="mx-modal-label">${label}</span><span class="mx-modal-value">${value}</span></div>`;
+    return `<div class="mx-modal-row"><span class="mx-modal-label">${escHtml(label)}</span><span class="mx-modal-value">${escHtml(value)}</span></div>`;
 }
 function closeMxModal() {
     document.getElementById('mxModal').classList.remove('open');
+    mxLastFocused?.focus?.();
 }
-function confirmCancel(id, court) {
-    if (!confirm('Cancel this booking at "' + court + '"? This cannot be undone.')) return;
-    @this.cancelBooking(id);
+function openMxConfirm(title, body, action) {
+    const modal = document.getElementById('mxConfirmModal');
+    document.getElementById('mxConfirmTitle').textContent = title;
+    document.getElementById('mxConfirmBody').textContent = body;
+    mxAction = action;
+    modal.classList.add('open');
+    document.getElementById('mxConfirmActionBtn').focus();
 }
-function confirmLeave(id, court) {
-    if (!confirm('Leave the match at "' + court + '"? This cannot be undone.')) return;
-    @this.leaveMatch(id);
+function closeMxConfirm() {
+    document.getElementById('mxConfirmModal').classList.remove('open');
+    mxAction = null;
 }
+document.getElementById('mxConfirmActionBtn')?.addEventListener('click', () => {
+    if (typeof mxAction === 'function') mxAction();
+    closeMxConfirm();
+});
 </script>
 
 </x-filament-panels::page>

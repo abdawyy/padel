@@ -5,6 +5,7 @@ namespace App\Filament\Saas\Widgets;
 use App\Filament\Saas\Resources\Subscriptions\SubscriptionResource;
 use App\Models\Club;
 use App\Models\ClubSaasSubscription;
+use App\Support\Money;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -59,8 +60,8 @@ class SaasStatsOverview extends StatsOverviewWidget
                     ])
                     : null),
 
-            Stat::make('Revenue This Month', '$' . number_format((float) $revenueThisMonth, 2))
-                ->description('Year total: $' . number_format((float) $revenueThisYear, 2))
+            Stat::make('Revenue This Month', Money::format($revenueThisMonth))
+                ->description('Year total: ' . Money::format($revenueThisYear))
                 ->descriptionIcon('heroicon-o-banknotes')
                 ->color('info'),
         ];

@@ -544,8 +544,8 @@
 - **Problem:** API supports pay; player UI has no checkout.
 - **Pages:** `MyMatches`, `MyTraining`, new `MyPayments` optional
 - **Acceptance criteria:**
-  - [ ] Pay outstanding booking share in browser
-  - [ ] Complete enrollment payment from training browse
+  - [x] Pay outstanding booking share in browser
+  - [x] Complete enrollment payment from training browse
 
 ---
 
@@ -554,7 +554,7 @@
 - **File:** `resources/views/web/layout.blade.php`
 - **Fix:** Footer or nav links: Player login, Coach login, Academy admin, SaaS (or combined "Login" dropdown).
 - **Acceptance criteria:**
-  - [ ] New user can find `/player/login` without docs
+  - [x] New user can find `/player/login` without docs
 
 ---
 
@@ -563,6 +563,7 @@
 - **File:** `resources/views/filament/coach/pages/coach-dashboard.blade.php`
 - **Problem:** "Manage Sessions (Admin)" → 403 for most coaches.
 - **Fix:** Show only if `auth()->user()->hasAdminAccess()`; else hide.
+- **Status:** [x] Implemented
 
 ---
 
@@ -571,12 +572,14 @@
 - **Files:** `MyMatches` blade, `CoachMatches.php`, `SaasStatsOverview.php`, config `app.currency`
 - **Problem:** `$` vs `EGP` mixed.
 - **Fix:** Central `format_money()` helper; use Paymob currency from config.
+- **Status:** [x] Implemented (`App\Support\Money`, `app.currency`)
 
 ---
 
 ### UX-005 — Player/coach: browse & join (see FLOW-010–012)
 - **Priority:** P1 | **Difficulty:** Hard
 - (Cross-reference FLOW items)
+- **Status:** [x] Completed via FLOW-010/011/012 implementation
 
 ---
 
@@ -585,6 +588,7 @@
 - **File:** `resources/views/filament/player/pages/my-training.blade.php`
 - **Problems:** No `role="dialog"`, focus trap; `innerHTML` for `session_plan`/`notes`.
 - **Fix:** Filament modal or Livewire; escape user content (`{{ }}` / `@js`).
+- **Status:** [x] Implemented (dialog semantics + escaped modal content)
 
 ---
 
@@ -592,6 +596,7 @@
 - **Priority:** P2 | **Difficulty:** Easy
 - **Files:** `my-matches.blade.php`, `my-training.blade.php`
 - **Fix:** Cancel/leave/withdraw use Filament Actions with confirmation.
+- **Status:** [x] Implemented with in-page Livewire confirmation modals
 
 ---
 

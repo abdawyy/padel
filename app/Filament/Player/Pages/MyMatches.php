@@ -5,6 +5,7 @@ namespace App\Filament\Player\Pages;
 use App\Exceptions\BookingCancellationException;
 use App\Models\Booking;
 use App\Services\BookingCancellationService;
+use App\Services\BookingPaymentService;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -27,6 +28,8 @@ class MyMatches extends Page
 
     protected static ?int $navigationSort = 4;
 
+    public ?string $paymentIframeUrl = null;
+
     public function getMatches(): Collection
     {
         return Booking::query()
@@ -34,7 +37,7 @@ class MyMatches extends Page
                 $q->where('owner_user_id', auth()->id())
                     ->orWhereHas('participants', fn (Builder $sub) => $sub->where('users.id', auth()->id()));
             })
-            ->with(['court.club', 'owner', 'coach'])
+            ->with(['court.club', 'owner', 'coach', 'participants'])
             ->orderByRaw("FIELD(status,'pending','confirmed','cancelled')")
             ->orderBy('start_time')
             ->get()
@@ -49,6 +52,44 @@ class MyMatches extends Page
                 fn (Booking $booking) => $booking->start_time?->timestamp ?? 0,
             ])
             ->values();
+    }
+
+    public function payOutstanding(int $bookingId): void
+    {
+        $booking = Booking::query()
+            ->whereHas('participants', fn (Builder $q) => $q->where('users.id', auth()->id()))
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->with('participants')
+            ->findOrFail($bookingId);
+
+        try {
+            $paymentSession = app(BookingPaymentService::class)
+                ->createParticipantPayment($booking, auth()->user());
+
+            $this->paymentIframeUrl = $paymentSession['iframe_url'] ?? null;
+
+            Notification::make()
+                ->title('Complete payment')
+                ->body('Use the checkout window to complete your match payment.')
+                ->success()
+                ->send();
+        } catch (\RuntimeException $exception) {
+            Notification::make()
+                ->title(match ($exception->getMessage()) {
+                    'already_paid' => 'Already paid',
+                    'cancelled_booking' => 'Booking is cancelled',
+                    'not_participant' => 'You are not a participant',
+                    default => 'Payment could not be started',
+                })
+                ->danger()
+                ->send();
+        } catch (\Throwable $exception) {
+            Notification::make()
+                ->title('Payment failed')
+                ->body($exception->getMessage())
+                ->danger()
+                ->send();
+        }
     }
 
     public function cancelBooking(int $bookingId): void
@@ -97,5 +138,10 @@ class MyMatches extends Page
                 ->danger()
                 ->send();
         }
+    }
+
+    public function closePayment(): void
+    {
+        $this->paymentIframeUrl = null;
     }
 }
