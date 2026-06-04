@@ -7,6 +7,7 @@ use App\Models\Booking;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Collection;
 
 class CoachDashboard extends Page
 {
@@ -53,5 +54,28 @@ class CoachDashboard extends Page
             ->join('academy_session_user', 'academy_sessions.id', '=', 'academy_session_user.academy_session_id')
             ->distinct('academy_session_user.user_id')
             ->count('academy_session_user.user_id');
+    }
+
+    public function getUpcomingSessions(): Collection
+    {
+        return AcademySession::query()
+            ->where('coach_user_id', auth()->id())
+            ->where('start_time', '>=', now())
+            ->with(['club', 'court'])
+            ->withCount('players')
+            ->orderBy('start_time')
+            ->limit(5)
+            ->get();
+    }
+
+    public function getUpcomingMatches(): Collection
+    {
+        return Booking::query()
+            ->where('coach_user_id', auth()->id())
+            ->where('start_time', '>=', now())
+            ->with(['court.club', 'owner'])
+            ->orderBy('start_time')
+            ->limit(5)
+            ->get();
     }
 }

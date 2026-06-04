@@ -4,13 +4,17 @@ namespace App\Filament\Coach\Pages;
 
 use App\Models\AcademySession;
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class CoachSessions extends Page implements HasTable
 {
@@ -18,9 +22,9 @@ class CoachSessions extends Page implements HasTable
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
 
-    protected static ?string $navigationLabel = 'My Training';
+    protected static ?string $navigationLabel = 'My Sessions';
 
-    protected static ?string $title = 'My Training Sessions';
+    protected static ?string $title = 'My Sessions';
 
     protected static ?int $navigationSort = 2;
 
@@ -31,11 +35,14 @@ class CoachSessions extends Page implements HasTable
 
     public function table(Table $table): Table
     {
+        $clubIds = auth()->user()?->clubs()->pluck('clubs.id') ?? collect();
+
         return $table
             ->query(
                 AcademySession::query()
                     ->where('coach_user_id', auth()->id())
                     ->with(['club', 'court'])
+                    ->withCount('players')
             )
             ->columns([
                 TextColumn::make('title')
@@ -47,6 +54,9 @@ class CoachSessions extends Page implements HasTable
                 TextColumn::make('court.name')
                     ->label('Court')
                     ->sortable(),
+                TextColumn::make('players_count')
+                    ->label('Players')
+                    ->badge(),
                 TextColumn::make('session_type')
                     ->label('Type')
                     ->badge()
@@ -62,21 +72,49 @@ class CoachSessions extends Page implements HasTable
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'scheduled' => 'info',
-                        'ongoing' => 'warning',
+                        'scheduled', 'active' => 'info',
                         'completed' => 'success',
                         'cancelled' => 'danger',
                         default => 'gray',
                     }),
             ])
             ->filters([
+                SelectFilter::make('club_id')
+                    ->label('Club')
+                    ->options(fn () => \App\Models\Club::query()
+                        ->whereIn('id', $clubIds)
+                        ->orderBy('name')
+                        ->pluck('name', 'id')
+                        ->all())
+                    ->searchable(),
+                Filter::make('date_range')
+                    ->form([
+                        DatePicker::make('from')->label('From'),
+                        DatePicker::make('until')->label('Until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when($data['from'] ?? null, fn (Builder $q, $date) => $q->whereDate('start_time', '>=', $date))
+                            ->when($data['until'] ?? null, fn (Builder $q, $date) => $q->whereDate('start_time', '<=', $date));
+                    }),
                 SelectFilter::make('status')
                     ->options([
                         'scheduled' => 'Scheduled',
-                        'ongoing' => 'Ongoing',
+                        'active' => 'Active',
                         'completed' => 'Completed',
                         'cancelled' => 'Cancelled',
                     ]),
+            ])
+            ->recordActions([
+                Action::make('details')
+                    ->label('View')
+                    ->icon('heroicon-o-eye')
+                    ->modalHeading(fn (AcademySession $record): string => $record->title)
+                    ->modalContent(fn (AcademySession $record) => view('filament.coach.partials.session-detail-modal', [
+                        'session' => $record->load(['players', 'club', 'court']),
+                    ]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close'),
             ])
             ->defaultSort('start_time', 'desc');
     }

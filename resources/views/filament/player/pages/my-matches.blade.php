@@ -1,4 +1,5 @@
 <x-filament-panels::page>
+@include('filament.player.partials.theme')
 @php
     $matches = $this->getMatches();
     $userId  = auth()->id();
@@ -132,11 +133,11 @@
 </div>
 
 @if($matches->isEmpty())
-    <div class="mx-empty">
-        <div style="font-size:40px;">🏓</div>
-        <div style="font-weight:700; font-size:16px; margin-top:8px;">No matches yet</div>
-        <div style="font-size:13px; margin-top:4px;">Your bookings and matches will appear here.</div>
-    </div>
+    @include('filament.player.partials.empty-state', [
+        'icon' => '🏓',
+        'title' => 'No matches yet',
+        'body' => 'Book a court or join an open match to get started.',
+    ])
 @else
     <div class="mx-grid">
         @foreach($matches as $match)
@@ -154,7 +155,7 @@
                 && in_array($match->status, ['pending', 'confirmed'], true);
         @endphp
 
-        <article class="mx-card">
+        <article class="mx-card" id="booking-{{ $match->id }}">
             <div class="mx-banner" style="background:{{ $bClr }};"></div>
             <div class="mx-body">
 

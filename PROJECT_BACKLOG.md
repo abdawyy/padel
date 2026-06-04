@@ -602,31 +602,35 @@
 
 ## P2 — Medium priority UX
 
-| ID | Title | Difficulty | Area |
-|----|-------|------------|------|
-| UX-008 | Player profile edit page (skill, sport, phone, DOB) | Medium | Player |
-| UX-009 | Player: filters on packages (active/expired), training (upcoming/past) | Easy | Player |
-| UX-010 | Player dashboard: remove hardcoded "Padel" if `preferred_sport` set | Easy | Player |
-| UX-011 | Coach dashboard: upcoming sessions/matches widgets | Medium | Coach |
-| UX-012 | Coach sessions: row actions (view players, session plan, videos) | Medium | Coach |
-| UX-013 | Coach tables: date range + club filters | Easy | Coach |
-| UX-014 | Rename coach nav "My Training" → "My Sessions" (avoid player confusion) | Easy | Coach |
-| UX-015 | Admin booking infolist: show payment_status per participant | Easy | Admin |
-| UX-016 | Landing page: align marketing copy with actual features | Easy | Web |
-| UX-017 | Registration pending page: expected timeline + contact | Easy | Web |
-| UX-018 | Booking confirmation email: deep link to `/player` booking | Easy | Notifications |
+**Status (UX-008–018):** [x] All done.
+
+| ID | Title | Difficulty | Area | Done |
+|----|-------|------------|------|------|
+| UX-008 | Player profile edit page (skill, sport, phone, DOB) | Medium | Player | [x] |
+| UX-009 | Player: filters on packages (active/expired), training (upcoming/past) | Easy | Player | [x] |
+| UX-010 | Player dashboard: remove hardcoded "Padel" if `preferred_sport` set | Easy | Player | [x] |
+| UX-011 | Coach dashboard: upcoming sessions/matches widgets | Medium | Coach | [x] |
+| UX-012 | Coach sessions: row actions (view players, session plan, videos) | Medium | Coach | [x] |
+| UX-013 | Coach tables: date range + club filters | Easy | Coach | [x] |
+| UX-014 | Rename coach nav "My Training" → "My Sessions" (avoid player confusion) | Easy | Coach | [x] |
+| UX-015 | Admin booking infolist: show payment_status per participant | Easy | Admin | [x] |
+| UX-016 | Landing page: align marketing copy with actual features | Easy | Web | [x] |
+| UX-017 | Registration pending page: expected timeline + contact | Easy | Web | [x] |
+| UX-018 | Booking confirmation email: deep link to `/player` booking | Easy | Notifications | [x] |
 
 ## P3 — Low priority UX
 
-| ID | Title | Difficulty |
-|----|-------|------------|
-| UX-019 | Shared brand logo on all Filament panels | Easy |
-| UX-020 | Player cards: use Filament components vs inline CSS | Medium |
-| UX-021 | Empty states: consistent illustration/copy | Easy |
-| UX-022 | Video modal: `title` on iframe for a11y | Easy |
-| UX-023 | SaaS plans table: filter by active | Easy |
-| UX-024 | Admin clubs: show `registration_status` + approve (or link to SaaS) | Medium |
-| UX-025 | Dark mode parity on custom player blades | Medium |
+**Status (UX-019–025):** [x] All done.
+
+| ID | Title | Difficulty | Done |
+|----|-------|------------|------|
+| UX-019 | Shared brand logo on all Filament panels | Easy | [x] |
+| UX-020 | Player cards: use Filament components vs inline CSS | Medium | [x] |
+| UX-021 | Empty states: consistent illustration/copy | Easy | [x] |
+| UX-022 | Video modal: `title` on iframe for a11y | Easy | [x] |
+| UX-023 | SaaS plans table: filter by active | Easy | [x] |
+| UX-024 | Admin clubs: show `registration_status` + approve (or link to SaaS) | Medium | [x] |
+| UX-025 | Dark mode parity on custom player blades | Medium | [x] |
 
 ---
 
@@ -666,9 +670,11 @@
 # Completion checklist (update when done)
 
 ```
-P0 Bugs:     [x] BUG-001–008 (all complete) [ ] BUG-006 [ ] BUG-007 [ ] BUG-008
-P1 Flows:    [ ] FLOW-001 [ ] FLOW-002 [ ] FLOW-010 [ ] FLOW-011 [ ] FLOW-012 [ ] FLOW-014 [ ] FLOW-015 [ ] FLOW-016
-P1 UX:       [ ] UX-001 [ ] UX-002 [ ] UX-003 [ ] UX-004 [ ] UX-006
+P0 Bugs:     [x] BUG-001–008
+P1 Flows:    [x] FLOW-001–020
+P1 UX:       [x] UX-001–007
+P2 UX:       [x] UX-008–018
+P3 UX:       [x] UX-019–025
 ```
 
 ---

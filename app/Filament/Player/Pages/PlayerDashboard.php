@@ -19,7 +19,14 @@ class PlayerDashboard extends Page
         return 'filament.player.pages.player-dashboard';
     }
 
-    protected static ?string $title = 'My Padel Profile';
+    public function getTitle(): string
+    {
+        $sport = auth()->user()?->preferred_sport;
+
+        return $sport
+            ? 'My '.ucfirst($sport).' Profile'
+            : 'My Profile';
+    }
 
     protected static ?string $navigationLabel = 'Dashboard';
 

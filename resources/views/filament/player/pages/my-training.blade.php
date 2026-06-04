@@ -1,4 +1,5 @@
 <x-filament-panels::page>
+@include('filament.player.partials.theme')
 @php
     $sessions = $this->getSessions();
 
@@ -63,6 +64,12 @@
         ];
     })->values();
 @endphp
+
+<div class="player-filter-bar">
+    @foreach(['upcoming' => 'Upcoming', 'past' => 'Past', 'all' => 'All'] as $key => $label)
+        <button type="button" wire:click="setTimeFilter('{{ $key }}')" class="player-filter-btn {{ $timeFilter === $key ? 'active' : '' }}">{{ $label }}</button>
+    @endforeach
+</div>
 
 <style>
 .tr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; }
@@ -155,11 +162,11 @@
 </div>
 
 @if ($sessionCards->isEmpty())
-    <div class="tr-empty">
-        <div style="font-size: 44px;">🎓</div>
-        <div style="font-weight: 800; font-size: 17px; margin-top: 10px;">No training sessions yet</div>
-        <div style="font-size: 13px; margin-top: 4px;">You have not been enrolled in any training sessions.</div>
-    </div>
+    @include('filament.player.partials.empty-state', [
+        'icon' => '🎓',
+        'title' => 'No training sessions in this view',
+        'body' => 'Browse academy sessions to enroll, or check another filter.',
+    ])
 @else
     <div class="tr-grid">
         @foreach ($sessionCards as $card)
@@ -261,7 +268,7 @@ function renderTrVideo(session, index) {
         return;
     }
 
-    videoWrap.innerHTML = `<div class="tr-mvideo"><iframe src="${current.embed_url}" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe></div>`;
+    videoWrap.innerHTML = `<div class="tr-mvideo"><iframe src="${current.embed_url}" title="Training video for session" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe></div>`;
 
     videoStrip.innerHTML = session.videos.length > 1
         ? `<div class="tr-video-strip">${session.videos.map((video, videoIndex) => `

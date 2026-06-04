@@ -1,4 +1,5 @@
 <x-filament-panels::page>
+@include('filament.player.partials.theme')
     @php
         $user = $this->getUser();
         $skill = $this->getSkillLabel();
@@ -151,7 +152,8 @@
                 </form>
             </div>
             <div style="text-align:right; font-size:13px;">
-                <div style="font-weight:700;">{{ $skill }}</div>
+                <a href="{{ \App\Filament\Player\Pages\PlayerProfile::getUrl() }}" class="text-sm underline opacity-90">Edit profile</a>
+                <div style="font-weight:700; margin-top:6px;">{{ $skill }}</div>
                 <div>Sport: {{ ucfirst($user->preferred_sport ?? 'padel') }}</div>
                 @if($user->date_of_birth)
                     <div>Born: {{ $user->date_of_birth->format('d M Y') }}</div>

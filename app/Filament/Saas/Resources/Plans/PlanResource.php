@@ -20,6 +20,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class PlanResource extends Resource
@@ -87,6 +88,18 @@ class PlanResource extends Resource
                 IconColumn::make('is_active')->boolean(),
             ])
             ->defaultSort('sort_order')
+            ->filters([
+                SelectFilter::make('is_active')
+                    ->label('Status')
+                    ->options([
+                        '1' => 'Active',
+                        '0' => 'Inactive',
+                    ])
+                    ->query(fn ($query, array $data) => $query->when(
+                        isset($data['value']) && $data['value'] !== '',
+                        fn ($q) => $q->where('is_active', (int) $data['value'] === 1)
+                    )),
+            ])
             ->actions([EditAction::make()])
             ->bulkActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }

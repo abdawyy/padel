@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Filament\Player\Pages\MyMatches;
 use App\Models\Booking;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -35,7 +36,7 @@ class BookingConfirmedNotification extends Notification implements ShouldQueue
             ->line("**Court:** {$court}".($club ? " at {$club}" : ''))
             ->line("**Date:** {$date}  |  **Time:** {$start} – {$end}")
             ->line("**Total:** {$booking->total_price} EGP")
-            ->action('View My Matches', url('/player/my-matches'))
+            ->action('View in Player Portal', MyMatches::getUrl(panel: 'player').'#booking-'.$booking->id)
             ->line('Thank you for booking with us!');
     }
 }

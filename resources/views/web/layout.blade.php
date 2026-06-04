@@ -62,6 +62,12 @@
     <div class="max-w-6xl mx-auto px-4 text-center text-sm">
         <p class="font-semibold text-white text-base mb-1">{{ config('app.name') }}</p>
         <p>The all-in-one sports academy management platform.</p>
+        <div class="flex flex-wrap justify-center gap-4 mt-4 text-gray-300">
+            <a href="{{ url('/player/login') }}" class="hover:text-white transition">Player login</a>
+            <a href="{{ url('/coach/login') }}" class="hover:text-white transition">Coach login</a>
+            <a href="{{ url('/admin/login') }}" class="hover:text-white transition">Academy admin</a>
+            <a href="{{ url('/saas/login') }}" class="hover:text-white transition">SaaS</a>
+        </div>
         <p class="mt-4">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
     </div>
 </footer>

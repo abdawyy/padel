@@ -9,6 +9,7 @@ use App\Filament\Player\Pages\MyPackages;
 use App\Filament\Player\Pages\MyTraining;
 use App\Filament\Player\Pages\OpenMatches;
 use App\Filament\Player\Pages\PlayerDashboard;
+use App\Filament\Player\Pages\PlayerProfile;
 use App\Http\Middleware\SetPlayerLocale;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -42,6 +43,7 @@ class PlayerPanelProvider extends PanelProvider
                 MyMatches::class,
                 OpenMatches::class,
                 BrowseAcademy::class,
+                PlayerProfile::class,
             ])
             ->middleware([
                 EncryptCookies::class,

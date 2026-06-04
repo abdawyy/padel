@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Bookings\Schemas;
 
 use App\Filament\Resources\PaymentTransactions\PaymentTransactionResource;
 use App\Models\Booking;
+use App\Support\Money;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
@@ -46,11 +47,25 @@ class BookingInfolist
                     ->url(fn (Booking $record): string => PaymentTransactionResource::getUrl('index', [
                         'tableFilters' => ['booking_id' => ['value' => $record->id]],
                     ])),
-                TextEntry::make('participants.name')
-                    ->label('Assigned Players')
-                    ->badge()
-                    ->separator(', ')
-                    ->placeholder('No players assigned yet')
+                TextEntry::make('participants_payment_summary')
+                    ->label('Participants & payment status')
+                    ->state(function (Booking $record): string {
+                        $record->loadMissing('participants');
+
+                        if ($record->participants->isEmpty()) {
+                            return 'No players assigned yet';
+                        }
+
+                        return $record->participants
+                            ->map(function ($participant): string {
+                                $status = ucfirst((string) ($participant->pivot->payment_status ?? 'pending'));
+                                $amount = Money::format($participant->pivot->amount_due ?? 0);
+
+                                return "{$participant->name}: {$status} ({$amount})";
+                            })
+                            ->join("\n");
+                    })
+                    ->listWithLineBreaks()
                     ->columnSpanFull(),
                 TextEntry::make('notes')
                     ->placeholder('-')

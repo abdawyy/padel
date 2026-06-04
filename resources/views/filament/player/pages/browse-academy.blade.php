@@ -1,4 +1,5 @@
 <x-filament-panels::page>
+@include('filament.player.partials.theme')
 @php
     $clubs = $this->getClubs();
     $sessions = $this->getSessions();
