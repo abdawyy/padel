@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Apr 26, 2026 at 07:29 AM
+-- Generation Time: Jun 14, 2026 at 01:06 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -37,6 +37,8 @@ CREATE TABLE `academy_sessions` (
   `sport_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'padel',
   `session_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'group_training',
   `skill_level` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `skill_min` tinyint UNSIGNED DEFAULT NULL COMMENT 'Min skill level to enroll (1-7)',
+  `skill_max` tinyint UNSIGNED DEFAULT NULL COMMENT 'Max skill level to enroll (1-7)',
   `start_time` datetime NOT NULL,
   `end_time` datetime NOT NULL,
   `max_players` smallint UNSIGNED NOT NULL DEFAULT '4',
@@ -54,42 +56,42 @@ CREATE TABLE `academy_sessions` (
 -- Dumping data for table `academy_sessions`
 --
 
-INSERT INTO `academy_sessions` (`id`, `club_id`, `court_id`, `coach_user_id`, `created_by_user_id`, `title`, `sport_type`, `session_type`, `skill_level`, `start_time`, `end_time`, `max_players`, `price_per_player`, `status`, `notes`, `session_plan`, `video_url`, `video_urls`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 7, 1, 'Weekend Boot Camp', 'squash', 'clinic', 'all_levels', '2026-05-14 21:02:46', '2026-05-14 23:02:46', 12, 30.00, 'scheduled', 'Consectetur a voluptate nulla sequi perspiciatis recusandae.', NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(2, 1, 1, 7, 1, 'Advanced Techniques', 'squash', 'clinic', 'advanced', '2026-04-25 02:32:42', '2026-04-25 03:32:42', 6, 30.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(3, 1, 1, 7, 1, 'Weekend Boot Camp', 'squash', 'clinic', NULL, '2026-05-30 00:33:15', '2026-05-30 02:03:15', 6, 40.00, 'completed', 'Optio quod et quod asperiores nihil est qui perspiciatis.', NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(4, 1, 1, 7, 1, 'Youth Training Session', 'squash', 'private_lesson', NULL, '2026-05-12 15:01:39', '2026-05-12 16:01:39', 4, 20.00, 'in_progress', NULL, NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(5, 1, 1, 7, 1, 'Ladies Morning Session', 'squash', 'clinic', NULL, '2026-05-07 18:07:03', '2026-05-07 19:07:03', 8, 40.00, 'cancelled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(6, 1, 1, 7, 1, 'Weekend Boot Camp', 'squash', 'clinic', 'intermediate', '2026-05-19 12:27:50', '2026-05-19 13:57:50', 6, 75.00, 'scheduled', 'Tenetur rem at minima eaque natus vel.', NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(7, 1, 1, 7, 1, 'Weekend Boot Camp', 'squash', 'group_training', 'advanced', '2026-04-30 07:38:30', '2026-04-30 09:08:30', 8, 40.00, 'completed', NULL, NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(8, 1, 1, 7, 1, 'Weekend Boot Camp', 'squash', 'group_training', NULL, '2026-04-28 06:57:37', '2026-04-28 08:27:37', 6, 75.00, 'completed', 'Quas earum tenetur ducimus animi illum cum error.', NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(9, 2, 5, 11, 1, 'Mixed Doubles Practice', 'squash', 'clinic', NULL, '2026-05-04 09:05:54', '2026-05-04 11:05:54', 8, 30.00, 'cancelled', 'Qui animi vero repellendus.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(10, 2, 5, 11, 1, 'Advanced Techniques', 'squash', 'group_training', 'all_levels', '2026-04-11 11:08:33', '2026-04-11 12:08:33', 12, 50.00, 'scheduled', 'Qui magnam dicta voluptate perspiciatis.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(11, 2, 5, 11, 1, 'Pro Players Workshop', 'squash', 'clinic', NULL, '2026-05-31 17:07:07', '2026-05-31 18:07:07', 6, 50.00, 'completed', 'Natus cumque ut quisquam nobis suscipit soluta.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(12, 2, 5, 11, 1, 'Mixed Doubles Practice', 'squash', 'clinic', 'advanced', '2026-05-17 23:54:29', '2026-05-18 01:54:29', 10, 75.00, 'cancelled', 'Cupiditate ut voluptas qui ut voluptatum voluptates et.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(13, 2, 5, 11, 1, 'Fitness & Padel', 'squash', 'private_lesson', NULL, '2026-05-04 01:48:20', '2026-05-04 03:18:20', 10, 40.00, 'completed', 'Veniam saepe totam porro.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(14, 2, 5, 11, 1, 'Mixed Doubles Practice', 'squash', 'group_training', NULL, '2026-05-07 13:17:39', '2026-05-07 15:17:39', 10, 50.00, 'scheduled', 'Labore harum officia tenetur ut laboriosam et in.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(15, 3, 8, 11, 1, 'Pro Players Workshop', 'padel', 'tournament', NULL, '2026-05-18 04:19:39', '2026-05-18 05:19:39', 4, 75.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(16, 3, 8, 11, 1, 'Youth Training Session', 'padel', 'private_lesson', NULL, '2026-05-01 10:59:20', '2026-05-01 11:59:20', 12, 30.00, 'completed', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(17, 3, 8, 11, 1, 'Advanced Techniques', 'padel', 'group_training', NULL, '2026-05-01 10:08:01', '2026-05-01 11:08:01', 6, 20.00, 'scheduled', 'Sit optio et blanditiis adipisci dolorem vel qui.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(18, 3, 8, 11, 1, 'Advanced Techniques', 'padel', 'private_lesson', 'advanced', '2026-04-12 03:56:39', '2026-04-12 04:56:39', 12, 20.00, 'scheduled', 'Ut quibusdam sit enim voluptates delectus dolores accusantium.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(19, 3, 8, 11, 1, 'Ladies Morning Session', 'padel', 'group_training', NULL, '2026-05-13 21:15:35', '2026-05-13 23:15:35', 10, 20.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(20, 3, 8, 11, 1, 'Advanced Techniques', 'padel', 'tournament', NULL, '2026-04-20 13:23:26', '2026-04-20 14:53:26', 6, 50.00, 'scheduled', 'Officia et quaerat itaque.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(21, 3, 8, 11, 1, 'Beginner Padel Clinic', 'padel', 'tournament', NULL, '2026-05-23 01:44:11', '2026-05-23 03:14:11', 4, 40.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(22, 4, 12, 10, 1, 'Pro Players Workshop', 'tennis', 'private_lesson', NULL, '2026-05-01 14:20:44', '2026-05-01 16:20:44', 4, 30.00, 'scheduled', 'Voluptate quas pariatur doloribus tenetur.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(23, 4, 12, 10, 1, 'Advanced Techniques', 'tennis', 'clinic', 'all_levels', '2026-05-16 18:08:54', '2026-05-16 20:08:54', 10, 20.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(24, 4, 12, 10, 1, 'Advanced Techniques', 'tennis', 'tournament', 'advanced', '2026-05-10 18:02:14', '2026-05-10 20:02:14', 12, 30.00, 'cancelled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(25, 4, 12, 10, 1, 'Fitness & Padel', 'tennis', 'group_training', 'all_levels', '2026-05-13 05:43:36', '2026-05-13 07:43:36', 6, 50.00, 'cancelled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(26, 4, 12, 10, 1, 'Pro Players Workshop', 'tennis', 'tournament', NULL, '2026-05-28 18:01:46', '2026-05-28 19:01:46', 8, 40.00, 'scheduled', 'Ut incidunt sit earum magni blanditiis laboriosam.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(27, 4, 12, 10, 1, 'Fitness & Padel', 'tennis', 'tournament', NULL, '2026-04-21 14:03:26', '2026-04-21 15:03:26', 4, 50.00, 'scheduled', 'Iste vitae sequi veniam eius eos ducimus voluptates.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(28, 5, 15, 2, 1, 'Youth Training Session', 'padel', 'tournament', NULL, '2026-05-22 21:41:45', '2026-05-22 22:41:45', 10, 50.00, 'scheduled', 'Nam et modi assumenda vel culpa modi.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(29, 5, 15, 2, 1, 'Pro Players Workshop', 'padel', 'tournament', NULL, '2026-05-29 01:43:11', '2026-05-29 03:13:11', 4, 20.00, 'cancelled', 'Dolor dolorem recusandae autem quia.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(30, 5, 15, 2, 1, 'Pro Players Workshop', 'padel', 'group_training', NULL, '2026-05-26 03:46:29', '2026-05-26 05:16:29', 4, 50.00, 'in_progress', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(31, 5, 15, 2, 1, 'Beginner Padel Clinic', 'padel', 'private_lesson', NULL, '2026-04-18 10:24:14', '2026-04-18 11:24:14', 12, 30.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(32, 5, 15, 2, 1, 'Advanced Techniques', 'padel', 'private_lesson', NULL, '2026-05-31 15:29:35', '2026-05-31 16:59:35', 4, 30.00, 'in_progress', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(33, 5, 15, 2, 1, 'Weekend Boot Camp', 'padel', 'group_training', NULL, '2026-04-25 11:13:54', '2026-04-25 13:13:54', 10, 40.00, 'scheduled', 'Facere sit earum nulla voluptate est ipsum similique.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(34, 5, 15, 2, 1, 'Ladies Morning Session', 'padel', 'clinic', NULL, '2026-05-21 23:40:25', '2026-05-22 00:40:25', 12, 75.00, 'cancelled', 'Iste corporis sequi sed nihil.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(35, 5, 15, 2, 1, 'Ladies Morning Session', 'padel', 'clinic', NULL, '2026-04-22 10:26:41', '2026-04-22 12:26:41', 4, 30.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21');
+INSERT INTO `academy_sessions` (`id`, `club_id`, `court_id`, `coach_user_id`, `created_by_user_id`, `title`, `sport_type`, `session_type`, `skill_level`, `skill_min`, `skill_max`, `start_time`, `end_time`, `max_players`, `price_per_player`, `status`, `notes`, `session_plan`, `video_url`, `video_urls`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 7, 1, 'Weekend Boot Camp', 'squash', 'clinic', 'all_levels', NULL, NULL, '2026-05-14 21:02:46', '2026-05-14 23:02:46', 12, 30.00, 'scheduled', 'Consectetur a voluptate nulla sequi perspiciatis recusandae.', NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(2, 1, 1, 7, 1, 'Advanced Techniques', 'squash', 'clinic', 'advanced', NULL, NULL, '2026-04-25 02:32:42', '2026-04-25 03:32:42', 6, 30.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(3, 1, 1, 7, 1, 'Weekend Boot Camp', 'squash', 'clinic', NULL, NULL, NULL, '2026-05-30 00:33:15', '2026-05-30 02:03:15', 6, 40.00, 'completed', 'Optio quod et quod asperiores nihil est qui perspiciatis.', NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(4, 1, 1, 7, 1, 'Youth Training Session', 'squash', 'private_lesson', NULL, NULL, NULL, '2026-05-12 15:01:39', '2026-05-12 16:01:39', 4, 20.00, 'in_progress', NULL, NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(5, 1, 1, 7, 1, 'Ladies Morning Session', 'squash', 'clinic', NULL, NULL, NULL, '2026-05-07 18:07:03', '2026-05-07 19:07:03', 8, 40.00, 'cancelled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(6, 1, 1, 7, 1, 'Weekend Boot Camp', 'squash', 'clinic', 'intermediate', NULL, NULL, '2026-05-19 12:27:50', '2026-05-19 13:57:50', 6, 75.00, 'scheduled', 'Tenetur rem at minima eaque natus vel.', NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(7, 1, 1, 7, 1, 'Weekend Boot Camp', 'squash', 'group_training', 'advanced', NULL, NULL, '2026-04-30 07:38:30', '2026-04-30 09:08:30', 8, 40.00, 'completed', NULL, NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(8, 1, 1, 7, 1, 'Weekend Boot Camp', 'squash', 'group_training', NULL, NULL, NULL, '2026-04-28 06:57:37', '2026-04-28 08:27:37', 6, 75.00, 'completed', 'Quas earum tenetur ducimus animi illum cum error.', NULL, NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(9, 2, 5, 11, 1, 'Mixed Doubles Practice', 'squash', 'clinic', NULL, NULL, NULL, '2026-05-04 09:05:54', '2026-05-04 11:05:54', 8, 30.00, 'cancelled', 'Qui animi vero repellendus.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(10, 2, 5, 11, 1, 'Advanced Techniques', 'squash', 'group_training', 'all_levels', NULL, NULL, '2026-04-11 11:08:33', '2026-04-11 12:08:33', 12, 50.00, 'scheduled', 'Qui magnam dicta voluptate perspiciatis.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(11, 2, 5, 11, 1, 'Pro Players Workshop', 'squash', 'clinic', NULL, NULL, NULL, '2026-05-31 17:07:07', '2026-05-31 18:07:07', 6, 50.00, 'completed', 'Natus cumque ut quisquam nobis suscipit soluta.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(12, 2, 5, 11, 1, 'Mixed Doubles Practice', 'squash', 'clinic', 'advanced', NULL, NULL, '2026-05-17 23:54:29', '2026-05-18 01:54:29', 10, 75.00, 'cancelled', 'Cupiditate ut voluptas qui ut voluptatum voluptates et.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(13, 2, 5, 11, 1, 'Fitness & Padel', 'squash', 'private_lesson', NULL, NULL, NULL, '2026-05-04 01:48:20', '2026-05-04 03:18:20', 10, 40.00, 'completed', 'Veniam saepe totam porro.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(14, 2, 5, 11, 1, 'Mixed Doubles Practice', 'squash', 'group_training', NULL, NULL, NULL, '2026-05-07 13:17:39', '2026-05-07 15:17:39', 10, 50.00, 'scheduled', 'Labore harum officia tenetur ut laboriosam et in.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(15, 3, 8, 11, 1, 'Pro Players Workshop', 'padel', 'tournament', NULL, NULL, NULL, '2026-05-18 04:19:39', '2026-05-18 05:19:39', 4, 75.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(16, 3, 8, 11, 1, 'Youth Training Session', 'padel', 'private_lesson', NULL, NULL, NULL, '2026-05-01 10:59:20', '2026-05-01 11:59:20', 12, 30.00, 'completed', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(17, 3, 8, 11, 1, 'Advanced Techniques', 'padel', 'group_training', NULL, NULL, NULL, '2026-05-01 10:08:01', '2026-05-01 11:08:01', 6, 20.00, 'scheduled', 'Sit optio et blanditiis adipisci dolorem vel qui.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(18, 3, 8, 11, 1, 'Advanced Techniques', 'padel', 'private_lesson', 'advanced', NULL, NULL, '2026-04-12 03:56:39', '2026-04-12 04:56:39', 12, 20.00, 'scheduled', 'Ut quibusdam sit enim voluptates delectus dolores accusantium.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(19, 3, 8, 11, 1, 'Ladies Morning Session', 'padel', 'group_training', NULL, NULL, NULL, '2026-05-13 21:15:35', '2026-05-13 23:15:35', 10, 20.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(20, 3, 8, 11, 1, 'Advanced Techniques', 'padel', 'tournament', NULL, NULL, NULL, '2026-04-20 13:23:26', '2026-04-20 14:53:26', 6, 50.00, 'scheduled', 'Officia et quaerat itaque.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(21, 3, 8, 11, 1, 'Beginner Padel Clinic', 'padel', 'tournament', NULL, NULL, NULL, '2026-05-23 01:44:11', '2026-05-23 03:14:11', 4, 40.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(22, 4, 12, 10, 1, 'Pro Players Workshop', 'tennis', 'private_lesson', NULL, NULL, NULL, '2026-05-01 14:20:44', '2026-05-01 16:20:44', 4, 30.00, 'scheduled', 'Voluptate quas pariatur doloribus tenetur.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(23, 4, 12, 10, 1, 'Advanced Techniques', 'tennis', 'clinic', 'all_levels', NULL, NULL, '2026-05-16 18:08:54', '2026-05-16 20:08:54', 10, 20.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(24, 4, 12, 10, 1, 'Advanced Techniques', 'tennis', 'tournament', 'advanced', NULL, NULL, '2026-05-10 18:02:14', '2026-05-10 20:02:14', 12, 30.00, 'cancelled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(25, 4, 12, 10, 1, 'Fitness & Padel', 'tennis', 'group_training', 'all_levels', NULL, NULL, '2026-05-13 05:43:36', '2026-05-13 07:43:36', 6, 50.00, 'cancelled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(26, 4, 12, 10, 1, 'Pro Players Workshop', 'tennis', 'tournament', NULL, NULL, NULL, '2026-05-28 18:01:46', '2026-05-28 19:01:46', 8, 40.00, 'scheduled', 'Ut incidunt sit earum magni blanditiis laboriosam.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(27, 4, 12, 10, 1, 'Fitness & Padel', 'tennis', 'tournament', NULL, NULL, NULL, '2026-04-21 14:03:26', '2026-04-21 15:03:26', 4, 50.00, 'scheduled', 'Iste vitae sequi veniam eius eos ducimus voluptates.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(28, 5, 15, 2, 1, 'Youth Training Session', 'padel', 'tournament', NULL, NULL, NULL, '2026-05-22 21:41:45', '2026-05-22 22:41:45', 10, 50.00, 'scheduled', 'Nam et modi assumenda vel culpa modi.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(29, 5, 15, 2, 1, 'Pro Players Workshop', 'padel', 'tournament', NULL, NULL, NULL, '2026-05-29 01:43:11', '2026-05-29 03:13:11', 4, 20.00, 'cancelled', 'Dolor dolorem recusandae autem quia.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(30, 5, 15, 2, 1, 'Pro Players Workshop', 'padel', 'group_training', NULL, NULL, NULL, '2026-05-26 03:46:29', '2026-05-26 05:16:29', 4, 50.00, 'in_progress', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(31, 5, 15, 2, 1, 'Beginner Padel Clinic', 'padel', 'private_lesson', NULL, NULL, NULL, '2026-04-18 10:24:14', '2026-04-18 11:24:14', 12, 30.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(32, 5, 15, 2, 1, 'Advanced Techniques', 'padel', 'private_lesson', NULL, NULL, NULL, '2026-05-31 15:29:35', '2026-05-31 16:59:35', 4, 30.00, 'in_progress', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(33, 5, 15, 2, 1, 'Weekend Boot Camp', 'padel', 'group_training', NULL, NULL, NULL, '2026-04-25 11:13:54', '2026-04-25 13:13:54', 10, 40.00, 'scheduled', 'Facere sit earum nulla voluptate est ipsum similique.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(34, 5, 15, 2, 1, 'Ladies Morning Session', 'padel', 'clinic', NULL, NULL, NULL, '2026-05-21 23:40:25', '2026-05-22 00:40:25', 12, 75.00, 'cancelled', 'Iste corporis sequi sed nihil.', NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(35, 5, 15, 2, 1, 'Ladies Morning Session', 'padel', 'clinic', NULL, NULL, NULL, '2026-04-22 10:26:41', '2026-04-22 12:26:41', 4, 30.00, 'scheduled', NULL, NULL, NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21');
 
 -- --------------------------------------------------------
 
@@ -127,6 +129,8 @@ CREATE TABLE `bookings` (
   `session_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'standard',
   `max_players` smallint UNSIGNED NOT NULL DEFAULT '4',
   `skill_level` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `skill_min` tinyint UNSIGNED DEFAULT NULL COMMENT 'Min skill level to join (1-7)',
+  `skill_max` tinyint UNSIGNED DEFAULT NULL COMMENT 'Max skill level to join (1-7)',
   `status` enum('pending','confirmed','cancelled') COLLATE utf8mb4_unicode_ci NOT NULL,
   `notes` text COLLATE utf8mb4_unicode_ci,
   `deleted_at` timestamp NULL DEFAULT NULL,
@@ -138,213 +142,213 @@ CREATE TABLE `bookings` (
 -- Dumping data for table `bookings`
 --
 
-INSERT INTO `bookings` (`id`, `court_id`, `sport_type`, `owner_user_id`, `coach_user_id`, `start_time`, `end_time`, `total_price`, `coach_fee`, `match_type`, `session_type`, `max_players`, `skill_level`, `status`, `notes`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, 1, 'squash', 19, NULL, '2026-05-19 16:24:31', '2026-05-19 17:24:31', 75.00, 0.00, 'private', 'coached', 4, 'advanced', 'confirmed', 'Odit quo et consequatur optio neque labore harum.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(2, 1, 'squash', 19, NULL, '2026-03-30 12:03:28', '2026-03-30 13:33:28', 225.00, 0.00, 'open_match', 'academy', 4, 'beginner', 'pending', 'Nemo qui esse eligendi sapiente est saepe quia labore.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(3, 1, 'squash', 19, NULL, '2026-04-11 10:56:51', '2026-04-11 12:56:51', 200.00, 0.00, 'open_match', 'coached', 4, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(4, 1, 'squash', 19, NULL, '2026-04-19 07:23:40', '2026-04-19 08:53:40', 180.00, 0.00, 'private', 'academy', 2, NULL, 'cancelled', 'Sint consequatur quia vero voluptates sequi.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(5, 1, 'squash', 19, NULL, '2026-05-18 03:18:18', '2026-05-18 04:48:18', 225.00, 0.00, 'private', 'academy', 2, 'intermediate', 'confirmed', 'Molestias sunt consequatur et voluptatem ullam quidem.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(6, 1, 'squash', 19, NULL, '2026-04-16 18:57:50', '2026-04-16 20:57:50', 200.00, 0.00, 'private', 'academy', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(7, 1, 'squash', 19, NULL, '2026-04-04 21:43:25', '2026-04-04 23:13:25', 75.00, 0.00, 'private', 'academy', 4, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(8, 1, 'squash', 19, NULL, '2026-05-06 20:55:47', '2026-05-06 22:25:47', 112.50, 0.00, 'private', 'standard', 2, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(9, 1, 'squash', 19, NULL, '2026-04-16 13:10:03', '2026-04-16 15:10:03', 240.00, 0.00, 'private', 'academy', 2, NULL, 'confirmed', 'Ut voluptas deserunt pariatur pariatur alias placeat.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(10, 1, 'squash', 19, NULL, '2026-03-29 15:18:45', '2026-03-29 17:18:45', 100.00, 0.00, 'open_match', 'standard', 4, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(11, 1, 'squash', 19, NULL, '2026-04-05 23:40:31', '2026-04-06 01:10:31', 225.00, 0.00, 'private', 'coached', 2, NULL, 'pending', 'Est et corporis a possimus quia qui nihil.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(12, 1, 'squash', 19, NULL, '2026-04-19 14:40:38', '2026-04-19 16:10:38', 112.50, 0.00, 'private', 'academy', 2, 'advanced', 'confirmed', 'Et quam facere dolores nam aut magni.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(13, 1, 'squash', 19, NULL, '2026-05-05 15:08:48', '2026-05-05 17:08:48', 150.00, 0.00, 'open_match', 'academy', 4, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(14, 1, 'squash', 19, NULL, '2026-04-22 13:27:21', '2026-04-22 14:27:21', 75.00, 0.00, 'private', 'standard', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(15, 2, 'squash', 24, NULL, '2026-05-14 01:03:00', '2026-05-14 02:03:00', 100.00, 0.00, 'open_match', 'coached', 2, 'intermediate', 'pending', 'Voluptatem aliquam non officia voluptates maiores facilis laborum dolor.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(16, 2, 'squash', 24, NULL, '2026-04-16 11:30:42', '2026-04-16 12:30:42', 50.00, 0.00, 'private', 'standard', 4, 'advanced', 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(17, 2, 'squash', 24, NULL, '2026-04-30 07:43:15', '2026-04-30 08:43:15', 120.00, 0.00, 'open_match', 'coached', 2, 'advanced', 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(18, 2, 'squash', 24, NULL, '2026-05-02 03:58:09', '2026-05-02 05:58:09', 200.00, 0.00, 'open_match', 'standard', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(19, 2, 'squash', 24, NULL, '2026-05-12 22:13:03', '2026-05-12 23:13:03', 100.00, 0.00, 'private', 'academy', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(20, 2, 'squash', 24, NULL, '2026-05-12 11:00:26', '2026-05-12 12:30:26', 225.00, 0.00, 'private', 'academy', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(21, 2, 'squash', 24, NULL, '2026-04-19 12:04:35', '2026-04-19 13:04:35', 75.00, 0.00, 'private', 'coached', 4, 'advanced', 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(22, 2, 'squash', 24, NULL, '2026-04-26 23:32:01', '2026-04-27 00:32:01', 120.00, 0.00, 'open_match', 'standard', 4, 'beginner', 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(23, 3, 'squash', 35, NULL, '2026-04-24 09:29:49', '2026-04-24 10:59:49', 112.50, 0.00, 'private', 'standard', 2, NULL, 'confirmed', 'Sunt hic voluptates et quod dicta rerum iste.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(24, 3, 'squash', 35, NULL, '2026-04-22 19:41:47', '2026-04-22 20:41:47', 120.00, 0.00, 'open_match', 'standard', 2, NULL, 'confirmed', 'Delectus placeat qui corrupti ut voluptas facilis magni.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(25, 3, 'squash', 35, NULL, '2026-05-10 12:50:13', '2026-05-10 13:50:13', 75.00, 0.00, 'open_match', 'standard', 2, 'beginner', 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(26, 3, 'squash', 35, NULL, '2026-04-27 21:14:56', '2026-04-27 22:44:56', 75.00, 0.00, 'open_match', 'academy', 4, 'beginner', 'cancelled', 'Ratione repudiandae saepe ea soluta est.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(27, 3, 'squash', 35, NULL, '2026-03-30 19:22:01', '2026-03-30 20:52:01', 112.50, 0.00, 'open_match', 'standard', 4, NULL, 'confirmed', 'Hic in sed et repellendus consequatur ipsam porro.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(28, 3, 'squash', 35, NULL, '2026-05-24 18:17:50', '2026-05-24 19:47:50', 180.00, 0.00, 'private', 'standard', 2, 'advanced', 'pending', 'Officiis voluptas reiciendis hic et officia esse quisquam.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(29, 3, 'squash', 35, NULL, '2026-05-18 22:10:33', '2026-05-19 00:10:33', 100.00, 0.00, 'open_match', 'academy', 2, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(30, 3, 'squash', 35, NULL, '2026-04-06 06:28:31', '2026-04-06 07:28:31', 50.00, 0.00, 'open_match', 'standard', 2, NULL, 'confirmed', 'Rem reiciendis quia at architecto ipsa ea.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(31, 3, 'squash', 35, NULL, '2026-05-03 21:52:22', '2026-05-03 23:52:22', 300.00, 0.00, 'open_match', 'standard', 2, NULL, 'pending', 'Consectetur minima quo quos et at ut.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(32, 3, 'squash', 35, NULL, '2026-05-17 20:18:09', '2026-05-17 21:18:09', 75.00, 0.00, 'private', 'coached', 4, 'advanced', 'confirmed', 'Magni sed quia ut quia.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(33, 3, 'squash', 35, NULL, '2026-04-09 18:36:25', '2026-04-09 19:36:25', 100.00, 0.00, 'private', 'academy', 2, 'advanced', 'pending', 'Autem dicta provident labore ut non.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(34, 3, 'squash', 35, NULL, '2026-04-13 03:56:27', '2026-04-13 04:56:27', 75.00, 0.00, 'private', 'academy', 4, 'advanced', 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(35, 3, 'squash', 35, NULL, '2026-05-06 08:02:45', '2026-05-06 10:02:45', 240.00, 0.00, 'private', 'academy', 4, 'intermediate', 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(36, 3, 'squash', 35, NULL, '2026-05-21 04:01:26', '2026-05-21 05:01:26', 100.00, 0.00, 'private', 'standard', 2, NULL, 'cancelled', 'Sunt odio quia temporibus a labore id harum facilis.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(37, 3, 'squash', 35, NULL, '2026-03-31 06:38:41', '2026-03-31 07:38:41', 150.00, 0.00, 'open_match', 'coached', 4, NULL, 'confirmed', 'Tenetur cum ut sapiente accusamus.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(38, 4, 'squash', 61, NULL, '2026-05-14 16:59:18', '2026-05-14 18:59:18', 100.00, 0.00, 'private', 'standard', 4, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(39, 4, 'squash', 61, NULL, '2026-04-17 19:00:16', '2026-04-17 20:00:16', 120.00, 0.00, 'open_match', 'academy', 4, 'intermediate', 'confirmed', 'Voluptas sint aut molestiae ut est cupiditate.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(40, 4, 'squash', 61, NULL, '2026-05-21 13:30:59', '2026-05-21 14:30:59', 50.00, 0.00, 'private', 'standard', 2, NULL, 'confirmed', 'Ab quos odit eius autem praesentium perspiciatis repellendus dolores.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(41, 4, 'squash', 61, NULL, '2026-05-16 07:28:54', '2026-05-16 09:28:54', 240.00, 0.00, 'private', 'academy', 4, NULL, 'confirmed', 'Praesentium voluptas adipisci magnam dolorem consectetur.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(42, 4, 'squash', 61, NULL, '2026-03-28 12:45:13', '2026-03-28 14:45:13', 150.00, 0.00, 'private', 'academy', 4, 'intermediate', 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(43, 4, 'squash', 61, NULL, '2026-04-08 22:50:10', '2026-04-09 00:50:10', 150.00, 0.00, 'open_match', 'academy', 4, NULL, 'confirmed', 'Est quisquam et blanditiis aut provident est.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(44, 4, 'squash', 61, NULL, '2026-05-08 19:16:28', '2026-05-08 21:16:28', 300.00, 0.00, 'private', 'academy', 4, 'beginner', 'confirmed', 'Voluptas aperiam sed consequatur quis distinctio.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(45, 4, 'squash', 61, NULL, '2026-03-26 13:35:58', '2026-03-26 15:05:58', 150.00, 0.00, 'open_match', 'coached', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(46, 4, 'squash', 61, NULL, '2026-03-25 23:49:11', '2026-03-26 01:19:11', 75.00, 0.00, 'private', 'coached', 4, 'advanced', 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(47, 4, 'squash', 61, NULL, '2026-04-06 20:58:07', '2026-04-06 22:28:07', 225.00, 0.00, 'open_match', 'standard', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(48, 4, 'squash', 61, NULL, '2026-05-06 18:24:41', '2026-05-06 19:54:41', 180.00, 0.00, 'private', 'coached', 2, 'intermediate', 'confirmed', 'Cumque voluptatem magni iusto dignissimos minima dolores eum.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(49, 4, 'squash', 61, NULL, '2026-04-29 04:25:31', '2026-04-29 05:25:31', 100.00, 0.00, 'private', 'coached', 4, 'advanced', 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(50, 4, 'squash', 61, NULL, '2026-04-14 02:09:51', '2026-04-14 03:09:51', 100.00, 0.00, 'open_match', 'coached', 4, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(51, 4, 'squash', 61, NULL, '2026-04-14 16:02:48', '2026-04-14 17:32:48', 75.00, 0.00, 'open_match', 'coached', 2, 'advanced', 'cancelled', 'Illo sit excepturi vel excepturi non.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(52, 4, 'squash', 61, NULL, '2026-04-02 18:56:38', '2026-04-02 20:26:38', 225.00, 0.00, 'open_match', 'coached', 4, NULL, 'confirmed', 'Et maiores et quo minima doloribus.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(53, 5, 'squash', 24, 3, '2026-04-05 06:05:28', '2026-04-05 08:05:28', 100.00, 0.00, 'private', 'coached', 4, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(54, 5, 'squash', 24, 3, '2026-05-14 03:10:29', '2026-05-14 04:10:29', 150.00, 0.00, 'private', 'coached', 4, 'beginner', 'cancelled', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(55, 5, 'squash', 24, 3, '2026-05-24 09:30:02', '2026-05-24 11:30:02', 300.00, 0.00, 'private', 'academy', 4, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(56, 5, 'squash', 24, 3, '2026-05-03 23:21:53', '2026-05-04 00:21:53', 50.00, 0.00, 'private', 'standard', 4, 'intermediate', 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(57, 5, 'squash', 24, 3, '2026-05-08 23:06:29', '2026-05-09 00:36:29', 225.00, 0.00, 'open_match', 'academy', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(58, 5, 'squash', 24, 3, '2026-03-26 07:14:17', '2026-03-26 09:14:17', 240.00, 0.00, 'private', 'academy', 2, NULL, 'confirmed', 'Est maiores magnam commodi ut et ut illo quia.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(59, 5, 'squash', 24, 3, '2026-05-05 12:49:33', '2026-05-05 14:19:33', 150.00, 0.00, 'private', 'academy', 4, 'beginner', 'confirmed', 'Totam quod tempora sed et eos soluta.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(60, 5, 'squash', 24, 3, '2026-04-09 02:16:37', '2026-04-09 04:16:37', 300.00, 0.00, 'private', 'standard', 2, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(61, 5, 'squash', 24, 3, '2026-05-24 06:06:16', '2026-05-24 07:36:16', 75.00, 0.00, 'open_match', 'standard', 2, NULL, 'confirmed', 'Consequuntur rerum incidunt dolore.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(62, 5, 'squash', 24, 3, '2026-05-03 06:19:00', '2026-05-03 07:19:00', 150.00, 0.00, 'private', 'standard', 4, 'beginner', 'cancelled', 'Qui vero qui iste voluptas iure.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(63, 6, 'squash', 23, NULL, '2026-05-01 22:18:54', '2026-05-01 23:48:54', 112.50, 0.00, 'private', 'coached', 4, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(64, 6, 'squash', 23, NULL, '2026-03-30 05:37:53', '2026-03-30 07:37:53', 100.00, 0.00, 'private', 'academy', 2, 'intermediate', 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(65, 6, 'squash', 23, NULL, '2026-05-03 02:09:29', '2026-05-03 04:09:29', 300.00, 0.00, 'open_match', 'academy', 2, 'advanced', 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(66, 6, 'squash', 23, NULL, '2026-04-01 14:45:49', '2026-04-01 15:45:49', 50.00, 0.00, 'private', 'coached', 4, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(67, 6, 'squash', 23, NULL, '2026-05-11 01:57:10', '2026-05-11 03:27:10', 180.00, 0.00, 'open_match', 'coached', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(68, 6, 'squash', 23, NULL, '2026-05-13 05:03:29', '2026-05-13 06:33:29', 150.00, 0.00, 'private', 'academy', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(69, 6, 'squash', 23, NULL, '2026-04-30 10:39:11', '2026-04-30 11:39:11', 75.00, 0.00, 'open_match', 'coached', 4, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(70, 6, 'squash', 23, NULL, '2026-05-08 17:44:06', '2026-05-08 18:44:06', 120.00, 0.00, 'private', 'coached', 2, 'advanced', 'confirmed', 'Aut voluptatem blanditiis nihil velit.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(71, 6, 'squash', 23, NULL, '2026-04-12 08:55:47', '2026-04-12 10:55:47', 240.00, 0.00, 'private', 'coached', 4, 'advanced', 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(72, 6, 'squash', 23, NULL, '2026-05-13 21:34:55', '2026-05-13 22:34:55', 120.00, 0.00, 'private', 'coached', 4, 'advanced', 'cancelled', 'Ut quia sequi eum sed.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(73, 6, 'squash', 23, NULL, '2026-04-13 03:52:08', '2026-04-13 04:52:08', 150.00, 0.00, 'open_match', 'standard', 4, 'advanced', 'confirmed', 'Nobis perferendis modi eum.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(74, 6, 'squash', 23, NULL, '2026-04-21 16:44:57', '2026-04-21 18:14:57', 75.00, 0.00, 'open_match', 'academy', 4, NULL, 'confirmed', 'Cumque aut provident eligendi.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(75, 6, 'squash', 23, NULL, '2026-04-01 07:10:40', '2026-04-01 09:10:40', 200.00, 0.00, 'open_match', 'coached', 4, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(76, 7, 'squash', 21, 10, '2026-05-04 16:05:15', '2026-05-04 18:05:15', 150.00, 0.00, 'open_match', 'standard', 2, NULL, 'confirmed', 'Dignissimos architecto non aut quidem laudantium saepe.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(77, 7, 'squash', 21, 10, '2026-05-15 07:56:25', '2026-05-15 08:56:25', 50.00, 0.00, 'private', 'coached', 2, 'intermediate', 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(78, 7, 'squash', 21, 10, '2026-05-20 17:45:50', '2026-05-20 19:45:50', 150.00, 0.00, 'open_match', 'standard', 2, 'beginner', 'confirmed', 'Voluptatibus in vitae qui accusantium perspiciatis cum.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(79, 7, 'squash', 21, 10, '2026-04-02 00:58:08', '2026-04-02 02:58:08', 240.00, 0.00, 'open_match', 'coached', 2, 'intermediate', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(80, 7, 'squash', 21, 10, '2026-04-18 16:03:13', '2026-04-18 18:03:13', 300.00, 0.00, 'open_match', 'academy', 4, NULL, 'confirmed', 'Accusamus unde iusto et fugit eligendi omnis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(81, 7, 'squash', 21, 10, '2026-04-14 06:39:23', '2026-04-14 08:09:23', 150.00, 0.00, 'open_match', 'academy', 4, 'advanced', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(82, 7, 'squash', 21, 10, '2026-04-16 19:42:35', '2026-04-16 21:42:35', 300.00, 0.00, 'open_match', 'academy', 2, 'advanced', 'confirmed', 'Non tempore aut voluptatem.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(83, 7, 'squash', 21, 10, '2026-05-06 08:14:20', '2026-05-06 09:44:20', 225.00, 0.00, 'open_match', 'coached', 4, NULL, 'confirmed', 'Voluptate asperiores placeat qui sint.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(84, 7, 'squash', 21, 10, '2026-05-16 04:56:22', '2026-05-16 05:56:22', 150.00, 0.00, 'open_match', 'coached', 2, 'intermediate', 'pending', 'Officiis necessitatibus expedita consequatur atque nihil dicta quis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(85, 7, 'squash', 21, 10, '2026-04-26 20:00:21', '2026-04-26 22:00:21', 240.00, 0.00, 'open_match', 'standard', 4, 'beginner', 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(86, 7, 'squash', 21, 10, '2026-04-17 12:17:00', '2026-04-17 14:17:00', 100.00, 0.00, 'private', 'coached', 4, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(87, 7, 'squash', 21, 10, '2026-05-22 15:17:17', '2026-05-22 16:47:17', 150.00, 0.00, 'open_match', 'academy', 2, NULL, 'cancelled', 'Hic et autem et ut ut consequatur ut voluptas.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(88, 7, 'squash', 21, 10, '2026-04-24 14:19:02', '2026-04-24 15:19:02', 75.00, 0.00, 'private', 'academy', 2, NULL, 'confirmed', 'Consequatur aliquid ipsum est repellendus molestiae dolore tempora sunt.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(89, 7, 'squash', 21, 10, '2026-04-19 21:47:33', '2026-04-19 23:17:33', 75.00, 0.00, 'private', 'coached', 4, 'beginner', 'confirmed', 'Facere modi iste nam molestias deleniti aperiam non.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(90, 7, 'squash', 21, 10, '2026-04-30 03:08:44', '2026-04-30 04:38:44', 180.00, 0.00, 'open_match', 'standard', 4, 'beginner', 'confirmed', 'Voluptate illo voluptatem voluptatem rerum eius iure.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(91, 8, 'padel', 52, 7, '2026-04-22 12:45:00', '2026-04-22 13:45:00', 100.00, 0.00, 'private', 'standard', 4, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(92, 8, 'padel', 52, 7, '2026-03-29 12:39:18', '2026-03-29 13:39:18', 150.00, 0.00, 'open_match', 'standard', 4, NULL, 'confirmed', 'Occaecati est error natus amet sed.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(93, 8, 'padel', 52, 7, '2026-05-05 00:52:00', '2026-05-05 02:52:00', 150.00, 0.00, 'open_match', 'standard', 4, NULL, 'confirmed', 'Tempore dolore deleniti reprehenderit officiis sit voluptatem voluptatibus.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(94, 8, 'padel', 52, 7, '2026-04-02 19:58:45', '2026-04-02 21:58:45', 150.00, 0.00, 'private', 'academy', 4, NULL, 'confirmed', 'Porro dolor a voluptate nostrum.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(95, 8, 'padel', 52, 7, '2026-05-02 19:33:15', '2026-05-02 20:33:15', 150.00, 0.00, 'open_match', 'standard', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(96, 8, 'padel', 52, 7, '2026-03-29 12:55:45', '2026-03-29 14:55:45', 150.00, 0.00, 'open_match', 'standard', 4, 'intermediate', 'cancelled', 'Laudantium et dolor soluta ex perferendis eum.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(97, 8, 'padel', 52, 7, '2026-04-14 22:00:58', '2026-04-14 23:30:58', 75.00, 0.00, 'open_match', 'coached', 4, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(98, 8, 'padel', 52, 7, '2026-04-22 20:17:44', '2026-04-22 21:17:44', 100.00, 0.00, 'open_match', 'standard', 2, NULL, 'confirmed', 'Omnis hic asperiores ipsum sit.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(99, 8, 'padel', 52, 7, '2026-03-28 00:24:00', '2026-03-28 01:54:00', 150.00, 0.00, 'private', 'academy', 4, NULL, 'confirmed', 'In expedita neque deserunt perspiciatis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(100, 8, 'padel', 52, 7, '2026-03-26 02:54:22', '2026-03-26 04:24:22', 112.50, 0.00, 'open_match', 'standard', 2, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(101, 8, 'padel', 52, 7, '2026-04-03 03:02:34', '2026-04-03 05:02:34', 300.00, 0.00, 'open_match', 'academy', 4, NULL, 'cancelled', 'Quod laborum quis quo et ut corrupti voluptatum.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(102, 8, 'padel', 52, 7, '2026-05-12 16:15:26', '2026-05-12 17:15:26', 50.00, 0.00, 'open_match', 'academy', 4, 'advanced', 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(103, 9, 'padel', 16, NULL, '2026-04-19 09:59:43', '2026-04-19 10:59:43', 150.00, 0.00, 'private', 'standard', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(104, 9, 'padel', 16, NULL, '2026-05-05 16:52:46', '2026-05-05 18:22:46', 225.00, 0.00, 'private', 'coached', 4, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(105, 9, 'padel', 16, NULL, '2026-03-27 22:54:51', '2026-03-28 00:24:51', 75.00, 0.00, 'open_match', 'standard', 4, NULL, 'confirmed', 'Atque tempore natus enim eos molestias iusto.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(106, 9, 'padel', 16, NULL, '2026-04-12 08:42:43', '2026-04-12 10:42:43', 300.00, 0.00, 'open_match', 'academy', 2, NULL, 'confirmed', 'Ut quia quos fuga provident et.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(107, 9, 'padel', 16, NULL, '2026-04-09 01:57:30', '2026-04-09 03:57:30', 300.00, 0.00, 'open_match', 'coached', 4, 'advanced', 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(108, 9, 'padel', 16, NULL, '2026-04-24 02:37:45', '2026-04-24 04:37:45', 300.00, 0.00, 'private', 'standard', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(109, 9, 'padel', 16, NULL, '2026-04-05 13:53:47', '2026-04-05 15:23:47', 180.00, 0.00, 'private', 'academy', 2, NULL, 'pending', 'Sed at sed sint saepe.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(110, 9, 'padel', 16, NULL, '2026-04-04 10:37:21', '2026-04-04 11:37:21', 50.00, 0.00, 'open_match', 'standard', 2, 'intermediate', 'cancelled', 'Ad quisquam temporibus odio ut ut quia sit quis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(111, 10, 'padel', 32, NULL, '2026-03-28 03:47:07', '2026-03-28 05:47:07', 200.00, 0.00, 'private', 'coached', 2, NULL, 'pending', 'Voluptas aut impedit rem eius.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(112, 10, 'padel', 32, NULL, '2026-05-20 07:42:50', '2026-05-20 09:12:50', 75.00, 0.00, 'private', 'standard', 4, 'beginner', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(113, 10, 'padel', 32, NULL, '2026-05-24 16:37:00', '2026-05-24 17:37:00', 75.00, 0.00, 'private', 'coached', 2, 'beginner', 'confirmed', 'Voluptate dolore dolorum quidem molestias saepe perferendis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(114, 10, 'padel', 32, NULL, '2026-04-22 22:58:38', '2026-04-23 00:58:38', 150.00, 0.00, 'open_match', 'standard', 2, NULL, 'pending', 'Explicabo eius ut quia possimus.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(115, 10, 'padel', 32, NULL, '2026-03-26 23:41:31', '2026-03-27 01:11:31', 180.00, 0.00, 'open_match', 'academy', 4, NULL, 'confirmed', 'Blanditiis quidem accusantium beatae eaque facere ut.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(116, 10, 'padel', 32, NULL, '2026-05-04 07:56:10', '2026-05-04 08:56:10', 50.00, 0.00, 'private', 'standard', 2, 'beginner', 'cancelled', 'Omnis iure nihil sit molestias ut accusantium.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(117, 10, 'padel', 32, NULL, '2026-05-20 12:49:03', '2026-05-20 14:49:03', 100.00, 0.00, 'open_match', 'standard', 4, 'beginner', 'pending', 'Mollitia fuga cumque maiores repudiandae id soluta.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(118, 10, 'padel', 32, NULL, '2026-04-20 13:30:08', '2026-04-20 15:00:08', 225.00, 0.00, 'open_match', 'academy', 2, NULL, 'confirmed', 'Magnam quo animi praesentium.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(119, 10, 'padel', 32, NULL, '2026-05-02 14:37:29', '2026-05-02 16:07:29', 150.00, 0.00, 'private', 'coached', 4, 'advanced', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(120, 10, 'padel', 32, NULL, '2026-05-24 13:54:06', '2026-05-24 15:54:06', 300.00, 0.00, 'open_match', 'academy', 4, 'advanced', 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(121, 10, 'padel', 32, NULL, '2026-04-18 22:43:22', '2026-04-19 00:13:22', 112.50, 0.00, 'private', 'standard', 4, NULL, 'confirmed', 'Dicta repudiandae quod in rem modi et.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(122, 10, 'padel', 32, NULL, '2026-04-20 15:52:46', '2026-04-20 16:52:46', 120.00, 0.00, 'private', 'standard', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(123, 11, 'tennis', 12, 7, '2026-05-20 04:05:25', '2026-05-20 05:35:25', 75.00, 0.00, 'private', 'standard', 4, 'intermediate', 'pending', 'Voluptates perferendis perspiciatis aliquam ipsa commodi reiciendis voluptas labore.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(124, 11, 'tennis', 12, 7, '2026-05-18 08:06:14', '2026-05-18 09:36:14', 180.00, 0.00, 'private', 'academy', 2, 'beginner', 'confirmed', 'Deserunt voluptas aspernatur voluptatibus placeat.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(125, 11, 'tennis', 12, 7, '2026-04-26 23:40:43', '2026-04-27 00:40:43', 120.00, 0.00, 'private', 'standard', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(126, 11, 'tennis', 12, 7, '2026-03-26 22:41:24', '2026-03-26 23:41:24', 100.00, 0.00, 'private', 'standard', 4, NULL, 'cancelled', 'Est exercitationem voluptas iusto fugit.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(127, 11, 'tennis', 12, 7, '2026-04-11 14:27:58', '2026-04-11 16:27:58', 100.00, 0.00, 'private', 'coached', 4, NULL, 'confirmed', 'Quo saepe aliquam sed.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(128, 11, 'tennis', 12, 7, '2026-04-18 07:10:29', '2026-04-18 09:10:29', 150.00, 0.00, 'private', 'standard', 2, NULL, 'cancelled', 'Itaque voluptate sequi aut voluptatem.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(129, 11, 'tennis', 12, 7, '2026-05-06 22:31:42', '2026-05-07 00:31:42', 240.00, 0.00, 'open_match', 'standard', 4, NULL, 'confirmed', 'Aut aut harum est itaque temporibus qui libero non.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(130, 11, 'tennis', 12, 7, '2026-05-24 09:54:24', '2026-05-24 11:54:24', 300.00, 0.00, 'private', 'academy', 2, 'advanced', 'confirmed', 'Qui omnis non inventore omnis eaque.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(131, 11, 'tennis', 12, 7, '2026-05-06 01:09:09', '2026-05-06 03:09:09', 150.00, 0.00, 'private', 'coached', 4, NULL, 'confirmed', 'Officia illum magni reiciendis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(132, 11, 'tennis', 12, 7, '2026-04-10 03:27:28', '2026-04-10 05:27:28', 300.00, 0.00, 'open_match', 'standard', 4, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(133, 11, 'tennis', 12, 7, '2026-04-02 08:53:08', '2026-04-02 09:53:08', 50.00, 0.00, 'private', 'academy', 2, 'beginner', 'confirmed', 'Labore quisquam odio nulla.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(134, 11, 'tennis', 12, 7, '2026-04-23 02:02:55', '2026-04-23 04:02:55', 240.00, 0.00, 'open_match', 'academy', 4, 'beginner', 'confirmed', 'Vitae deleniti eos est asperiores aut voluptas odio.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(135, 11, 'tennis', 12, 7, '2026-04-19 13:12:23', '2026-04-19 15:12:23', 150.00, 0.00, 'open_match', 'standard', 4, 'intermediate', 'confirmed', 'Sunt quae voluptate temporibus numquam dolor vel in.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(136, 11, 'tennis', 12, 7, '2026-05-12 10:54:49', '2026-05-12 12:54:49', 200.00, 0.00, 'private', 'standard', 2, 'intermediate', 'confirmed', 'Vero dolores ducimus voluptas omnis ea ut.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(137, 11, 'tennis', 12, 7, '2026-03-29 09:04:57', '2026-03-29 10:34:57', 112.50, 0.00, 'open_match', 'coached', 4, 'intermediate', 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 20:12:01'),
-(138, 12, 'tennis', 33, NULL, '2026-04-17 01:24:40', '2026-04-17 03:24:40', 100.00, 0.00, 'private', 'coached', 2, 'advanced', 'confirmed', 'Labore ab aliquid et distinctio labore totam.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(139, 12, 'tennis', 33, NULL, '2026-05-11 00:35:03', '2026-05-11 02:05:03', 225.00, 0.00, 'open_match', 'academy', 2, 'advanced', 'confirmed', 'Dolore ipsum numquam odio provident voluptate.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(140, 12, 'tennis', 33, NULL, '2026-04-23 16:25:52', '2026-04-23 18:25:52', 200.00, 0.00, 'open_match', 'academy', 2, NULL, 'confirmed', 'Et consequatur minus officia aspernatur culpa aut qui consequuntur.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(141, 12, 'tennis', 33, NULL, '2026-05-17 11:25:34', '2026-05-17 13:25:34', 200.00, 0.00, 'open_match', 'academy', 4, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(142, 12, 'tennis', 33, NULL, '2026-04-08 10:29:36', '2026-04-08 12:29:36', 300.00, 0.00, 'private', 'standard', 4, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(143, 12, 'tennis', 33, NULL, '2026-04-12 05:41:13', '2026-04-12 07:11:13', 225.00, 0.00, 'open_match', 'standard', 4, 'intermediate', 'confirmed', 'Dolor voluptas occaecati officia.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(144, 12, 'tennis', 33, NULL, '2026-05-19 07:05:48', '2026-05-19 09:05:48', 150.00, 0.00, 'private', 'academy', 2, 'advanced', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(145, 12, 'tennis', 33, NULL, '2026-05-14 16:43:51', '2026-05-14 18:43:51', 100.00, 0.00, 'open_match', 'academy', 4, 'beginner', 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(146, 12, 'tennis', 33, NULL, '2026-05-21 07:10:17', '2026-05-21 08:10:17', 75.00, 0.00, 'private', 'coached', 2, 'advanced', 'confirmed', 'Magni sit ratione quod sed tempora commodi.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(147, 12, 'tennis', 33, NULL, '2026-04-12 19:52:07', '2026-04-12 20:52:07', 150.00, 0.00, 'private', 'standard', 2, 'advanced', 'confirmed', 'Ea esse vel fuga vel commodi veritatis est dolor.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(148, 12, 'tennis', 33, NULL, '2026-04-18 14:57:22', '2026-04-18 15:57:22', 100.00, 0.00, 'private', 'academy', 2, NULL, 'confirmed', 'Dolores et rerum sit et voluptatibus.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(149, 12, 'tennis', 33, NULL, '2026-05-24 16:16:19', '2026-05-24 17:46:19', 225.00, 0.00, 'open_match', 'coached', 4, 'advanced', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(150, 12, 'tennis', 33, NULL, '2026-05-13 02:24:24', '2026-05-13 04:24:24', 240.00, 0.00, 'open_match', 'academy', 2, 'intermediate', 'pending', 'Velit quisquam amet voluptatem.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(151, 12, 'tennis', 33, NULL, '2026-04-08 01:30:52', '2026-04-08 03:30:52', 300.00, 0.00, 'private', 'coached', 4, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(152, 13, 'tennis', 23, NULL, '2026-05-16 04:28:03', '2026-05-16 05:28:03', 150.00, 0.00, 'open_match', 'academy', 4, 'intermediate', 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(153, 13, 'tennis', 23, NULL, '2026-05-11 08:57:02', '2026-05-11 09:57:02', 50.00, 0.00, 'private', 'standard', 2, NULL, 'confirmed', 'Ipsa eos modi ducimus reiciendis sequi autem.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(154, 13, 'tennis', 23, NULL, '2026-05-11 04:51:26', '2026-05-11 06:51:26', 100.00, 0.00, 'private', 'academy', 2, 'intermediate', 'cancelled', 'Illo et laborum atque consequatur.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(155, 13, 'tennis', 23, NULL, '2026-05-01 09:50:32', '2026-05-01 11:20:32', 150.00, 0.00, 'open_match', 'academy', 2, 'beginner', 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(156, 13, 'tennis', 23, NULL, '2026-05-19 17:24:27', '2026-05-19 18:24:27', 50.00, 0.00, 'open_match', 'coached', 4, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(157, 13, 'tennis', 23, NULL, '2026-04-11 12:46:01', '2026-04-11 14:16:01', 180.00, 0.00, 'open_match', 'academy', 2, 'beginner', 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(158, 13, 'tennis', 23, NULL, '2026-04-17 22:13:50', '2026-04-17 23:13:50', 120.00, 0.00, 'open_match', 'standard', 2, NULL, 'confirmed', 'Dolores eius veniam occaecati consequatur autem dolore nesciunt.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(159, 13, 'tennis', 23, NULL, '2026-04-12 21:33:10', '2026-04-12 23:03:10', 180.00, 0.00, 'private', 'standard', 4, NULL, 'pending', 'Et sit fugiat ipsa quibusdam.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(160, 13, 'tennis', 23, NULL, '2026-04-13 17:55:30', '2026-04-13 18:55:30', 120.00, 0.00, 'private', 'coached', 2, NULL, 'confirmed', 'Et voluptatem voluptatem velit atque aliquam amet fugit.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(161, 13, 'tennis', 23, NULL, '2026-04-27 18:55:51', '2026-04-27 20:25:51', 180.00, 0.00, 'private', 'academy', 2, 'intermediate', 'confirmed', 'Laboriosam laborum perferendis maxime et et.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(162, 13, 'tennis', 23, NULL, '2026-04-30 13:14:10', '2026-04-30 15:14:10', 100.00, 0.00, 'private', 'standard', 4, NULL, 'confirmed', 'Rem distinctio quo molestias.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(163, 13, 'tennis', 23, NULL, '2026-03-29 03:00:40', '2026-03-29 05:00:40', 300.00, 0.00, 'private', 'academy', 2, 'beginner', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(164, 13, 'tennis', 23, NULL, '2026-04-10 13:39:20', '2026-04-10 15:39:20', 100.00, 0.00, 'open_match', 'coached', 2, NULL, 'pending', 'Similique rem sit earum iste.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(165, 14, 'padel', 20, NULL, '2026-05-14 01:10:19', '2026-05-14 02:10:19', 150.00, 0.00, 'private', 'coached', 2, 'beginner', 'cancelled', 'Sed aliquid modi dolor reiciendis at quis corrupti voluptas.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(166, 14, 'padel', 20, NULL, '2026-05-23 02:30:08', '2026-05-23 04:30:08', 100.00, 0.00, 'private', 'coached', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(167, 14, 'padel', 20, NULL, '2026-04-22 14:34:21', '2026-04-22 16:04:21', 225.00, 0.00, 'private', 'standard', 4, 'intermediate', 'pending', 'A praesentium fugiat doloribus.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(168, 14, 'padel', 20, NULL, '2026-03-28 01:27:38', '2026-03-28 03:27:38', 200.00, 0.00, 'private', 'coached', 2, NULL, 'confirmed', 'Corporis quisquam praesentium laudantium et odit magnam voluptas.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(169, 14, 'padel', 20, NULL, '2026-05-07 02:01:47', '2026-05-07 04:01:47', 100.00, 0.00, 'private', 'coached', 2, 'beginner', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(170, 14, 'padel', 20, NULL, '2026-04-14 10:01:54', '2026-04-14 12:01:54', 200.00, 0.00, 'private', 'standard', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(171, 14, 'padel', 20, NULL, '2026-05-05 10:07:27', '2026-05-05 11:07:27', 120.00, 0.00, 'private', 'academy', 2, 'beginner', 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(172, 14, 'padel', 20, NULL, '2026-03-30 00:37:48', '2026-03-30 01:37:48', 75.00, 0.00, 'private', 'academy', 2, NULL, 'cancelled', 'Quisquam qui nihil ut dolorum harum.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(173, 14, 'padel', 20, NULL, '2026-05-13 11:08:29', '2026-05-13 12:38:29', 225.00, 0.00, 'private', 'academy', 4, 'intermediate', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(174, 15, 'padel', 42, 10, '2026-05-18 01:42:39', '2026-05-18 03:42:39', 150.00, 0.00, 'private', 'academy', 2, NULL, 'confirmed', 'Est minus non ad facere.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(175, 15, 'padel', 42, 10, '2026-05-10 14:47:55', '2026-05-10 15:47:55', 150.00, 0.00, 'private', 'coached', 2, 'beginner', 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(176, 15, 'padel', 42, 10, '2026-05-01 19:25:38', '2026-05-01 20:25:38', 50.00, 0.00, 'open_match', 'academy', 2, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(177, 15, 'padel', 42, 10, '2026-04-11 05:44:00', '2026-04-11 07:14:00', 225.00, 0.00, 'private', 'coached', 2, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(178, 15, 'padel', 42, 10, '2026-04-10 15:14:07', '2026-04-10 16:44:07', 150.00, 0.00, 'open_match', 'coached', 4, 'advanced', 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(179, 15, 'padel', 42, 10, '2026-04-25 11:15:41', '2026-04-25 12:15:41', 150.00, 0.00, 'private', 'coached', 4, NULL, 'confirmed', 'Nihil voluptatum eaque aut velit non sed error.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(180, 15, 'padel', 42, 10, '2026-05-24 08:04:27', '2026-05-24 09:34:27', 75.00, 0.00, 'open_match', 'coached', 2, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(181, 15, 'padel', 42, 10, '2026-04-15 05:16:35', '2026-04-15 06:46:35', 75.00, 0.00, 'private', 'coached', 2, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(182, 16, 'padel', 49, NULL, '2026-04-16 22:53:35', '2026-04-16 23:53:35', 75.00, 0.00, 'open_match', 'standard', 2, NULL, 'confirmed', 'Porro id totam ut dicta.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(183, 16, 'padel', 49, NULL, '2026-05-02 10:58:07', '2026-05-02 12:58:07', 150.00, 0.00, 'open_match', 'coached', 4, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(184, 16, 'padel', 49, NULL, '2026-04-26 19:06:51', '2026-04-26 20:06:51', 100.00, 0.00, 'open_match', 'academy', 4, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(185, 16, 'padel', 49, NULL, '2026-04-14 21:25:45', '2026-04-14 22:55:45', 112.50, 0.00, 'open_match', 'standard', 2, 'intermediate', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(186, 16, 'padel', 49, NULL, '2026-05-10 20:16:49', '2026-05-10 22:16:49', 150.00, 0.00, 'private', 'standard', 2, 'beginner', 'confirmed', 'In sint ipsa odio sit.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(187, 16, 'padel', 49, NULL, '2026-03-31 14:31:01', '2026-03-31 16:01:01', 180.00, 0.00, 'open_match', 'coached', 4, 'advanced', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(188, 16, 'padel', 49, NULL, '2026-03-31 22:37:01', '2026-04-01 00:07:01', 180.00, 0.00, 'open_match', 'academy', 2, 'beginner', 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(189, 16, 'padel', 49, NULL, '2026-04-14 11:59:47', '2026-04-14 13:29:47', 75.00, 0.00, 'open_match', 'standard', 2, NULL, 'cancelled', 'Doloribus corrupti exercitationem facilis aut et quam.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(190, 16, 'padel', 49, NULL, '2026-04-12 16:19:40', '2026-04-12 18:19:40', 240.00, 0.00, 'open_match', 'coached', 2, 'intermediate', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(191, 16, 'padel', 49, NULL, '2026-04-29 21:20:58', '2026-04-29 23:20:58', 100.00, 0.00, 'private', 'standard', 4, 'intermediate', 'confirmed', 'Illum autem laboriosam ab sunt a sit cupiditate.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(192, 16, 'padel', 49, NULL, '2026-04-21 18:40:21', '2026-04-21 19:40:21', 120.00, 0.00, 'open_match', 'academy', 2, NULL, 'confirmed', 'Quaerat voluptatem veniam consequatur nihil quas eligendi deleniti.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(193, 17, 'padel', 60, 10, '2026-04-29 18:23:46', '2026-04-29 19:53:46', 180.00, 0.00, 'private', 'standard', 4, NULL, 'confirmed', 'Minima autem provident dolor vero in dolore.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(194, 17, 'padel', 60, 10, '2026-05-03 08:57:59', '2026-05-03 09:57:59', 100.00, 0.00, 'open_match', 'standard', 2, 'beginner', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(195, 17, 'padel', 60, 10, '2026-05-21 20:27:24', '2026-05-21 22:27:24', 240.00, 0.00, 'open_match', 'coached', 4, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(196, 17, 'padel', 60, 10, '2026-05-23 11:59:02', '2026-05-23 13:29:02', 75.00, 0.00, 'private', 'coached', 4, 'advanced', 'confirmed', 'Consequuntur omnis id ducimus sit qui vitae pariatur.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(197, 17, 'padel', 60, 10, '2026-03-25 22:46:11', '2026-03-25 23:46:11', 100.00, 0.00, 'open_match', 'standard', 2, NULL, 'confirmed', 'Suscipit pariatur inventore commodi.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(198, 17, 'padel', 60, 10, '2026-04-11 17:42:34', '2026-04-11 19:12:34', 150.00, 0.00, 'open_match', 'academy', 4, 'intermediate', 'confirmed', 'Doloremque adipisci ea qui perferendis mollitia voluptatem.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(199, 17, 'padel', 60, 10, '2026-05-11 22:26:34', '2026-05-11 23:56:34', 180.00, 0.00, 'open_match', 'standard', 2, 'beginner', 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(200, 17, 'padel', 60, 10, '2026-04-05 02:31:50', '2026-04-05 03:31:50', 50.00, 0.00, 'private', 'coached', 2, 'beginner', 'cancelled', 'Odit voluptatibus est voluptatem tempora maxime in officiis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(201, 17, 'padel', 60, 10, '2026-04-28 03:54:17', '2026-04-28 05:24:17', 180.00, 0.00, 'private', 'standard', 4, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(202, 17, 'padel', 60, 10, '2026-04-03 03:32:08', '2026-04-03 05:32:08', 300.00, 0.00, 'open_match', 'standard', 2, 'intermediate', 'confirmed', 'Debitis ratione esse quia dignissimos.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(203, 17, 'padel', 60, 10, '2026-04-11 00:19:49', '2026-04-11 01:49:49', 180.00, 0.00, 'private', 'academy', 4, 'advanced', 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(204, 17, 'padel', 60, 10, '2026-05-23 11:21:00', '2026-05-23 12:21:00', 100.00, 0.00, 'open_match', 'coached', 2, 'beginner', 'cancelled', 'Quas expedita et veritatis provident.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(205, 17, 'padel', 60, 10, '2026-05-16 21:28:04', '2026-05-16 22:28:04', 75.00, 0.00, 'private', 'academy', 4, 'intermediate', 'cancelled', 'Aut perferendis corporis consequatur et est natus quam.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(206, 17, 'padel', 60, 10, '2026-04-20 12:53:17', '2026-04-20 13:53:17', 120.00, 0.00, 'open_match', 'standard', 4, 'advanced', 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21');
+INSERT INTO `bookings` (`id`, `court_id`, `sport_type`, `owner_user_id`, `coach_user_id`, `start_time`, `end_time`, `total_price`, `coach_fee`, `match_type`, `session_type`, `max_players`, `skill_level`, `skill_min`, `skill_max`, `status`, `notes`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(1, 1, 'squash', 19, NULL, '2026-05-19 16:24:31', '2026-05-19 17:24:31', 75.00, 0.00, 'private', 'coached', 4, 'advanced', NULL, NULL, 'confirmed', 'Odit quo et consequatur optio neque labore harum.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(2, 1, 'squash', 19, NULL, '2026-03-30 12:03:28', '2026-03-30 13:33:28', 225.00, 0.00, 'open_match', 'academy', 4, 'beginner', NULL, NULL, 'pending', 'Nemo qui esse eligendi sapiente est saepe quia labore.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(3, 1, 'squash', 19, NULL, '2026-04-11 10:56:51', '2026-04-11 12:56:51', 200.00, 0.00, 'open_match', 'coached', 4, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(4, 1, 'squash', 19, NULL, '2026-04-19 07:23:40', '2026-04-19 08:53:40', 180.00, 0.00, 'private', 'academy', 2, NULL, NULL, NULL, 'cancelled', 'Sint consequatur quia vero voluptates sequi.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(5, 1, 'squash', 19, NULL, '2026-05-18 03:18:18', '2026-05-18 04:48:18', 225.00, 0.00, 'private', 'academy', 2, 'intermediate', NULL, NULL, 'confirmed', 'Molestias sunt consequatur et voluptatem ullam quidem.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(6, 1, 'squash', 19, NULL, '2026-04-16 18:57:50', '2026-04-16 20:57:50', 200.00, 0.00, 'private', 'academy', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(7, 1, 'squash', 19, NULL, '2026-04-04 21:43:25', '2026-04-04 23:13:25', 75.00, 0.00, 'private', 'academy', 4, NULL, NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(8, 1, 'squash', 19, NULL, '2026-05-06 20:55:47', '2026-05-06 22:25:47', 112.50, 0.00, 'private', 'standard', 2, NULL, NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(9, 1, 'squash', 19, NULL, '2026-04-16 13:10:03', '2026-04-16 15:10:03', 240.00, 0.00, 'private', 'academy', 2, NULL, NULL, NULL, 'confirmed', 'Ut voluptas deserunt pariatur pariatur alias placeat.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(10, 1, 'squash', 19, NULL, '2026-03-29 15:18:45', '2026-03-29 17:18:45', 100.00, 0.00, 'open_match', 'standard', 4, NULL, NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(11, 1, 'squash', 19, NULL, '2026-04-05 23:40:31', '2026-04-06 01:10:31', 225.00, 0.00, 'private', 'coached', 2, NULL, NULL, NULL, 'pending', 'Est et corporis a possimus quia qui nihil.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(12, 1, 'squash', 19, NULL, '2026-04-19 14:40:38', '2026-04-19 16:10:38', 112.50, 0.00, 'private', 'academy', 2, 'advanced', NULL, NULL, 'confirmed', 'Et quam facere dolores nam aut magni.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(13, 1, 'squash', 19, NULL, '2026-05-05 15:08:48', '2026-05-05 17:08:48', 150.00, 0.00, 'open_match', 'academy', 4, NULL, NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(14, 1, 'squash', 19, NULL, '2026-04-22 13:27:21', '2026-04-22 14:27:21', 75.00, 0.00, 'private', 'standard', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(15, 2, 'squash', 24, NULL, '2026-05-14 01:03:00', '2026-05-14 02:03:00', 100.00, 0.00, 'open_match', 'coached', 2, 'intermediate', NULL, NULL, 'pending', 'Voluptatem aliquam non officia voluptates maiores facilis laborum dolor.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(16, 2, 'squash', 24, NULL, '2026-04-16 11:30:42', '2026-04-16 12:30:42', 50.00, 0.00, 'private', 'standard', 4, 'advanced', NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(17, 2, 'squash', 24, NULL, '2026-04-30 07:43:15', '2026-04-30 08:43:15', 120.00, 0.00, 'open_match', 'coached', 2, 'advanced', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(18, 2, 'squash', 24, NULL, '2026-05-02 03:58:09', '2026-05-02 05:58:09', 200.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(19, 2, 'squash', 24, NULL, '2026-05-12 22:13:03', '2026-05-12 23:13:03', 100.00, 0.00, 'private', 'academy', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(20, 2, 'squash', 24, NULL, '2026-05-12 11:00:26', '2026-05-12 12:30:26', 225.00, 0.00, 'private', 'academy', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(21, 2, 'squash', 24, NULL, '2026-04-19 12:04:35', '2026-04-19 13:04:35', 75.00, 0.00, 'private', 'coached', 4, 'advanced', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(22, 2, 'squash', 24, NULL, '2026-04-26 23:32:01', '2026-04-27 00:32:01', 120.00, 0.00, 'open_match', 'standard', 4, 'beginner', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(23, 3, 'squash', 35, NULL, '2026-04-24 09:29:49', '2026-04-24 10:59:49', 112.50, 0.00, 'private', 'standard', 2, NULL, NULL, NULL, 'confirmed', 'Sunt hic voluptates et quod dicta rerum iste.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(24, 3, 'squash', 35, NULL, '2026-04-22 19:41:47', '2026-04-22 20:41:47', 120.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'confirmed', 'Delectus placeat qui corrupti ut voluptas facilis magni.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(25, 3, 'squash', 35, NULL, '2026-05-10 12:50:13', '2026-05-10 13:50:13', 75.00, 0.00, 'open_match', 'standard', 2, 'beginner', NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(26, 3, 'squash', 35, NULL, '2026-04-27 21:14:56', '2026-04-27 22:44:56', 75.00, 0.00, 'open_match', 'academy', 4, 'beginner', NULL, NULL, 'cancelled', 'Ratione repudiandae saepe ea soluta est.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(27, 3, 'squash', 35, NULL, '2026-03-30 19:22:01', '2026-03-30 20:52:01', 112.50, 0.00, 'open_match', 'standard', 4, NULL, NULL, NULL, 'confirmed', 'Hic in sed et repellendus consequatur ipsam porro.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(28, 3, 'squash', 35, NULL, '2026-05-24 18:17:50', '2026-05-24 19:47:50', 180.00, 0.00, 'private', 'standard', 2, 'advanced', NULL, NULL, 'pending', 'Officiis voluptas reiciendis hic et officia esse quisquam.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(29, 3, 'squash', 35, NULL, '2026-05-18 22:10:33', '2026-05-19 00:10:33', 100.00, 0.00, 'open_match', 'academy', 2, NULL, NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(30, 3, 'squash', 35, NULL, '2026-04-06 06:28:31', '2026-04-06 07:28:31', 50.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'confirmed', 'Rem reiciendis quia at architecto ipsa ea.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(31, 3, 'squash', 35, NULL, '2026-05-03 21:52:22', '2026-05-03 23:52:22', 300.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'pending', 'Consectetur minima quo quos et at ut.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(32, 3, 'squash', 35, NULL, '2026-05-17 20:18:09', '2026-05-17 21:18:09', 75.00, 0.00, 'private', 'coached', 4, 'advanced', NULL, NULL, 'confirmed', 'Magni sed quia ut quia.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(33, 3, 'squash', 35, NULL, '2026-04-09 18:36:25', '2026-04-09 19:36:25', 100.00, 0.00, 'private', 'academy', 2, 'advanced', NULL, NULL, 'pending', 'Autem dicta provident labore ut non.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(34, 3, 'squash', 35, NULL, '2026-04-13 03:56:27', '2026-04-13 04:56:27', 75.00, 0.00, 'private', 'academy', 4, 'advanced', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(35, 3, 'squash', 35, NULL, '2026-05-06 08:02:45', '2026-05-06 10:02:45', 240.00, 0.00, 'private', 'academy', 4, 'intermediate', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(36, 3, 'squash', 35, NULL, '2026-05-21 04:01:26', '2026-05-21 05:01:26', 100.00, 0.00, 'private', 'standard', 2, NULL, NULL, NULL, 'cancelled', 'Sunt odio quia temporibus a labore id harum facilis.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(37, 3, 'squash', 35, NULL, '2026-03-31 06:38:41', '2026-03-31 07:38:41', 150.00, 0.00, 'open_match', 'coached', 4, NULL, NULL, NULL, 'confirmed', 'Tenetur cum ut sapiente accusamus.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(38, 4, 'squash', 61, NULL, '2026-05-14 16:59:18', '2026-05-14 18:59:18', 100.00, 0.00, 'private', 'standard', 4, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(39, 4, 'squash', 61, NULL, '2026-04-17 19:00:16', '2026-04-17 20:00:16', 120.00, 0.00, 'open_match', 'academy', 4, 'intermediate', NULL, NULL, 'confirmed', 'Voluptas sint aut molestiae ut est cupiditate.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(40, 4, 'squash', 61, NULL, '2026-05-21 13:30:59', '2026-05-21 14:30:59', 50.00, 0.00, 'private', 'standard', 2, NULL, NULL, NULL, 'confirmed', 'Ab quos odit eius autem praesentium perspiciatis repellendus dolores.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(41, 4, 'squash', 61, NULL, '2026-05-16 07:28:54', '2026-05-16 09:28:54', 240.00, 0.00, 'private', 'academy', 4, NULL, NULL, NULL, 'confirmed', 'Praesentium voluptas adipisci magnam dolorem consectetur.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(42, 4, 'squash', 61, NULL, '2026-03-28 12:45:13', '2026-03-28 14:45:13', 150.00, 0.00, 'private', 'academy', 4, 'intermediate', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(43, 4, 'squash', 61, NULL, '2026-04-08 22:50:10', '2026-04-09 00:50:10', 150.00, 0.00, 'open_match', 'academy', 4, NULL, NULL, NULL, 'confirmed', 'Est quisquam et blanditiis aut provident est.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(44, 4, 'squash', 61, NULL, '2026-05-08 19:16:28', '2026-05-08 21:16:28', 300.00, 0.00, 'private', 'academy', 4, 'beginner', NULL, NULL, 'confirmed', 'Voluptas aperiam sed consequatur quis distinctio.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(45, 4, 'squash', 61, NULL, '2026-03-26 13:35:58', '2026-03-26 15:05:58', 150.00, 0.00, 'open_match', 'coached', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(46, 4, 'squash', 61, NULL, '2026-03-25 23:49:11', '2026-03-26 01:19:11', 75.00, 0.00, 'private', 'coached', 4, 'advanced', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(47, 4, 'squash', 61, NULL, '2026-04-06 20:58:07', '2026-04-06 22:28:07', 225.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(48, 4, 'squash', 61, NULL, '2026-05-06 18:24:41', '2026-05-06 19:54:41', 180.00, 0.00, 'private', 'coached', 2, 'intermediate', NULL, NULL, 'confirmed', 'Cumque voluptatem magni iusto dignissimos minima dolores eum.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(49, 4, 'squash', 61, NULL, '2026-04-29 04:25:31', '2026-04-29 05:25:31', 100.00, 0.00, 'private', 'coached', 4, 'advanced', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(50, 4, 'squash', 61, NULL, '2026-04-14 02:09:51', '2026-04-14 03:09:51', 100.00, 0.00, 'open_match', 'coached', 4, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(51, 4, 'squash', 61, NULL, '2026-04-14 16:02:48', '2026-04-14 17:32:48', 75.00, 0.00, 'open_match', 'coached', 2, 'advanced', NULL, NULL, 'cancelled', 'Illo sit excepturi vel excepturi non.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(52, 4, 'squash', 61, NULL, '2026-04-02 18:56:38', '2026-04-02 20:26:38', 225.00, 0.00, 'open_match', 'coached', 4, NULL, NULL, NULL, 'confirmed', 'Et maiores et quo minima doloribus.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(53, 5, 'squash', 24, 3, '2026-04-05 06:05:28', '2026-04-05 08:05:28', 100.00, 0.00, 'private', 'coached', 4, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(54, 5, 'squash', 24, 3, '2026-05-14 03:10:29', '2026-05-14 04:10:29', 150.00, 0.00, 'private', 'coached', 4, 'beginner', NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(55, 5, 'squash', 24, 3, '2026-05-24 09:30:02', '2026-05-24 11:30:02', 300.00, 0.00, 'private', 'academy', 4, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(56, 5, 'squash', 24, 3, '2026-05-03 23:21:53', '2026-05-04 00:21:53', 50.00, 0.00, 'private', 'standard', 4, 'intermediate', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(57, 5, 'squash', 24, 3, '2026-05-08 23:06:29', '2026-05-09 00:36:29', 225.00, 0.00, 'open_match', 'academy', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(58, 5, 'squash', 24, 3, '2026-03-26 07:14:17', '2026-03-26 09:14:17', 240.00, 0.00, 'private', 'academy', 2, NULL, NULL, NULL, 'confirmed', 'Est maiores magnam commodi ut et ut illo quia.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(59, 5, 'squash', 24, 3, '2026-05-05 12:49:33', '2026-05-05 14:19:33', 150.00, 0.00, 'private', 'academy', 4, 'beginner', NULL, NULL, 'confirmed', 'Totam quod tempora sed et eos soluta.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(60, 5, 'squash', 24, 3, '2026-04-09 02:16:37', '2026-04-09 04:16:37', 300.00, 0.00, 'private', 'standard', 2, NULL, NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(61, 5, 'squash', 24, 3, '2026-05-24 06:06:16', '2026-05-24 07:36:16', 75.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'confirmed', 'Consequuntur rerum incidunt dolore.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(62, 5, 'squash', 24, 3, '2026-05-03 06:19:00', '2026-05-03 07:19:00', 150.00, 0.00, 'private', 'standard', 4, 'beginner', NULL, NULL, 'cancelled', 'Qui vero qui iste voluptas iure.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(63, 6, 'squash', 23, NULL, '2026-05-01 22:18:54', '2026-05-01 23:48:54', 112.50, 0.00, 'private', 'coached', 4, NULL, NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(64, 6, 'squash', 23, NULL, '2026-03-30 05:37:53', '2026-03-30 07:37:53', 100.00, 0.00, 'private', 'academy', 2, 'intermediate', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(65, 6, 'squash', 23, NULL, '2026-05-03 02:09:29', '2026-05-03 04:09:29', 300.00, 0.00, 'open_match', 'academy', 2, 'advanced', NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(66, 6, 'squash', 23, NULL, '2026-04-01 14:45:49', '2026-04-01 15:45:49', 50.00, 0.00, 'private', 'coached', 4, NULL, NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(67, 6, 'squash', 23, NULL, '2026-05-11 01:57:10', '2026-05-11 03:27:10', 180.00, 0.00, 'open_match', 'coached', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(68, 6, 'squash', 23, NULL, '2026-05-13 05:03:29', '2026-05-13 06:33:29', 150.00, 0.00, 'private', 'academy', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(69, 6, 'squash', 23, NULL, '2026-04-30 10:39:11', '2026-04-30 11:39:11', 75.00, 0.00, 'open_match', 'coached', 4, NULL, NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(70, 6, 'squash', 23, NULL, '2026-05-08 17:44:06', '2026-05-08 18:44:06', 120.00, 0.00, 'private', 'coached', 2, 'advanced', NULL, NULL, 'confirmed', 'Aut voluptatem blanditiis nihil velit.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(71, 6, 'squash', 23, NULL, '2026-04-12 08:55:47', '2026-04-12 10:55:47', 240.00, 0.00, 'private', 'coached', 4, 'advanced', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(72, 6, 'squash', 23, NULL, '2026-05-13 21:34:55', '2026-05-13 22:34:55', 120.00, 0.00, 'private', 'coached', 4, 'advanced', NULL, NULL, 'cancelled', 'Ut quia sequi eum sed.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(73, 6, 'squash', 23, NULL, '2026-04-13 03:52:08', '2026-04-13 04:52:08', 150.00, 0.00, 'open_match', 'standard', 4, 'advanced', NULL, NULL, 'confirmed', 'Nobis perferendis modi eum.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(74, 6, 'squash', 23, NULL, '2026-04-21 16:44:57', '2026-04-21 18:14:57', 75.00, 0.00, 'open_match', 'academy', 4, NULL, NULL, NULL, 'confirmed', 'Cumque aut provident eligendi.', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(75, 6, 'squash', 23, NULL, '2026-04-01 07:10:40', '2026-04-01 09:10:40', 200.00, 0.00, 'open_match', 'coached', 4, NULL, NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(76, 7, 'squash', 21, 10, '2026-05-04 16:05:15', '2026-05-04 18:05:15', 150.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'confirmed', 'Dignissimos architecto non aut quidem laudantium saepe.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(77, 7, 'squash', 21, 10, '2026-05-15 07:56:25', '2026-05-15 08:56:25', 50.00, 0.00, 'private', 'coached', 2, 'intermediate', NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(78, 7, 'squash', 21, 10, '2026-05-20 17:45:50', '2026-05-20 19:45:50', 150.00, 0.00, 'open_match', 'standard', 2, 'beginner', NULL, NULL, 'confirmed', 'Voluptatibus in vitae qui accusantium perspiciatis cum.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(79, 7, 'squash', 21, 10, '2026-04-02 00:58:08', '2026-04-02 02:58:08', 240.00, 0.00, 'open_match', 'coached', 2, 'intermediate', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(80, 7, 'squash', 21, 10, '2026-04-18 16:03:13', '2026-04-18 18:03:13', 300.00, 0.00, 'open_match', 'academy', 4, NULL, NULL, NULL, 'confirmed', 'Accusamus unde iusto et fugit eligendi omnis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(81, 7, 'squash', 21, 10, '2026-04-14 06:39:23', '2026-04-14 08:09:23', 150.00, 0.00, 'open_match', 'academy', 4, 'advanced', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(82, 7, 'squash', 21, 10, '2026-04-16 19:42:35', '2026-04-16 21:42:35', 300.00, 0.00, 'open_match', 'academy', 2, 'advanced', NULL, NULL, 'confirmed', 'Non tempore aut voluptatem.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(83, 7, 'squash', 21, 10, '2026-05-06 08:14:20', '2026-05-06 09:44:20', 225.00, 0.00, 'open_match', 'coached', 4, NULL, NULL, NULL, 'confirmed', 'Voluptate asperiores placeat qui sint.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(84, 7, 'squash', 21, 10, '2026-05-16 04:56:22', '2026-05-16 05:56:22', 150.00, 0.00, 'open_match', 'coached', 2, 'intermediate', NULL, NULL, 'pending', 'Officiis necessitatibus expedita consequatur atque nihil dicta quis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(85, 7, 'squash', 21, 10, '2026-04-26 20:00:21', '2026-04-26 22:00:21', 240.00, 0.00, 'open_match', 'standard', 4, 'beginner', NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(86, 7, 'squash', 21, 10, '2026-04-17 12:17:00', '2026-04-17 14:17:00', 100.00, 0.00, 'private', 'coached', 4, NULL, NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(87, 7, 'squash', 21, 10, '2026-05-22 15:17:17', '2026-05-22 16:47:17', 150.00, 0.00, 'open_match', 'academy', 2, NULL, NULL, NULL, 'cancelled', 'Hic et autem et ut ut consequatur ut voluptas.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(88, 7, 'squash', 21, 10, '2026-04-24 14:19:02', '2026-04-24 15:19:02', 75.00, 0.00, 'private', 'academy', 2, NULL, NULL, NULL, 'confirmed', 'Consequatur aliquid ipsum est repellendus molestiae dolore tempora sunt.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(89, 7, 'squash', 21, 10, '2026-04-19 21:47:33', '2026-04-19 23:17:33', 75.00, 0.00, 'private', 'coached', 4, 'beginner', NULL, NULL, 'confirmed', 'Facere modi iste nam molestias deleniti aperiam non.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(90, 7, 'squash', 21, 10, '2026-04-30 03:08:44', '2026-04-30 04:38:44', 180.00, 0.00, 'open_match', 'standard', 4, 'beginner', NULL, NULL, 'confirmed', 'Voluptate illo voluptatem voluptatem rerum eius iure.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(91, 8, 'padel', 52, 7, '2026-04-22 12:45:00', '2026-04-22 13:45:00', 100.00, 0.00, 'private', 'standard', 4, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(92, 8, 'padel', 52, 7, '2026-03-29 12:39:18', '2026-03-29 13:39:18', 150.00, 0.00, 'open_match', 'standard', 4, NULL, NULL, NULL, 'confirmed', 'Occaecati est error natus amet sed.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(93, 8, 'padel', 52, 7, '2026-05-05 00:52:00', '2026-05-05 02:52:00', 150.00, 0.00, 'open_match', 'standard', 4, NULL, NULL, NULL, 'confirmed', 'Tempore dolore deleniti reprehenderit officiis sit voluptatem voluptatibus.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(94, 8, 'padel', 52, 7, '2026-04-02 19:58:45', '2026-04-02 21:58:45', 150.00, 0.00, 'private', 'academy', 4, NULL, NULL, NULL, 'confirmed', 'Porro dolor a voluptate nostrum.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(95, 8, 'padel', 52, 7, '2026-05-02 19:33:15', '2026-05-02 20:33:15', 150.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(96, 8, 'padel', 52, 7, '2026-03-29 12:55:45', '2026-03-29 14:55:45', 150.00, 0.00, 'open_match', 'standard', 4, 'intermediate', NULL, NULL, 'cancelled', 'Laudantium et dolor soluta ex perferendis eum.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(97, 8, 'padel', 52, 7, '2026-04-14 22:00:58', '2026-04-14 23:30:58', 75.00, 0.00, 'open_match', 'coached', 4, NULL, NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(98, 8, 'padel', 52, 7, '2026-04-22 20:17:44', '2026-04-22 21:17:44', 100.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'confirmed', 'Omnis hic asperiores ipsum sit.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(99, 8, 'padel', 52, 7, '2026-03-28 00:24:00', '2026-03-28 01:54:00', 150.00, 0.00, 'private', 'academy', 4, NULL, NULL, NULL, 'confirmed', 'In expedita neque deserunt perspiciatis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(100, 8, 'padel', 52, 7, '2026-03-26 02:54:22', '2026-03-26 04:24:22', 112.50, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(101, 8, 'padel', 52, 7, '2026-04-03 03:02:34', '2026-04-03 05:02:34', 300.00, 0.00, 'open_match', 'academy', 4, NULL, NULL, NULL, 'cancelled', 'Quod laborum quis quo et ut corrupti voluptatum.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(102, 8, 'padel', 52, 7, '2026-05-12 16:15:26', '2026-05-12 17:15:26', 50.00, 0.00, 'open_match', 'academy', 4, 'advanced', NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(103, 9, 'padel', 16, NULL, '2026-04-19 09:59:43', '2026-04-19 10:59:43', 150.00, 0.00, 'private', 'standard', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(104, 9, 'padel', 16, NULL, '2026-05-05 16:52:46', '2026-05-05 18:22:46', 225.00, 0.00, 'private', 'coached', 4, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(105, 9, 'padel', 16, NULL, '2026-03-27 22:54:51', '2026-03-28 00:24:51', 75.00, 0.00, 'open_match', 'standard', 4, NULL, NULL, NULL, 'confirmed', 'Atque tempore natus enim eos molestias iusto.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(106, 9, 'padel', 16, NULL, '2026-04-12 08:42:43', '2026-04-12 10:42:43', 300.00, 0.00, 'open_match', 'academy', 2, NULL, NULL, NULL, 'confirmed', 'Ut quia quos fuga provident et.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(107, 9, 'padel', 16, NULL, '2026-04-09 01:57:30', '2026-04-09 03:57:30', 300.00, 0.00, 'open_match', 'coached', 4, 'advanced', NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(108, 9, 'padel', 16, NULL, '2026-04-24 02:37:45', '2026-04-24 04:37:45', 300.00, 0.00, 'private', 'standard', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(109, 9, 'padel', 16, NULL, '2026-04-05 13:53:47', '2026-04-05 15:23:47', 180.00, 0.00, 'private', 'academy', 2, NULL, NULL, NULL, 'pending', 'Sed at sed sint saepe.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(110, 9, 'padel', 16, NULL, '2026-04-04 10:37:21', '2026-04-04 11:37:21', 50.00, 0.00, 'open_match', 'standard', 2, 'intermediate', NULL, NULL, 'cancelled', 'Ad quisquam temporibus odio ut ut quia sit quis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(111, 10, 'padel', 32, NULL, '2026-03-28 03:47:07', '2026-03-28 05:47:07', 200.00, 0.00, 'private', 'coached', 2, NULL, NULL, NULL, 'pending', 'Voluptas aut impedit rem eius.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(112, 10, 'padel', 32, NULL, '2026-05-20 07:42:50', '2026-05-20 09:12:50', 75.00, 0.00, 'private', 'standard', 4, 'beginner', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(113, 10, 'padel', 32, NULL, '2026-05-24 16:37:00', '2026-05-24 17:37:00', 75.00, 0.00, 'private', 'coached', 2, 'beginner', NULL, NULL, 'confirmed', 'Voluptate dolore dolorum quidem molestias saepe perferendis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(114, 10, 'padel', 32, NULL, '2026-04-22 22:58:38', '2026-04-23 00:58:38', 150.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'pending', 'Explicabo eius ut quia possimus.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(115, 10, 'padel', 32, NULL, '2026-03-26 23:41:31', '2026-03-27 01:11:31', 180.00, 0.00, 'open_match', 'academy', 4, NULL, NULL, NULL, 'confirmed', 'Blanditiis quidem accusantium beatae eaque facere ut.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(116, 10, 'padel', 32, NULL, '2026-05-04 07:56:10', '2026-05-04 08:56:10', 50.00, 0.00, 'private', 'standard', 2, 'beginner', NULL, NULL, 'cancelled', 'Omnis iure nihil sit molestias ut accusantium.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(117, 10, 'padel', 32, NULL, '2026-05-20 12:49:03', '2026-05-20 14:49:03', 100.00, 0.00, 'open_match', 'standard', 4, 'beginner', NULL, NULL, 'pending', 'Mollitia fuga cumque maiores repudiandae id soluta.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(118, 10, 'padel', 32, NULL, '2026-04-20 13:30:08', '2026-04-20 15:00:08', 225.00, 0.00, 'open_match', 'academy', 2, NULL, NULL, NULL, 'confirmed', 'Magnam quo animi praesentium.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(119, 10, 'padel', 32, NULL, '2026-05-02 14:37:29', '2026-05-02 16:07:29', 150.00, 0.00, 'private', 'coached', 4, 'advanced', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(120, 10, 'padel', 32, NULL, '2026-05-24 13:54:06', '2026-05-24 15:54:06', 300.00, 0.00, 'open_match', 'academy', 4, 'advanced', NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(121, 10, 'padel', 32, NULL, '2026-04-18 22:43:22', '2026-04-19 00:13:22', 112.50, 0.00, 'private', 'standard', 4, NULL, NULL, NULL, 'confirmed', 'Dicta repudiandae quod in rem modi et.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(122, 10, 'padel', 32, NULL, '2026-04-20 15:52:46', '2026-04-20 16:52:46', 120.00, 0.00, 'private', 'standard', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(123, 11, 'tennis', 12, 7, '2026-05-20 04:05:25', '2026-05-20 05:35:25', 75.00, 0.00, 'private', 'standard', 4, 'intermediate', NULL, NULL, 'pending', 'Voluptates perferendis perspiciatis aliquam ipsa commodi reiciendis voluptas labore.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(124, 11, 'tennis', 12, 7, '2026-05-18 08:06:14', '2026-05-18 09:36:14', 180.00, 0.00, 'private', 'academy', 2, 'beginner', NULL, NULL, 'confirmed', 'Deserunt voluptas aspernatur voluptatibus placeat.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(125, 11, 'tennis', 12, 7, '2026-04-26 23:40:43', '2026-04-27 00:40:43', 120.00, 0.00, 'private', 'standard', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(126, 11, 'tennis', 12, 7, '2026-03-26 22:41:24', '2026-03-26 23:41:24', 100.00, 0.00, 'private', 'standard', 4, NULL, NULL, NULL, 'cancelled', 'Est exercitationem voluptas iusto fugit.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(127, 11, 'tennis', 12, 7, '2026-04-11 14:27:58', '2026-04-11 16:27:58', 100.00, 0.00, 'private', 'coached', 4, NULL, NULL, NULL, 'confirmed', 'Quo saepe aliquam sed.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(128, 11, 'tennis', 12, 7, '2026-04-18 07:10:29', '2026-04-18 09:10:29', 150.00, 0.00, 'private', 'standard', 2, NULL, NULL, NULL, 'cancelled', 'Itaque voluptate sequi aut voluptatem.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(129, 11, 'tennis', 12, 7, '2026-05-06 22:31:42', '2026-05-07 00:31:42', 240.00, 0.00, 'open_match', 'standard', 4, NULL, NULL, NULL, 'confirmed', 'Aut aut harum est itaque temporibus qui libero non.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(130, 11, 'tennis', 12, 7, '2026-05-24 09:54:24', '2026-05-24 11:54:24', 300.00, 0.00, 'private', 'academy', 2, 'advanced', NULL, NULL, 'confirmed', 'Qui omnis non inventore omnis eaque.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(131, 11, 'tennis', 12, 7, '2026-05-06 01:09:09', '2026-05-06 03:09:09', 150.00, 0.00, 'private', 'coached', 4, NULL, NULL, NULL, 'confirmed', 'Officia illum magni reiciendis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(132, 11, 'tennis', 12, 7, '2026-04-10 03:27:28', '2026-04-10 05:27:28', 300.00, 0.00, 'open_match', 'standard', 4, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(133, 11, 'tennis', 12, 7, '2026-04-02 08:53:08', '2026-04-02 09:53:08', 50.00, 0.00, 'private', 'academy', 2, 'beginner', NULL, NULL, 'confirmed', 'Labore quisquam odio nulla.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(134, 11, 'tennis', 12, 7, '2026-04-23 02:02:55', '2026-04-23 04:02:55', 240.00, 0.00, 'open_match', 'academy', 4, 'beginner', NULL, NULL, 'confirmed', 'Vitae deleniti eos est asperiores aut voluptas odio.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(135, 11, 'tennis', 12, 7, '2026-04-19 13:12:23', '2026-04-19 15:12:23', 150.00, 0.00, 'open_match', 'standard', 4, 'intermediate', NULL, NULL, 'confirmed', 'Sunt quae voluptate temporibus numquam dolor vel in.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(136, 11, 'tennis', 12, 7, '2026-05-12 10:54:49', '2026-05-12 12:54:49', 200.00, 0.00, 'private', 'standard', 2, 'intermediate', NULL, NULL, 'confirmed', 'Vero dolores ducimus voluptas omnis ea ut.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(137, 11, 'tennis', 12, 7, '2026-03-29 09:04:57', '2026-03-29 10:34:57', 112.50, 0.00, 'open_match', 'coached', 4, 'intermediate', NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 20:12:01'),
+(138, 12, 'tennis', 33, NULL, '2026-04-17 01:24:40', '2026-04-17 03:24:40', 100.00, 0.00, 'private', 'coached', 2, 'advanced', NULL, NULL, 'confirmed', 'Labore ab aliquid et distinctio labore totam.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(139, 12, 'tennis', 33, NULL, '2026-05-11 00:35:03', '2026-05-11 02:05:03', 225.00, 0.00, 'open_match', 'academy', 2, 'advanced', NULL, NULL, 'confirmed', 'Dolore ipsum numquam odio provident voluptate.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(140, 12, 'tennis', 33, NULL, '2026-04-23 16:25:52', '2026-04-23 18:25:52', 200.00, 0.00, 'open_match', 'academy', 2, NULL, NULL, NULL, 'confirmed', 'Et consequatur minus officia aspernatur culpa aut qui consequuntur.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(141, 12, 'tennis', 33, NULL, '2026-05-17 11:25:34', '2026-05-17 13:25:34', 200.00, 0.00, 'open_match', 'academy', 4, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(142, 12, 'tennis', 33, NULL, '2026-04-08 10:29:36', '2026-04-08 12:29:36', 300.00, 0.00, 'private', 'standard', 4, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(143, 12, 'tennis', 33, NULL, '2026-04-12 05:41:13', '2026-04-12 07:11:13', 225.00, 0.00, 'open_match', 'standard', 4, 'intermediate', NULL, NULL, 'confirmed', 'Dolor voluptas occaecati officia.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(144, 12, 'tennis', 33, NULL, '2026-05-19 07:05:48', '2026-05-19 09:05:48', 150.00, 0.00, 'private', 'academy', 2, 'advanced', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(145, 12, 'tennis', 33, NULL, '2026-05-14 16:43:51', '2026-05-14 18:43:51', 100.00, 0.00, 'open_match', 'academy', 4, 'beginner', NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(146, 12, 'tennis', 33, NULL, '2026-05-21 07:10:17', '2026-05-21 08:10:17', 75.00, 0.00, 'private', 'coached', 2, 'advanced', NULL, NULL, 'confirmed', 'Magni sit ratione quod sed tempora commodi.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(147, 12, 'tennis', 33, NULL, '2026-04-12 19:52:07', '2026-04-12 20:52:07', 150.00, 0.00, 'private', 'standard', 2, 'advanced', NULL, NULL, 'confirmed', 'Ea esse vel fuga vel commodi veritatis est dolor.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(148, 12, 'tennis', 33, NULL, '2026-04-18 14:57:22', '2026-04-18 15:57:22', 100.00, 0.00, 'private', 'academy', 2, NULL, NULL, NULL, 'confirmed', 'Dolores et rerum sit et voluptatibus.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(149, 12, 'tennis', 33, NULL, '2026-05-24 16:16:19', '2026-05-24 17:46:19', 225.00, 0.00, 'open_match', 'coached', 4, 'advanced', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(150, 12, 'tennis', 33, NULL, '2026-05-13 02:24:24', '2026-05-13 04:24:24', 240.00, 0.00, 'open_match', 'academy', 2, 'intermediate', NULL, NULL, 'pending', 'Velit quisquam amet voluptatem.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(151, 12, 'tennis', 33, NULL, '2026-04-08 01:30:52', '2026-04-08 03:30:52', 300.00, 0.00, 'private', 'coached', 4, NULL, NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(152, 13, 'tennis', 23, NULL, '2026-05-16 04:28:03', '2026-05-16 05:28:03', 150.00, 0.00, 'open_match', 'academy', 4, 'intermediate', NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(153, 13, 'tennis', 23, NULL, '2026-05-11 08:57:02', '2026-05-11 09:57:02', 50.00, 0.00, 'private', 'standard', 2, NULL, NULL, NULL, 'confirmed', 'Ipsa eos modi ducimus reiciendis sequi autem.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(154, 13, 'tennis', 23, NULL, '2026-05-11 04:51:26', '2026-05-11 06:51:26', 100.00, 0.00, 'private', 'academy', 2, 'intermediate', NULL, NULL, 'cancelled', 'Illo et laborum atque consequatur.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(155, 13, 'tennis', 23, NULL, '2026-05-01 09:50:32', '2026-05-01 11:20:32', 150.00, 0.00, 'open_match', 'academy', 2, 'beginner', NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(156, 13, 'tennis', 23, NULL, '2026-05-19 17:24:27', '2026-05-19 18:24:27', 50.00, 0.00, 'open_match', 'coached', 4, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(157, 13, 'tennis', 23, NULL, '2026-04-11 12:46:01', '2026-04-11 14:16:01', 180.00, 0.00, 'open_match', 'academy', 2, 'beginner', NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(158, 13, 'tennis', 23, NULL, '2026-04-17 22:13:50', '2026-04-17 23:13:50', 120.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'confirmed', 'Dolores eius veniam occaecati consequatur autem dolore nesciunt.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(159, 13, 'tennis', 23, NULL, '2026-04-12 21:33:10', '2026-04-12 23:03:10', 180.00, 0.00, 'private', 'standard', 4, NULL, NULL, NULL, 'pending', 'Et sit fugiat ipsa quibusdam.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(160, 13, 'tennis', 23, NULL, '2026-04-13 17:55:30', '2026-04-13 18:55:30', 120.00, 0.00, 'private', 'coached', 2, NULL, NULL, NULL, 'confirmed', 'Et voluptatem voluptatem velit atque aliquam amet fugit.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(161, 13, 'tennis', 23, NULL, '2026-04-27 18:55:51', '2026-04-27 20:25:51', 180.00, 0.00, 'private', 'academy', 2, 'intermediate', NULL, NULL, 'confirmed', 'Laboriosam laborum perferendis maxime et et.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(162, 13, 'tennis', 23, NULL, '2026-04-30 13:14:10', '2026-04-30 15:14:10', 100.00, 0.00, 'private', 'standard', 4, NULL, NULL, NULL, 'confirmed', 'Rem distinctio quo molestias.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(163, 13, 'tennis', 23, NULL, '2026-03-29 03:00:40', '2026-03-29 05:00:40', 300.00, 0.00, 'private', 'academy', 2, 'beginner', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(164, 13, 'tennis', 23, NULL, '2026-04-10 13:39:20', '2026-04-10 15:39:20', 100.00, 0.00, 'open_match', 'coached', 2, NULL, NULL, NULL, 'pending', 'Similique rem sit earum iste.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(165, 14, 'padel', 20, NULL, '2026-05-14 01:10:19', '2026-05-14 02:10:19', 150.00, 0.00, 'private', 'coached', 2, 'beginner', NULL, NULL, 'cancelled', 'Sed aliquid modi dolor reiciendis at quis corrupti voluptas.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(166, 14, 'padel', 20, NULL, '2026-05-23 02:30:08', '2026-05-23 04:30:08', 100.00, 0.00, 'private', 'coached', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(167, 14, 'padel', 20, NULL, '2026-04-22 14:34:21', '2026-04-22 16:04:21', 225.00, 0.00, 'private', 'standard', 4, 'intermediate', NULL, NULL, 'pending', 'A praesentium fugiat doloribus.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(168, 14, 'padel', 20, NULL, '2026-03-28 01:27:38', '2026-03-28 03:27:38', 200.00, 0.00, 'private', 'coached', 2, NULL, NULL, NULL, 'confirmed', 'Corporis quisquam praesentium laudantium et odit magnam voluptas.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(169, 14, 'padel', 20, NULL, '2026-05-07 02:01:47', '2026-05-07 04:01:47', 100.00, 0.00, 'private', 'coached', 2, 'beginner', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(170, 14, 'padel', 20, NULL, '2026-04-14 10:01:54', '2026-04-14 12:01:54', 200.00, 0.00, 'private', 'standard', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(171, 14, 'padel', 20, NULL, '2026-05-05 10:07:27', '2026-05-05 11:07:27', 120.00, 0.00, 'private', 'academy', 2, 'beginner', NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(172, 14, 'padel', 20, NULL, '2026-03-30 00:37:48', '2026-03-30 01:37:48', 75.00, 0.00, 'private', 'academy', 2, NULL, NULL, NULL, 'cancelled', 'Quisquam qui nihil ut dolorum harum.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(173, 14, 'padel', 20, NULL, '2026-05-13 11:08:29', '2026-05-13 12:38:29', 225.00, 0.00, 'private', 'academy', 4, 'intermediate', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(174, 15, 'padel', 42, 10, '2026-05-18 01:42:39', '2026-05-18 03:42:39', 150.00, 0.00, 'private', 'academy', 2, NULL, NULL, NULL, 'confirmed', 'Est minus non ad facere.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(175, 15, 'padel', 42, 10, '2026-05-10 14:47:55', '2026-05-10 15:47:55', 150.00, 0.00, 'private', 'coached', 2, 'beginner', NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(176, 15, 'padel', 42, 10, '2026-05-01 19:25:38', '2026-05-01 20:25:38', 50.00, 0.00, 'open_match', 'academy', 2, NULL, NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(177, 15, 'padel', 42, 10, '2026-04-11 05:44:00', '2026-04-11 07:14:00', 225.00, 0.00, 'private', 'coached', 2, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(178, 15, 'padel', 42, 10, '2026-04-10 15:14:07', '2026-04-10 16:44:07', 150.00, 0.00, 'open_match', 'coached', 4, 'advanced', NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(179, 15, 'padel', 42, 10, '2026-04-25 11:15:41', '2026-04-25 12:15:41', 150.00, 0.00, 'private', 'coached', 4, NULL, NULL, NULL, 'confirmed', 'Nihil voluptatum eaque aut velit non sed error.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(180, 15, 'padel', 42, 10, '2026-05-24 08:04:27', '2026-05-24 09:34:27', 75.00, 0.00, 'open_match', 'coached', 2, NULL, NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(181, 15, 'padel', 42, 10, '2026-04-15 05:16:35', '2026-04-15 06:46:35', 75.00, 0.00, 'private', 'coached', 2, NULL, NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(182, 16, 'padel', 49, NULL, '2026-04-16 22:53:35', '2026-04-16 23:53:35', 75.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'confirmed', 'Porro id totam ut dicta.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(183, 16, 'padel', 49, NULL, '2026-05-02 10:58:07', '2026-05-02 12:58:07', 150.00, 0.00, 'open_match', 'coached', 4, NULL, NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(184, 16, 'padel', 49, NULL, '2026-04-26 19:06:51', '2026-04-26 20:06:51', 100.00, 0.00, 'open_match', 'academy', 4, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(185, 16, 'padel', 49, NULL, '2026-04-14 21:25:45', '2026-04-14 22:55:45', 112.50, 0.00, 'open_match', 'standard', 2, 'intermediate', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(186, 16, 'padel', 49, NULL, '2026-05-10 20:16:49', '2026-05-10 22:16:49', 150.00, 0.00, 'private', 'standard', 2, 'beginner', NULL, NULL, 'confirmed', 'In sint ipsa odio sit.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(187, 16, 'padel', 49, NULL, '2026-03-31 14:31:01', '2026-03-31 16:01:01', 180.00, 0.00, 'open_match', 'coached', 4, 'advanced', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(188, 16, 'padel', 49, NULL, '2026-03-31 22:37:01', '2026-04-01 00:07:01', 180.00, 0.00, 'open_match', 'academy', 2, 'beginner', NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(189, 16, 'padel', 49, NULL, '2026-04-14 11:59:47', '2026-04-14 13:29:47', 75.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'cancelled', 'Doloribus corrupti exercitationem facilis aut et quam.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(190, 16, 'padel', 49, NULL, '2026-04-12 16:19:40', '2026-04-12 18:19:40', 240.00, 0.00, 'open_match', 'coached', 2, 'intermediate', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(191, 16, 'padel', 49, NULL, '2026-04-29 21:20:58', '2026-04-29 23:20:58', 100.00, 0.00, 'private', 'standard', 4, 'intermediate', NULL, NULL, 'confirmed', 'Illum autem laboriosam ab sunt a sit cupiditate.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(192, 16, 'padel', 49, NULL, '2026-04-21 18:40:21', '2026-04-21 19:40:21', 120.00, 0.00, 'open_match', 'academy', 2, NULL, NULL, NULL, 'confirmed', 'Quaerat voluptatem veniam consequatur nihil quas eligendi deleniti.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(193, 17, 'padel', 60, 10, '2026-04-29 18:23:46', '2026-04-29 19:53:46', 180.00, 0.00, 'private', 'standard', 4, NULL, NULL, NULL, 'confirmed', 'Minima autem provident dolor vero in dolore.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(194, 17, 'padel', 60, 10, '2026-05-03 08:57:59', '2026-05-03 09:57:59', 100.00, 0.00, 'open_match', 'standard', 2, 'beginner', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(195, 17, 'padel', 60, 10, '2026-05-21 20:27:24', '2026-05-21 22:27:24', 240.00, 0.00, 'open_match', 'coached', 4, NULL, NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(196, 17, 'padel', 60, 10, '2026-05-23 11:59:02', '2026-05-23 13:29:02', 75.00, 0.00, 'private', 'coached', 4, 'advanced', NULL, NULL, 'confirmed', 'Consequuntur omnis id ducimus sit qui vitae pariatur.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(197, 17, 'padel', 60, 10, '2026-03-25 22:46:11', '2026-03-25 23:46:11', 100.00, 0.00, 'open_match', 'standard', 2, NULL, NULL, NULL, 'confirmed', 'Suscipit pariatur inventore commodi.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(198, 17, 'padel', 60, 10, '2026-04-11 17:42:34', '2026-04-11 19:12:34', 150.00, 0.00, 'open_match', 'academy', 4, 'intermediate', NULL, NULL, 'confirmed', 'Doloremque adipisci ea qui perferendis mollitia voluptatem.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(199, 17, 'padel', 60, 10, '2026-05-11 22:26:34', '2026-05-11 23:56:34', 180.00, 0.00, 'open_match', 'standard', 2, 'beginner', NULL, NULL, 'pending', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(200, 17, 'padel', 60, 10, '2026-04-05 02:31:50', '2026-04-05 03:31:50', 50.00, 0.00, 'private', 'coached', 2, 'beginner', NULL, NULL, 'cancelled', 'Odit voluptatibus est voluptatem tempora maxime in officiis.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(201, 17, 'padel', 60, 10, '2026-04-28 03:54:17', '2026-04-28 05:24:17', 180.00, 0.00, 'private', 'standard', 4, NULL, NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(202, 17, 'padel', 60, 10, '2026-04-03 03:32:08', '2026-04-03 05:32:08', 300.00, 0.00, 'open_match', 'standard', 2, 'intermediate', NULL, NULL, 'confirmed', 'Debitis ratione esse quia dignissimos.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(203, 17, 'padel', 60, 10, '2026-04-11 00:19:49', '2026-04-11 01:49:49', 180.00, 0.00, 'private', 'academy', 4, 'advanced', NULL, NULL, 'confirmed', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(204, 17, 'padel', 60, 10, '2026-05-23 11:21:00', '2026-05-23 12:21:00', 100.00, 0.00, 'open_match', 'coached', 2, 'beginner', NULL, NULL, 'cancelled', 'Quas expedita et veritatis provident.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(205, 17, 'padel', 60, 10, '2026-05-16 21:28:04', '2026-05-16 22:28:04', 75.00, 0.00, 'private', 'academy', 4, 'intermediate', NULL, NULL, 'cancelled', 'Aut perferendis corporis consequatur et est natus quam.', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(206, 17, 'padel', 60, 10, '2026-04-20 12:53:17', '2026-04-20 13:53:17', 120.00, 0.00, 'open_match', 'standard', 4, 'advanced', NULL, NULL, 'cancelled', NULL, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21');
 
 -- --------------------------------------------------------
 
@@ -374,6 +378,14 @@ CREATE TABLE `cache` (
   `expiration` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `cache`
+--
+
+INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
+('laravel-cache-livewire-rate-limiter:16d36dff9abd246c67dfac3e63b993a169af77e6', 'i:1;', 1778588793),
+('laravel-cache-livewire-rate-limiter:16d36dff9abd246c67dfac3e63b993a169af77e6:timer', 'i:1778588793;', 1778588793);
+
 -- --------------------------------------------------------
 
 --
@@ -398,22 +410,51 @@ CREATE TABLE `clubs` (
   `sport_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'padel',
   `address` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `subscription_status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
+  `registration_status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'approved',
+  `rejection_reason` text COLLATE utf8mb4_unicode_ci,
+  `approved_at` timestamp NULL DEFAULT NULL,
   `settings` json DEFAULT NULL,
+  `sport_rules` json DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `approved_by` bigint UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `clubs`
 --
 
-INSERT INTO `clubs` (`id`, `name`, `sport_type`, `address`, `subscription_status`, `settings`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, 'Skiles-Hackett Padel Club', 'squash', '3004 Bessie Locks, Dubai', 'trial', '{\"currency\": \"SAR\", \"timezone\": \"Asia/Dubai\", \"closing_hour\": 23, \"opening_hour\": 6}', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(2, 'Walker-Shanahan Padel Club', 'squash', '7726 Mills Meadows, Abu Dhabi', 'trial', '{\"currency\": \"AED\", \"timezone\": \"Asia/Riyadh\", \"closing_hour\": 23, \"opening_hour\": 6}', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(3, 'Braun-Tromp Padel Club', 'padel', '416 Medhurst Stravenue Apt. 874, Casablanca', 'inactive', '{\"currency\": \"USD\", \"timezone\": \"Asia/Riyadh\", \"closing_hour\": 23, \"opening_hour\": 6}', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(4, 'Balistreri Ltd Padel Club', 'tennis', '843 Garfield Squares Suite 720, Abu Dhabi', 'trial', '{\"currency\": \"USD\", \"timezone\": \"Africa/Cairo\", \"closing_hour\": 23, \"opening_hour\": 6}', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(5, 'Kunde Inc Padel Club', 'padel', '189 Carlie Mission Apt. 858, Tunis', 'active', '{\"currency\": \"QAR\", \"timezone\": \"Africa/Cairo\", \"closing_hour\": 23, \"opening_hour\": 6}', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20');
+INSERT INTO `clubs` (`id`, `name`, `sport_type`, `address`, `subscription_status`, `registration_status`, `rejection_reason`, `approved_at`, `settings`, `sport_rules`, `deleted_at`, `created_at`, `updated_at`, `approved_by`) VALUES
+(1, 'Skiles-Hackett Padel Club', 'squash', '3004 Bessie Locks, Dubai', 'trial', 'approved', NULL, NULL, '{\"currency\": \"SAR\", \"timezone\": \"Asia/Dubai\", \"closing_hour\": 23, \"opening_hour\": 6}', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20', NULL),
+(2, 'Walker-Shanahan Padel Club', 'squash', '7726 Mills Meadows, Abu Dhabi', 'trial', 'approved', NULL, NULL, '{\"currency\": \"AED\", \"timezone\": \"Asia/Riyadh\", \"closing_hour\": 23, \"opening_hour\": 6}', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20', NULL),
+(3, 'Braun-Tromp Padel Club', 'padel', '416 Medhurst Stravenue Apt. 874, Casablanca', 'inactive', 'approved', NULL, NULL, '{\"currency\": \"USD\", \"timezone\": \"Asia/Riyadh\", \"closing_hour\": 23, \"opening_hour\": 6}', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20', NULL),
+(4, 'Balistreri Ltd Padel Club', 'tennis', '843 Garfield Squares Suite 720, Abu Dhabi', 'trial', 'approved', NULL, NULL, '{\"currency\": \"USD\", \"timezone\": \"Africa/Cairo\", \"closing_hour\": 23, \"opening_hour\": 6}', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20', NULL),
+(5, 'Kunde Inc Padel Club', 'padel', '189 Carlie Mission Apt. 858, Tunis', 'active', 'approved', NULL, NULL, '{\"currency\": \"QAR\", \"timezone\": \"Africa/Cairo\", \"closing_hour\": 23, \"opening_hour\": 6}', NULL, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20', NULL),
+(6, 'Cairo Padel Club', 'padel', '5 Tahrir Square, Cairo, Egypt', 'active', 'approved', NULL, '2026-05-12 08:55:21', NULL, '{\"padel\": {\"max_players\": 4, \"match_duration_minutes\": 90}}', NULL, '2026-05-12 08:55:21', '2026-05-12 08:55:21', 1),
+(7, 'Alexandria Tennis Academy', 'tennis', '12 Corniche Road, Alexandria, Egypt', 'active', 'approved', NULL, '2026-05-12 08:55:21', NULL, '{\"tennis\": {\"max_players\": 2, \"match_duration_minutes\": 60}}', NULL, '2026-05-12 08:55:21', '2026-05-12 08:55:21', 1),
+(8, 'Giza Sports Hub', 'padel', '88 Pyramids Street, Giza, Egypt', 'active', 'approved', NULL, '2026-05-12 08:55:22', NULL, '{\"padel\": {\"max_players\": 4, \"match_duration_minutes\": 90}, \"pickleball\": {\"max_players\": 4, \"match_duration_minutes\": 60}}', NULL, '2026-05-12 08:55:22', '2026-05-12 08:55:22', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `club_saas_subscriptions`
+--
+
+CREATE TABLE `club_saas_subscriptions` (
+  `id` bigint UNSIGNED NOT NULL,
+  `club_id` bigint UNSIGNED NOT NULL,
+  `saas_plan_id` bigint UNSIGNED DEFAULT NULL,
+  `billing_cycle` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'monthly',
+  `amount_paid` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `starts_at` date NOT NULL,
+  `ends_at` date NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
+  `payment_reference` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -449,7 +490,34 @@ INSERT INTO `club_users` (`id`, `club_id`, `user_id`, `role`, `created_at`, `upd
 (12, 4, 6, 'staff', '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
 (13, 5, 1, 'owner', '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
 (14, 5, 8, 'staff', '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(15, 5, 10, 'staff', '2026-04-24 19:36:21', '2026-04-24 19:36:21');
+(15, 5, 10, 'staff', '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(16, 6, 63, 'owner', '2026-05-12 08:55:21', '2026-05-12 08:55:21'),
+(17, 6, 64, 'manager', '2026-05-12 08:55:21', '2026-05-12 08:55:21'),
+(18, 6, 65, 'staff', '2026-05-12 08:55:21', '2026-05-12 08:55:21'),
+(19, 7, 67, 'owner', '2026-05-12 08:55:22', '2026-05-12 08:55:22'),
+(20, 7, 68, 'manager', '2026-05-12 08:55:22', '2026-05-12 08:55:22'),
+(21, 7, 69, 'staff', '2026-05-12 08:55:22', '2026-05-12 08:55:22'),
+(22, 8, 71, 'owner', '2026-05-12 08:55:22', '2026-05-12 08:55:22'),
+(23, 8, 72, 'manager', '2026-05-12 08:55:22', '2026-05-12 08:55:22'),
+(24, 8, 73, 'staff', '2026-05-12 08:55:23', '2026-05-12 08:55:23');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `coach_applications`
+--
+
+CREATE TABLE `coach_applications` (
+  `id` bigint UNSIGNED NOT NULL,
+  `academy_session_id` bigint UNSIGNED NOT NULL,
+  `coach_user_id` bigint UNSIGNED NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `message` text COLLATE utf8mb4_unicode_ci,
+  `response_note` text COLLATE utf8mb4_unicode_ci,
+  `responded_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -717,7 +785,14 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (13, '2026_04_25_000001_create_packages_table', 1),
 (14, '2026_04_25_000002_add_player_profile_fields_to_users', 1),
 (15, '2026_04_24_232401_add_video_url_to_academy_sessions_table', 2),
-(16, '2026_04_24_233626_add_session_plan_and_video_urls_to_academy_sessions_table', 3);
+(16, '2026_04_24_233626_add_session_plan_and_video_urls_to_academy_sessions_table', 3),
+(17, '2026_05_01_000001_create_saas_plans_table', 4),
+(18, '2026_05_01_000002_add_registration_status_to_clubs', 4),
+(19, '2026_05_01_000003_add_skill_range_to_bookings_and_sessions', 4),
+(20, '2026_05_01_000004_create_coach_applications_table', 4),
+(21, '2026_05_01_000005_add_sport_rules_to_clubs_table', 4),
+(22, '2026_05_12_000001_add_max_players_and_price_per_player_to_packages_table', 5),
+(23, '2026_05_12_000002_backfill_package_price_per_player', 6);
 
 -- --------------------------------------------------------
 
@@ -732,8 +807,10 @@ CREATE TABLE `packages` (
   `sport_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'padel',
   `type` enum('sessions','monthly','quarterly','yearly','custom') COLLATE utf8mb4_unicode_ci NOT NULL,
   `session_count` smallint UNSIGNED DEFAULT NULL COMMENT 'Number of sessions included (for sessions type)',
+  `max_players` smallint UNSIGNED NOT NULL DEFAULT '4',
   `duration_days` smallint UNSIGNED DEFAULT NULL COMMENT 'Validity period in days',
   `price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `price_per_player` decimal(10,2) NOT NULL DEFAULT '0.00',
   `description` text COLLATE utf8mb4_unicode_ci,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `deleted_at` timestamp NULL DEFAULT NULL,
@@ -745,20 +822,21 @@ CREATE TABLE `packages` (
 -- Dumping data for table `packages`
 --
 
-INSERT INTO `packages` (`id`, `club_id`, `name`, `sport_type`, `type`, `session_count`, `duration_days`, `price`, `description`, `is_active`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Academy Yearly', 'tennis', 'quarterly', NULL, NULL, 100.00, 'Eos accusamus praesentium et qui.', 1, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(2, 1, 'Pro Monthly', 'tennis', 'sessions', 7, NULL, 200.00, 'Quod doloremque est veritatis nisi eius.', 1, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(3, 1, 'Summer Intensive', 'tennis', 'monthly', NULL, NULL, 100.00, NULL, 1, NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(4, 2, 'Beginner Starter Pack', 'squash', 'custom', NULL, 14, 1500.00, NULL, 1, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(5, 2, 'Pro Monthly', 'padel', 'yearly', NULL, NULL, 500.00, NULL, 0, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(6, 3, 'Junior Academy', 'padel', 'monthly', NULL, NULL, 1000.00, NULL, 1, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(7, 3, 'Summer Intensive', 'padel', 'quarterly', NULL, NULL, 1000.00, NULL, 0, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(8, 3, 'Weekend Warrior', 'squash', 'sessions', 12, NULL, 100.00, NULL, 1, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(9, 4, 'Pro Monthly', 'padel', 'custom', NULL, 60, 200.00, NULL, 1, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(10, 4, 'Open Court Pass', 'tennis', 'yearly', NULL, NULL, 350.00, NULL, 1, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(11, 4, 'Academy Yearly', 'squash', 'monthly', NULL, NULL, 500.00, NULL, 0, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(12, 5, 'Junior Academy', 'padel', 'yearly', NULL, NULL, 350.00, 'Aut delectus vero nulla rerum dicta explicabo.', 1, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(13, 5, 'Open Court Pass', 'tennis', 'monthly', NULL, NULL, 100.00, NULL, 1, NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21');
+INSERT INTO `packages` (`id`, `club_id`, `name`, `sport_type`, `type`, `session_count`, `max_players`, `duration_days`, `price`, `price_per_player`, `description`, `is_active`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Academy Yearly', 'tennis', 'quarterly', NULL, 4, NULL, 100.00, 25.00, 'Eos accusamus praesentium et qui.', 1, NULL, '2026-04-24 19:36:20', '2026-05-12 09:17:09'),
+(2, 1, 'Pro Monthly', 'tennis', 'sessions', 7, 4, NULL, 200.00, 50.00, 'Quod doloremque est veritatis nisi eius.', 1, NULL, '2026-04-24 19:36:20', '2026-05-12 09:17:09'),
+(3, 1, 'Summer Intensive', 'tennis', 'monthly', NULL, 4, NULL, 100.00, 25.00, NULL, 1, NULL, '2026-04-24 19:36:20', '2026-05-12 09:17:09'),
+(4, 2, 'Beginner Starter Pack', 'squash', 'custom', NULL, 4, 14, 1500.00, 375.00, NULL, 1, NULL, '2026-04-24 19:36:21', '2026-05-12 09:17:09'),
+(5, 2, 'Pro Monthly', 'padel', 'yearly', NULL, 4, NULL, 500.00, 125.00, NULL, 0, NULL, '2026-04-24 19:36:21', '2026-05-12 09:17:09'),
+(6, 3, 'Junior Academy', 'padel', 'monthly', NULL, 4, NULL, 1000.00, 250.00, NULL, 1, NULL, '2026-04-24 19:36:21', '2026-05-12 09:17:09'),
+(7, 3, 'Summer Intensive', 'padel', 'quarterly', NULL, 4, NULL, 1000.00, 250.00, NULL, 0, NULL, '2026-04-24 19:36:21', '2026-05-12 09:17:09'),
+(8, 3, 'Weekend Warrior', 'squash', 'sessions', 12, 4, NULL, 100.00, 25.00, NULL, 1, NULL, '2026-04-24 19:36:21', '2026-05-12 09:17:09'),
+(9, 4, 'Pro Monthly', 'padel', 'custom', NULL, 4, 60, 200.00, 50.00, NULL, 1, NULL, '2026-04-24 19:36:21', '2026-05-12 09:17:09'),
+(10, 4, 'Open Court Pass', 'tennis', 'yearly', NULL, 4, NULL, 350.00, 87.50, NULL, 1, NULL, '2026-04-24 19:36:21', '2026-05-12 09:17:09'),
+(11, 4, 'Academy Yearly', 'squash', 'monthly', NULL, 4, NULL, 500.00, 125.00, NULL, 0, NULL, '2026-04-24 19:36:21', '2026-05-12 09:17:09'),
+(12, 5, 'Junior Academy', 'padel', 'yearly', NULL, 4, NULL, 350.00, 87.50, 'Aut delectus vero nulla rerum dicta explicabo.', 1, NULL, '2026-04-24 19:36:21', '2026-05-12 09:17:09'),
+(13, 5, 'Open Court Pass', 'tennis', 'monthly', NULL, 4, NULL, 100.00, 25.00, NULL, 1, NULL, '2026-04-24 19:36:21', '2026-05-12 09:17:09'),
+(14, 6, '1 MONTH ', 'padel', 'monthly', NULL, 4, NULL, 4000.00, 1000.00, NULL, 1, NULL, '2026-05-12 09:01:04', '2026-05-12 09:17:09');
 
 -- --------------------------------------------------------
 
@@ -870,7 +948,8 @@ INSERT INTO `package_subscriptions` (`id`, `package_id`, `user_id`, `starts_at`,
 (84, 13, 18, '2026-03-20', '2026-04-19', NULL, 'expired', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
 (85, 13, 21, '2026-03-24', '2026-04-23', NULL, 'expired', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
 (86, 13, 50, '2026-04-06', '2026-05-06', NULL, 'active', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
-(87, 13, 60, '2026-04-06', '2026-05-06', NULL, 'active', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21');
+(87, 13, 60, '2026-04-06', '2026-05-06', NULL, 'active', NULL, '2026-04-24 19:36:21', '2026-04-24 19:36:21'),
+(88, 14, 66, '2026-05-12', '2026-06-12', NULL, 'active', NULL, '2026-05-12 09:13:45', '2026-05-12 09:13:45');
 
 -- --------------------------------------------------------
 
@@ -924,6 +1003,26 @@ CREATE TABLE `personal_access_tokens` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `saas_plans`
+--
+
+CREATE TABLE `saas_plans` (
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `monthly_price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `yearly_price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `features` json DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `sort_order` smallint UNSIGNED NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `sessions`
 --
 
@@ -941,6 +1040,17 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('5vp8nKqIGGyHeFPFIahntv50BaigFVB58aQML7ak', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0', 'eyJfdG9rZW4iOiJhb3pUaUROTTk3ZllGN3U4cmpQYkxaQmVSZEtFM1lrN0doaVFoTW9EIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cL2xvY2FsaG9zdDo4MDAwXC9hZG1pblwvbG9naW4iLCJyb3V0ZSI6ImZpbGFtZW50LmFkbWluLmF1dGgubG9naW4ifSwiX2ZsYXNoIjp7Im9sZCI6W10sIm5ldyI6W119fQ==', 1778584418),
+('8iWYMk9LqrPuLNMimAOqicnPzadR3nAzcOZbVATZ', 62, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36', 'eyJfdG9rZW4iOiJuckpUT1ZHQjVIakpYcER3MnpHT3gyYkhWVlhQWEs1elRwWTYxbzBKIiwidXJsIjpbXSwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwXC9zYWFzXC9zdWJzY3JpcHRpb25zIiwicm91dGUiOiJmaWxhbWVudC5zYWFzLnJlc291cmNlcy5zdWJzY3JpcHRpb25zLmluZGV4In0sIl9mbGFzaCI6eyJvbGQiOltdLCJuZXciOltdfSwibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiOjYyLCJwYXNzd29yZF9oYXNoX3dlYiI6ImRkNGYwOWM5NjAwODU1ZTYxYjIzZDk0YzBjYzgwZDRiODljZWQ1Njc1NWRkZTM3MjkzOTJhZTMwMTVkZjg2NDMiLCJ0YWJsZXMiOnsiMjY2ZmMzYjBmOWUzZDM1MTc2MDllYTcyMjBkZDEwNDVfY29sdW1ucyI6W3sidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJuYW1lIiwibGFiZWwiOiJOYW1lIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InNwb3J0X3R5cGUiLCJsYWJlbCI6IlNwb3J0IHR5cGUiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoicmVnaXN0cmF0aW9uX3N0YXR1cyIsImxhYmVsIjoiUmVnaXN0cmF0aW9uIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InN1YnNjcmlwdGlvbl9zdGF0dXMiLCJsYWJlbCI6IlN1YnNjcmlwdGlvbiBzdGF0dXMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoibGF0ZXN0U2Fhc1N1YnNjcmlwdGlvbi5wbGFuLm5hbWUiLCJsYWJlbCI6IlNhYVMgUGxhbiIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJsYXRlc3RTYWFzU3Vic2NyaXB0aW9uLmJpbGxpbmdfY3ljbGUiLCJsYWJlbCI6IkN5Y2xlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImxhdGVzdFNhYXNTdWJzY3JpcHRpb24uZW5kc19hdCIsImxhYmVsIjoiU3ViLiBFbmRzIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImNvdXJ0c19jb3VudCIsImxhYmVsIjoiQ291cnRzIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InVzZXJzX2NvdW50IiwibGFiZWwiOiJVc2VycyIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjcmVhdGVkX2F0IiwibGFiZWwiOiJDcmVhdGVkIGF0IiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOmZhbHNlLCJpc1RvZ2dsZWFibGUiOnRydWUsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6dHJ1ZX1dLCIzYjE5YjY3YTNjZTJlMmIwZGFjMTExNWZkYjE4YjRkMF9jb2x1bW5zIjpbeyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6Im5hbWUiLCJsYWJlbCI6Ik5hbWUiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiZW1haWwiLCJsYWJlbCI6IkVtYWlsIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InBob25lIiwibGFiZWwiOiJQaG9uZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJyb2xlIiwibGFiZWwiOiJSb2xlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImNsdWJzX2NvdW50IiwibGFiZWwiOiJBY2FkZW1pZXMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiaXNfYWN0aXZlIiwibGFiZWwiOiJBY3RpdmUiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiY3JlYXRlZF9hdCIsImxhYmVsIjoiQ3JlYXRlZCBhdCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjpmYWxzZSwiaXNUb2dnbGVhYmxlIjp0cnVlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOnRydWV9XSwiYWNiYTdmZDJiNjQwZGM5MWI3YmQzOGQwMzU1Y2ZjZGJfY29sdW1ucyI6W3sidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzb3J0X29yZGVyIiwibGFiZWwiOiIjIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6Im5hbWUiLCJsYWJlbCI6Ik5hbWUiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoic2x1ZyIsImxhYmVsIjoiU2x1ZyIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJtb250aGx5X3ByaWNlIiwibGFiZWwiOiJNb250aGx5IHByaWNlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InllYXJseV9wcmljZSIsImxhYmVsIjoiWWVhcmx5IHByaWNlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InN1YnNjcmlwdGlvbnNfY291bnQiLCJsYWJlbCI6IkNsdWJzIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImlzX2FjdGl2ZSIsImxhYmVsIjoiSXMgYWN0aXZlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH1dLCI1YjQxMWQ3MmMyOGY5YWUwZGIyODkyYWYwYmUzNjBmYV9jb2x1bW5zIjpbeyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImNsdWIubmFtZSIsImxhYmVsIjoiQ2x1YiIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJwbGFuLm5hbWUiLCJsYWJlbCI6IlBsYW4iLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiYmlsbGluZ19jeWNsZSIsImxhYmVsIjoiQmlsbGluZyBjeWNsZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzdGF0dXMiLCJsYWJlbCI6IlN0YXR1cyIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJhbW91bnRfcGFpZCIsImxhYmVsIjoiQW1vdW50IHBhaWQiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoic3RhcnRzX2F0IiwibGFiZWwiOiJTdGFydHMgYXQiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiZW5kc19hdCIsImxhYmVsIjoiRW5kcyBhdCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9XX19', 1778588744),
+('DS71AbQEqN76uGbsMMSgCSB9QkQwfZMifqaIa5X7', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0', 'eyJfdG9rZW4iOiJmeENDcUY0T0FQdkYxYThlN2s3UUpVQVN2aVN5MENIRDQ5clAwWUlQIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwIiwicm91dGUiOiJob21lIn0sIl9mbGFzaCI6eyJvbGQiOltdLCJuZXciOltdfX0=', 1778011948),
+('EhXjfZjyUp7UemovN9lBCuyGXPWmEcqYgzGzSUOn', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0', 'eyJfdG9rZW4iOiJmM0h6VzlLYlI3TGg1Y21XUXc3VzBNb3FXRXZJanJQOFN1WVJ0MGlqIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cL2xvY2FsaG9zdDo4MDAwXC9hZG1pblwvbG9naW4iLCJyb3V0ZSI6ImZpbGFtZW50LmFkbWluLmF1dGgubG9naW4ifSwiX2ZsYXNoIjp7Im9sZCI6W10sIm5ldyI6W119fQ==', 1778588198),
+('h73GjIXFmK3Xnt4XimQkJBnpe3nw76UOiTF4Bc8O', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0', 'eyJfdG9rZW4iOiJhSlFZOU8zQzNTR1dleFB2aFpORmR4elFhZ0hPYkU0ZHJyMjlkTHlNIiwidXJsIjp7ImludGVuZGVkIjoiaHR0cDpcL1wvbG9jYWxob3N0OjgwMDBcL2FkbWluXC9wYWNrYWdlc1wvMTQifSwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cL2xvY2FsaG9zdDo4MDAwXC9hZG1pblwvcGFja2FnZXNcLzE0Iiwicm91dGUiOiJmaWxhbWVudC5hZG1pbi5yZXNvdXJjZXMucGFja2FnZXMudmlldyJ9LCJfZmxhc2giOnsib2xkIjpbXSwibmV3IjpbXX19', 1778588198),
+('iDYk9kmGOYoxxBNpHjxNJIYRJ95x6XleOKsLXQIX', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0', 'eyJfdG9rZW4iOiJlTjFZeTRPVnlTRFpYMWRQVjM1YkgzenhyMzBjcHJzVUhQR1dtQ0JoIiwidXJsIjp7ImludGVuZGVkIjoiaHR0cDpcL1wvMTI3LjAuMC4xOjgwMDBcL3NhYXMifSwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwXC9zYWFzIiwicm91dGUiOiJmaWxhbWVudC5zYWFzLnBhZ2VzLmRhc2hib2FyZCJ9LCJfZmxhc2giOnsib2xkIjpbXSwibmV3IjpbXX19', 1778586979),
+('oak8x0fOq4wUql1Vw78OEhFyF4rT2wSvSlV0xi0x', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0', 'eyJfdG9rZW4iOiJZckIxMnFhcHhpMlU3akRleVBTbW9WS0cxem1ic2ZIdkpPOVBYT1hNIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwIiwicm91dGUiOiJob21lIn0sIl9mbGFzaCI6eyJvbGQiOltdLCJuZXciOltdfX0=', 1778590266),
+('PA0E3GYZq8gIU0ebxLJ8bAFRyu5sNo2afl9crCBK', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0', 'eyJfdG9rZW4iOiJvaEsyQmhVc0NqNWNaRzNmbThxUExlYjNIZTI4R0NPWXQ2cWt0SGFzIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwXC9yZWdpc3Rlci1hY2FkZW15Iiwicm91dGUiOiJyZWdpc3Rlci5hY2FkZW15In0sIl9mbGFzaCI6eyJvbGQiOltdLCJuZXciOltdfX0=', 1778367961),
+('sAyA0UvQuGOIoy5dlrU050i7xR8LPFouXRpb7bkQ', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0', 'eyJfdG9rZW4iOiJ4QlFyaU5pQkxBSFlRNkVMY3NhTUlkR0p1QkhWWHBtUXN3MHQwS0pmIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwIiwicm91dGUiOiJob21lIn0sIl9mbGFzaCI6eyJvbGQiOltdLCJuZXciOltdfX0=', 1778582411),
+('WHTPQhxgyMXl6zzbFfSZ4KcqZxwa21bjkKnCazIT', 63, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0', 'eyJfdG9rZW4iOiJIYjlCdEN1MTBuWjJYb0tZNnJtNjRvbWR2UVN3SlVQd2lFaWljZzhrIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cL2xvY2FsaG9zdDo4MDAwXC9hZG1pblwvcGFja2FnZXNcLzE0Iiwicm91dGUiOiJmaWxhbWVudC5hZG1pbi5yZXNvdXJjZXMucGFja2FnZXMudmlldyJ9LCJfZmxhc2giOnsib2xkIjpbXSwibmV3IjpbXX0sInVybCI6W10sImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjo2MywicGFzc3dvcmRfaGFzaF93ZWIiOiI2OTU1MDI3ZmQwMTA5YThjMTkwOGQzNTM4Yjc1MGZiZDk3ZTNlZmI2MDQxMzk0ZDM3N2JjNWQ0MTBiZDY4NzFkIiwidGFibGVzIjp7IjI5MDFkMWE3ODU1OGQ0ZWEzNGIxNmJhNTk1YzBmMGU3X2NvbHVtbnMiOlt7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiY2x1Yi5uYW1lIiwibGFiZWwiOiJDbHViIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImNvdXJ0Lm5hbWUiLCJsYWJlbCI6IkNvdXJ0IiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImNvYWNoLm5hbWUiLCJsYWJlbCI6IkNvYWNoIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6dHJ1ZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpmYWxzZX0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InRpdGxlIiwibGFiZWwiOiJUaXRsZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzZXNzaW9uX3R5cGUiLCJsYWJlbCI6IlBhY2thZ2UgVHlwZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzdGFydF90aW1lIiwibGFiZWwiOiJTdGFydCB0aW1lIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImVuZF90aW1lIiwibGFiZWwiOiJFbmQgdGltZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJwbGF5ZXJzX2NvdW50IiwibGFiZWwiOiJQbGF5ZXJzIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6Im1heF9wbGF5ZXJzIiwibGFiZWwiOiJNYXggcGxheWVycyIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJwcmljZV9wZXJfcGxheWVyIiwibGFiZWwiOiJQcmljZSBwZXIgcGxheWVyIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InN0YXR1cyIsImxhYmVsIjoiU3RhdHVzIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImNyZWF0ZWRfYXQiLCJsYWJlbCI6IkNyZWF0ZWQgYXQiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6ZmFsc2UsImlzVG9nZ2xlYWJsZSI6dHJ1ZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0Ijp0cnVlfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoidXBkYXRlZF9hdCIsImxhYmVsIjoiVXBkYXRlZCBhdCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjpmYWxzZSwiaXNUb2dnbGVhYmxlIjp0cnVlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOnRydWV9XSwiMjg2YmQ0MDU0ZDcyMGI5MjI5MDI5M2U1MWEyMjY4Y2ZfY29sdW1ucyI6W3sidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjb3VydC5uYW1lIiwibGFiZWwiOiJDb3VydCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJvd25lci5uYW1lIiwibGFiZWwiOiJPd25lciIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjb2FjaC5uYW1lIiwibGFiZWwiOiJDb2FjaCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOnRydWUsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6ZmFsc2V9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzdGFydF90aW1lIiwibGFiZWwiOiJTdGFydCB0aW1lIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImVuZF90aW1lIiwibGFiZWwiOiJFbmQgdGltZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJ0b3RhbF9wcmljZSIsImxhYmVsIjoiVG90YWwgcHJpY2UiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoibWF0Y2hfdHlwZSIsImxhYmVsIjoiTWF0Y2ggdHlwZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzZXNzaW9uX3R5cGUiLCJsYWJlbCI6IlNlc3Npb24gdHlwZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJtYXhfcGxheWVycyIsImxhYmVsIjoiTWF4IHBsYXllcnMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoic3RhdHVzIiwibGFiZWwiOiJTdGF0dXMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiZGVsZXRlZF9hdCIsImxhYmVsIjoiRGVsZXRlZCBhdCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjpmYWxzZSwiaXNUb2dnbGVhYmxlIjp0cnVlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOnRydWV9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjcmVhdGVkX2F0IiwibGFiZWwiOiJDcmVhdGVkIGF0IiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOmZhbHNlLCJpc1RvZ2dsZWFibGUiOnRydWUsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6dHJ1ZX0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InVwZGF0ZWRfYXQiLCJsYWJlbCI6IlVwZGF0ZWQgYXQiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6ZmFsc2UsImlzVG9nZ2xlYWJsZSI6dHJ1ZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0Ijp0cnVlfV0sIjBkMjIwYzA1ZDFiNGYyNDg2MzExZjE2ZDZiYTcyNGJmX2NvbHVtbnMiOlt7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiY291cnQubmFtZSIsImxhYmVsIjoiQ291cnQiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoidGl0bGUiLCJsYWJlbCI6IlRpdGxlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InNsb3RfdHlwZSIsImxhYmVsIjoiU2xvdCB0eXBlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImRheV9vZl93ZWVrIiwibGFiZWwiOiJEYXkgb2Ygd2VlayIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzdGFydF90aW1lIiwibGFiZWwiOiJTdGFydCB0aW1lIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImVuZF90aW1lIiwibGFiZWwiOiJFbmQgdGltZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjb2FjaC5uYW1lIiwibGFiZWwiOiJDb2FjaCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOnRydWUsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6ZmFsc2V9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJtYXhfcGxheWVycyIsImxhYmVsIjoiTWF4IHBsYXllcnMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoicHJpY2UiLCJsYWJlbCI6IlByaWNlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InNraWxsX2xldmVsIiwibGFiZWwiOiJTa2lsbCBsZXZlbCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJpc19hY3RpdmUiLCJsYWJlbCI6IkFjdGl2ZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjcmVhdGVkX2F0IiwibGFiZWwiOiJDcmVhdGVkIGF0IiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOmZhbHNlLCJpc1RvZ2dsZWFibGUiOnRydWUsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6dHJ1ZX0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InVwZGF0ZWRfYXQiLCJsYWJlbCI6IlVwZGF0ZWQgYXQiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6ZmFsc2UsImlzVG9nZ2xlYWJsZSI6dHJ1ZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0Ijp0cnVlfV0sIjNmZGE3YzFjZjEyZWY4NTQ0NjAxN2MzNWE1YmFlZGQzX2NvbHVtbnMiOlt7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiY2x1Yi5uYW1lIiwibGFiZWwiOiJDbHViIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6Im5hbWUiLCJsYWJlbCI6Ik5hbWUiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoic3BvcnRfdHlwZSIsImxhYmVsIjoiU3BvcnQgdHlwZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJ0eXBlIiwibGFiZWwiOiJQYWNrYWdlIFR5cGUiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoic2Vzc2lvbl9jb3VudCIsImxhYmVsIjoiU2Vzc2lvbnMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoibWF4X3BsYXllcnMiLCJsYWJlbCI6IlBsYXllcnMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiZHVyYXRpb25fZGF5cyIsImxhYmVsIjoiRGF5cyIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJwcmljZSIsImxhYmVsIjoiVG90YWwgUHJpY2UiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoicHJpY2VfcGVyX3BsYXllciIsImxhYmVsIjoiUHJpY2UgXC8gUGxheWVyIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InN1YnNjcmlwdGlvbnNfY291bnQiLCJsYWJlbCI6IlN1YnNjcmliZXJzIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImlzX2FjdGl2ZSIsImxhYmVsIjoiQWN0aXZlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImNyZWF0ZWRfYXQiLCJsYWJlbCI6IkNyZWF0ZWQgYXQiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6ZmFsc2UsImlzVG9nZ2xlYWJsZSI6dHJ1ZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0Ijp0cnVlfV0sIjI2M2RjMjMzOGJmMjM2ODJmMDg2NTcxZDg1ZjIxMzRlX2NvbHVtbnMiOlt7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoibmFtZSIsImxhYmVsIjoiUGxheWVyIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InNraWxsX2xldmVsIiwibGFiZWwiOiJMZXZlbCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJlbWFpbCIsImxhYmVsIjoiRW1haWwiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjp0cnVlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOmZhbHNlfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoicGl2b3Quc3RhcnRzX2F0IiwibGFiZWwiOiJTdGFydCBEYXRlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InBpdm90LmV4cGlyZXNfYXQiLCJsYWJlbCI6IkV4cGlyeSBEYXRlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InBpdm90LnNlc3Npb25zX3JlbWFpbmluZyIsImxhYmVsIjoiU2Vzc2lvbnMgTGVmdCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJwaXZvdC5zdGF0dXMiLCJsYWJlbCI6IlN0YXR1cyIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9XX0sImZpbGFtZW50IjpbXX0=', 1778588069),
+('wI2f8sTjJym3Q2okm1pTXpfNPDSt84ZaEkmt3Jo3', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0', 'eyJfdG9rZW4iOiJxSkJ5QUhZM0JIRVBtZ1B0YXNMeFY4T2htUU5HR0I1ejUzbWZHS29GIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwXC9zYWFzXC9sb2dpbiIsInJvdXRlIjoiZmlsYW1lbnQuc2Fhcy5hdXRoLmxvZ2luIn0sIl9mbGFzaCI6eyJvbGQiOltdLCJuZXciOltdfX0=', 1778586979),
 ('wNvRcIxNdjO7zMfF5MWinf31VSsnI0JHojaokUhD', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0', 'eyJfdG9rZW4iOiJBN2F6T05uY3J5SDc0ZXJUVnBWdnNWUkpDN1AyMDVDMEprUUpNRFJUIiwidXJsIjpbXSwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwXC9hZG1pblwvYm9va2luZ3MiLCJyb3V0ZSI6ImZpbGFtZW50LmFkbWluLnJlc291cmNlcy5ib29raW5ncy5pbmRleCJ9LCJfZmxhc2giOnsib2xkIjpbXSwibmV3IjpbXX0sImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjoxLCJwYXNzd29yZF9oYXNoX3dlYiI6ImE0NzAwZTVkZjUzMjQ2ZWQwOTMwNmQxMGI3NzdhYWY2MjE2MzAzZGUwM2MwYmM2YzQ1MGZmNDU2M2E4YmNmZjIiLCJ0YWJsZXMiOnsiM2ZkYTdjMWNmMTJlZjg1NDQ2MDE3YzM1YTViYWVkZDNfY29sdW1ucyI6W3sidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjbHViLm5hbWUiLCJsYWJlbCI6IkNsdWIiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoibmFtZSIsImxhYmVsIjoiTmFtZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzcG9ydF90eXBlIiwibGFiZWwiOiJTcG9ydCB0eXBlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InR5cGUiLCJsYWJlbCI6IlBhY2thZ2UgVHlwZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzZXNzaW9uX2NvdW50IiwibGFiZWwiOiJTZXNzaW9ucyIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJkdXJhdGlvbl9kYXlzIiwibGFiZWwiOiJEYXlzIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InByaWNlIiwibGFiZWwiOiJQcmljZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzdWJzY3JpcHRpb25zX2NvdW50IiwibGFiZWwiOiJTdWJzY3JpYmVycyIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJpc19hY3RpdmUiLCJsYWJlbCI6IkFjdGl2ZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjcmVhdGVkX2F0IiwibGFiZWwiOiJDcmVhdGVkIGF0IiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOmZhbHNlLCJpc1RvZ2dsZWFibGUiOnRydWUsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6dHJ1ZX1dLCIyNjNkYzIzMzhiZjIzNjgyZjA4NjU3MWQ4NWYyMTM0ZV9jb2x1bW5zIjpbeyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6Im5hbWUiLCJsYWJlbCI6IlBsYXllciIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJza2lsbF9sZXZlbCIsImxhYmVsIjoiTGV2ZWwiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiZW1haWwiLCJsYWJlbCI6IkVtYWlsIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6dHJ1ZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpmYWxzZX0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InBpdm90LnN0YXJ0c19hdCIsImxhYmVsIjoiU3RhcnQgRGF0ZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJwaXZvdC5leHBpcmVzX2F0IiwibGFiZWwiOiJFeHBpcnkgRGF0ZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJwaXZvdC5zZXNzaW9uc19yZW1haW5pbmciLCJsYWJlbCI6IlNlc3Npb25zIExlZnQiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoicGl2b3Quc3RhdHVzIiwibGFiZWwiOiJTdGF0dXMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfV0sIjBkMjIwYzA1ZDFiNGYyNDg2MzExZjE2ZDZiYTcyNGJmX2NvbHVtbnMiOlt7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiY291cnQubmFtZSIsImxhYmVsIjoiQ291cnQiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoidGl0bGUiLCJsYWJlbCI6IlRpdGxlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InNsb3RfdHlwZSIsImxhYmVsIjoiU2xvdCB0eXBlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImRheV9vZl93ZWVrIiwibGFiZWwiOiJEYXkgb2Ygd2VlayIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzdGFydF90aW1lIiwibGFiZWwiOiJTdGFydCB0aW1lIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImVuZF90aW1lIiwibGFiZWwiOiJFbmQgdGltZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjb2FjaC5uYW1lIiwibGFiZWwiOiJDb2FjaCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOnRydWUsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6ZmFsc2V9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJtYXhfcGxheWVycyIsImxhYmVsIjoiTWF4IHBsYXllcnMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoicHJpY2UiLCJsYWJlbCI6IlByaWNlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InNraWxsX2xldmVsIiwibGFiZWwiOiJTa2lsbCBsZXZlbCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJpc19hY3RpdmUiLCJsYWJlbCI6IkFjdGl2ZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjcmVhdGVkX2F0IiwibGFiZWwiOiJDcmVhdGVkIGF0IiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOmZhbHNlLCJpc1RvZ2dsZWFibGUiOnRydWUsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6dHJ1ZX0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InVwZGF0ZWRfYXQiLCJsYWJlbCI6IlVwZGF0ZWQgYXQiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6ZmFsc2UsImlzVG9nZ2xlYWJsZSI6dHJ1ZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0Ijp0cnVlfV0sIjI5MDFkMWE3ODU1OGQ0ZWEzNGIxNmJhNTk1YzBmMGU3X2NvbHVtbnMiOlt7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiY2x1Yi5uYW1lIiwibGFiZWwiOiJDbHViIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImNvdXJ0Lm5hbWUiLCJsYWJlbCI6IkNvdXJ0IiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImNvYWNoLm5hbWUiLCJsYWJlbCI6IkNvYWNoIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6dHJ1ZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpmYWxzZX0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InRpdGxlIiwibGFiZWwiOiJUaXRsZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzZXNzaW9uX3R5cGUiLCJsYWJlbCI6IlBhY2thZ2UgVHlwZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzdGFydF90aW1lIiwibGFiZWwiOiJTdGFydCB0aW1lIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImVuZF90aW1lIiwibGFiZWwiOiJFbmQgdGltZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJwbGF5ZXJzX2NvdW50IiwibGFiZWwiOiJQbGF5ZXJzIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6Im1heF9wbGF5ZXJzIiwibGFiZWwiOiJNYXggcGxheWVycyIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJwcmljZV9wZXJfcGxheWVyIiwibGFiZWwiOiJQcmljZSBwZXIgcGxheWVyIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InN0YXR1cyIsImxhYmVsIjoiU3RhdHVzIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImNyZWF0ZWRfYXQiLCJsYWJlbCI6IkNyZWF0ZWQgYXQiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6ZmFsc2UsImlzVG9nZ2xlYWJsZSI6dHJ1ZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0Ijp0cnVlfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoidXBkYXRlZF9hdCIsImxhYmVsIjoiVXBkYXRlZCBhdCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjpmYWxzZSwiaXNUb2dnbGVhYmxlIjp0cnVlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOnRydWV9XSwiMjg2YmQ0MDU0ZDcyMGI5MjI5MDI5M2U1MWEyMjY4Y2ZfY29sdW1ucyI6W3sidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjb3VydC5uYW1lIiwibGFiZWwiOiJDb3VydCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJvd25lci5uYW1lIiwibGFiZWwiOiJPd25lciIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjb2FjaC5uYW1lIiwibGFiZWwiOiJDb2FjaCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOnRydWUsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6ZmFsc2V9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzdGFydF90aW1lIiwibGFiZWwiOiJTdGFydCB0aW1lIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImVuZF90aW1lIiwibGFiZWwiOiJFbmQgdGltZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJ0b3RhbF9wcmljZSIsImxhYmVsIjoiVG90YWwgcHJpY2UiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoibWF0Y2hfdHlwZSIsImxhYmVsIjoiTWF0Y2ggdHlwZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzZXNzaW9uX3R5cGUiLCJsYWJlbCI6IlNlc3Npb24gdHlwZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJtYXhfcGxheWVycyIsImxhYmVsIjoiTWF4IHBsYXllcnMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoic3RhdHVzIiwibGFiZWwiOiJTdGF0dXMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiZGVsZXRlZF9hdCIsImxhYmVsIjoiRGVsZXRlZCBhdCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjpmYWxzZSwiaXNUb2dnbGVhYmxlIjp0cnVlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOnRydWV9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjcmVhdGVkX2F0IiwibGFiZWwiOiJDcmVhdGVkIGF0IiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOmZhbHNlLCJpc1RvZ2dsZWFibGUiOnRydWUsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6dHJ1ZX0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InVwZGF0ZWRfYXQiLCJsYWJlbCI6IlVwZGF0ZWQgYXQiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6ZmFsc2UsImlzVG9nZ2xlYWJsZSI6dHJ1ZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0Ijp0cnVlfV0sIjc5ZTk0NTU5MWY1YWFlZDVkNzdjMzVmYjZhNWM1YzFiX2NvbHVtbnMiOlt7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoibmFtZSIsImxhYmVsIjoiTmFtZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzcG9ydF90eXBlIiwibGFiZWwiOiJTcG9ydCB0eXBlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InN1YnNjcmlwdGlvbl9zdGF0dXMiLCJsYWJlbCI6IlN1YnNjcmlwdGlvbiBzdGF0dXMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiY291cnRzX2NvdW50IiwibGFiZWwiOiJDb3VydHMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiYWRkcmVzcyIsImxhYmVsIjoiQWRkcmVzcyIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOnRydWUsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6ZmFsc2V9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJkZWxldGVkX2F0IiwibGFiZWwiOiJEZWxldGVkIGF0IiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOmZhbHNlLCJpc1RvZ2dsZWFibGUiOnRydWUsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6dHJ1ZX0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImNyZWF0ZWRfYXQiLCJsYWJlbCI6IkNyZWF0ZWQgYXQiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6ZmFsc2UsImlzVG9nZ2xlYWJsZSI6dHJ1ZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0Ijp0cnVlfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoidXBkYXRlZF9hdCIsImxhYmVsIjoiVXBkYXRlZCBhdCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjpmYWxzZSwiaXNUb2dnbGVhYmxlIjp0cnVlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOnRydWV9XX19', 1777074391),
 ('xS7hxddZarMfqJwz348ZATeAgOnRDusAnrNmwzZK', 12, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', 'eyJfdG9rZW4iOiJvd1lRODlvTVB6VzhGeDhIVGN6Q0N1RkxGT2ZPWFZidHN4NkdOaThlIiwidXJsIjpbXSwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwXC9wbGF5ZXJcL215LXRyYWluaW5nIiwicm91dGUiOiJmaWxhbWVudC5wbGF5ZXIucGFnZXMubXktdHJhaW5pbmcifSwiX2ZsYXNoIjp7Im9sZCI6W10sIm5ldyI6W119LCJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI6MTIsInBhc3N3b3JkX2hhc2hfd2ViIjoiYjc3YTViMGRiOTlhNjU0N2RlNGY3MzM2MzQyNTc5ZjllYjc0MmI3MjRmOTIxYWFiZjEzYWVmNDYyNDQ3N2ZjYSIsInRhYmxlcyI6eyJkMzkzNmYwNWY5MGQ2MTc5MGQ3ZTk1MTBhZDYzOTM0ZF9jb2x1bW5zIjpbeyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InBhY2thZ2UuY2x1Yi5uYW1lIiwibGFiZWwiOiJDbHViIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InBhY2thZ2UubmFtZSIsImxhYmVsIjoiUGFja2FnZSIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJwYWNrYWdlLnR5cGUiLCJsYWJlbCI6IlR5cGUiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoic3RhcnRzX2F0IiwibGFiZWwiOiJTdGFydCBEYXRlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImV4cGlyZXNfYXQiLCJsYWJlbCI6IkV4cGlyeSBEYXRlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InNlc3Npb25zX3JlbWFpbmluZyIsImxhYmVsIjoiU2Vzc2lvbnMgTGVmdCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzdGF0dXMiLCJsYWJlbCI6IlN0YXR1cyIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9XSwiMGFmNTljYTQwOTYxZDgwNDAxZGM0OGNiZGIxYTc1MWVfY29sdW1ucyI6W3sidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJ0aXRsZSIsImxhYmVsIjoiVGl0bGUiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiY2x1Yi5uYW1lIiwibGFiZWwiOiJDbHViIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImNvYWNoLm5hbWUiLCJsYWJlbCI6IkNvYWNoIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InNlc3Npb25fdHlwZSIsImxhYmVsIjoiUGFja2FnZSBUeXBlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InNraWxsX2xldmVsIiwibGFiZWwiOiJMZXZlbCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzdGFydF90aW1lIiwibGFiZWwiOiJEYXRlICZhbXA7IFRpbWUiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoic3RhdHVzIiwibGFiZWwiOiJTdGF0dXMiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfV0sIjEwMDExN2NkZWRiMDNhNjc0NjgzNGRiZWNjNDZkZjYzX2NvbHVtbnMiOlt7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoiY291cnQuY2x1Yi5uYW1lIiwibGFiZWwiOiJDbHViIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6ImNvdXJ0Lm5hbWUiLCJsYWJlbCI6IkNvdXJ0IiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6Im1hdGNoX3R5cGUiLCJsYWJlbCI6Ik1hdGNoIFR5cGUiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoic2tpbGxfbGV2ZWwiLCJsYWJlbCI6IkxldmVsIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6Im93bmVyLm5hbWUiLCJsYWJlbCI6Ik9yZ2FuaXNlciIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJjb2FjaC5uYW1lIiwibGFiZWwiOiJDb2FjaCIsImlzSGlkZGVuIjpmYWxzZSwiaXNUb2dnbGVkIjp0cnVlLCJpc1RvZ2dsZWFibGUiOmZhbHNlLCJpc1RvZ2dsZWRIaWRkZW5CeURlZmF1bHQiOm51bGx9LHsidHlwZSI6ImNvbHVtbiIsIm5hbWUiOiJzdGFydF90aW1lIiwibGFiZWwiOiJEYXRlICZhbXA7IFRpbWUiLCJpc0hpZGRlbiI6ZmFsc2UsImlzVG9nZ2xlZCI6dHJ1ZSwiaXNUb2dnbGVhYmxlIjpmYWxzZSwiaXNUb2dnbGVkSGlkZGVuQnlEZWZhdWx0IjpudWxsfSx7InR5cGUiOiJjb2x1bW4iLCJuYW1lIjoidG90YWxfcHJpY2UiLCJsYWJlbCI6IlByaWNlIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH0seyJ0eXBlIjoiY29sdW1uIiwibmFtZSI6InN0YXR1cyIsImxhYmVsIjoiU3RhdHVzIiwiaXNIaWRkZW4iOmZhbHNlLCJpc1RvZ2dsZWQiOnRydWUsImlzVG9nZ2xlYWJsZSI6ZmFsc2UsImlzVG9nZ2xlZEhpZGRlbkJ5RGVmYXVsdCI6bnVsbH1dfSwiZmlsYW1lbnQiOltdfQ==', 1777074022);
 
@@ -973,7 +1083,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `phone`, `email_verified_at`, `password`, `role`, `is_active`, `skill_level`, `date_of_birth`, `preferred_sport`, `remember_token`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, 'Super Admin', 'admin@padel.test', NULL, '2026-04-24 19:36:20', '$2y$12$6bINpaU2uxcoS6lp0dmKVesZj.I116I1vMuH9dXt3qK5PyvG5Ry.i', 'super_admin', 1, 4, '1999-10-31', 'padel', 'eOKC3FOL2K', NULL, '2026-04-24 19:36:20', '2026-04-24 19:39:01'),
+(1, 'Super Admin', 'admin@padel.test', NULL, '2026-04-24 19:36:20', '$2y$12$Sp11bcu0SUT/86Z21D6vTeTnISTn2/aTWNgimBegQ9MxeKwImAxAa', 'super_admin', 1, 4, '1999-10-31', 'padel', 'eOKC3FOL2K', NULL, '2026-04-24 19:36:20', '2026-05-12 08:55:45'),
 (2, 'Cristina Huels', 'cnikolaus@example.net', NULL, '2026-04-24 19:36:20', '$2y$12$d3ZYke3SXvInhDIdI7/F8e3tomtHrgSQpyUdHurQkl4LE4sMMNSgO', 'coach', 1, 5, '2006-02-19', 'squash', 'kbtMRA10Jb', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
 (3, 'Geovanni Sauer', 'helen73@example.org', NULL, '2026-04-24 19:36:20', '$2y$12$d3ZYke3SXvInhDIdI7/F8e3tomtHrgSQpyUdHurQkl4LE4sMMNSgO', 'coach', 1, 5, '1998-05-10', 'tennis', 'GM9z3K9kwU', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
 (4, 'Gino Mertz', 'gschiller@example.com', NULL, '2026-04-24 19:36:20', '$2y$12$d3ZYke3SXvInhDIdI7/F8e3tomtHrgSQpyUdHurQkl4LE4sMMNSgO', 'coach', 1, 4, '2005-01-24', 'padel', 'QTMj7snORW', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
@@ -1033,7 +1143,20 @@ INSERT INTO `users` (`id`, `name`, `email`, `phone`, `email_verified_at`, `passw
 (58, 'Oral Runolfsson', 'jacobson.birdie@example.net', '+1 (786) 727-6524', '2026-04-24 19:36:20', '$2y$12$d3ZYke3SXvInhDIdI7/F8e3tomtHrgSQpyUdHurQkl4LE4sMMNSgO', 'player', 1, 2, '2008-03-29', 'tennis', 'CJHnGeuYDP', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
 (59, 'Prof. Tyrique Harris IV', 'tania46@example.net', '+1-352-571-4999', '2026-04-24 19:36:20', '$2y$12$d3ZYke3SXvInhDIdI7/F8e3tomtHrgSQpyUdHurQkl4LE4sMMNSgO', 'player', 1, 3, '1997-01-06', 'tennis', 'setHla3Vky', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
 (60, 'Mrs. Roslyn Kiehn', 'qbreitenberg@example.net', '724-993-1230', '2026-04-24 19:36:20', '$2y$12$d3ZYke3SXvInhDIdI7/F8e3tomtHrgSQpyUdHurQkl4LE4sMMNSgO', 'player', 1, 5, '1987-08-19', 'padel', '5RtWmgl5sE', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
-(61, 'Raphael Turcotte', 'vida.gislason@example.net', '425-930-6576', '2026-04-24 19:36:20', '$2y$12$d3ZYke3SXvInhDIdI7/F8e3tomtHrgSQpyUdHurQkl4LE4sMMNSgO', 'player', 1, 3, '1985-11-08', 'tennis', 'BCrmOn9xso', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20');
+(61, 'Raphael Turcotte', 'vida.gislason@example.net', '425-930-6576', '2026-04-24 19:36:20', '$2y$12$d3ZYke3SXvInhDIdI7/F8e3tomtHrgSQpyUdHurQkl4LE4sMMNSgO', 'player', 1, 3, '1985-11-08', 'tennis', 'BCrmOn9xso', NULL, '2026-04-24 19:36:20', '2026-04-24 19:36:20'),
+(62, 'SaaS Owner', 'saas@padel.test', NULL, NULL, '$2y$12$MKEkp5Q0VQeNGoh87fy20uhFaoFsDsm5yQeuALwFcIaON1EczZSo6', 'super_admin', 1, 3, NULL, 'padel', '4Srq3RWTgmy2nhe6Oq8pO1EHIoO3W5wViKo6rE3n4HFIZdnpfwhHQM5LDXHt', NULL, '2026-05-12 08:55:21', '2026-05-12 08:55:45'),
+(63, 'Cairo Club Owner', 'owner@cairo.test', '+201000725645', NULL, '$2y$12$uuheZCBKSuW8MFlna1n6uuRU0azGgjHL.aGJQCifCxm6.vb9..Yba', 'academy_admin', 1, 3, NULL, 'padel', NULL, NULL, '2026-05-12 08:55:21', '2026-05-12 08:55:45'),
+(64, 'Cairo Club Manager', 'manager@cairo.test', '+201001285956', NULL, '$2y$12$PrkRTJ6.P9.5cXor1ruLweT5B73wpYIKjNrH32wxqmfzSL3cMKreW', 'academy_admin', 1, 3, NULL, 'padel', NULL, NULL, '2026-05-12 08:55:21', '2026-05-12 08:55:46'),
+(65, 'Cairo Head Coach', 'coach@cairo.test', '+201002597743', NULL, '$2y$12$PFd.hN6.PDDvgrujyi7AyOCTYqGHs0Sh/klys7PwvWXZetH27BdqK', 'coach', 1, 5, NULL, 'padel', NULL, NULL, '2026-05-12 08:55:21', '2026-05-12 08:55:46'),
+(66, 'Cairo Demo Player', 'player@cairo.test', '+201003663488', NULL, '$2y$12$o288ui4z0zPmyrbPg2PovumeZWotUiMwuDPqka4p9MUa9LMCV02Ci', 'player', 1, 4, NULL, 'padel', NULL, NULL, '2026-05-12 08:55:21', '2026-05-12 08:55:46'),
+(67, 'Alex Club Owner', 'owner@alex.test', '+201000850393', NULL, '$2y$12$ruyqPLkMjewXAjhNVv9zP.kluR0UvdcP2DozbBLcTKEJsR0idjsga', 'academy_admin', 1, 3, NULL, 'padel', NULL, NULL, '2026-05-12 08:55:22', '2026-05-12 08:55:46'),
+(68, 'Alex Club Manager', 'manager@alex.test', '+201001613141', NULL, '$2y$12$eF0Cvb1nFqoGAlXtWvLB.elWkJHwAhFoUc/f7pJFaVRYru1AUsCse', 'academy_admin', 1, 3, NULL, 'padel', NULL, NULL, '2026-05-12 08:55:22', '2026-05-12 08:55:46'),
+(69, 'Alex Head Coach', 'coach@alex.test', '+201002329742', NULL, '$2y$12$jehIIytS9AOSxEUVuwMCyO2uijx3AnOyjJFg80Zg9eJs/cgv4EWx.', 'coach', 1, 5, NULL, 'padel', NULL, NULL, '2026-05-12 08:55:22', '2026-05-12 08:55:46'),
+(70, 'Alex Demo Player', 'player@alex.test', '+201003628993', NULL, '$2y$12$EFm3YUJ6cVEqm1ghfoFZruB7eoB26EKyVOnEN4/C8tggTTzApdV3y', 'player', 1, 2, NULL, 'tennis', NULL, NULL, '2026-05-12 08:55:22', '2026-05-12 08:55:47'),
+(71, 'Giza Club Owner', 'owner@giza.test', '+201000986026', NULL, '$2y$12$o9zXIiYHD.uoDO0fvzmpAemZKQ0gdsOg.p5Am6zhsbkSs/hlhwlA6', 'academy_admin', 1, 3, NULL, 'padel', NULL, NULL, '2026-05-12 08:55:22', '2026-05-12 08:55:47'),
+(72, 'Giza Club Manager', 'manager@giza.test', '+201001257598', NULL, '$2y$12$H.UbjgweiMl6pV4NQZyfu.1te9Hb9U1W7/dG0iXBTrEw/1FgHwd4.', 'academy_admin', 1, 3, NULL, 'padel', NULL, NULL, '2026-05-12 08:55:22', '2026-05-12 08:55:47'),
+(73, 'Giza Head Coach', 'coach@giza.test', '+201002684534', NULL, '$2y$12$zFGuxS8Y345NUgoX0k/pBuUt/80Rae1G6MCjWBp1Xb3WHBhMHYSxG', 'coach', 1, 5, NULL, 'padel', NULL, NULL, '2026-05-12 08:55:23', '2026-05-12 08:55:47'),
+(74, 'Giza Demo Player', 'player@giza.test', '+201003877738', NULL, '$2y$12$5XCDaoz8.nXztLerUkIf1.0gG3sZFjTfR0L.g6TCkKRNQnHUcye0G', 'player', 1, 1, NULL, 'padel', NULL, NULL, '2026-05-12 08:55:23', '2026-05-12 08:55:47');
 
 --
 -- Indexes for dumped tables
@@ -1092,7 +1215,16 @@ ALTER TABLE `cache_locks`
 -- Indexes for table `clubs`
 --
 ALTER TABLE `clubs`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `clubs_approved_by_foreign` (`approved_by`);
+
+--
+-- Indexes for table `club_saas_subscriptions`
+--
+ALTER TABLE `club_saas_subscriptions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `club_saas_subscriptions_club_id_foreign` (`club_id`),
+  ADD KEY `club_saas_subscriptions_saas_plan_id_foreign` (`saas_plan_id`);
 
 --
 -- Indexes for table `club_users`
@@ -1101,6 +1233,14 @@ ALTER TABLE `club_users`
   ADD PRIMARY KEY (`id`),
   ADD KEY `club_users_club_id_foreign` (`club_id`),
   ADD KEY `club_users_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `coach_applications`
+--
+ALTER TABLE `coach_applications`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `coach_applications_academy_session_id_coach_user_id_unique` (`academy_session_id`,`coach_user_id`),
+  ADD KEY `coach_applications_coach_user_id_foreign` (`coach_user_id`);
 
 --
 -- Indexes for table `courts`
@@ -1184,6 +1324,13 @@ ALTER TABLE `personal_access_tokens`
   ADD KEY `personal_access_tokens_expires_at_index` (`expires_at`);
 
 --
+-- Indexes for table `saas_plans`
+--
+ALTER TABLE `saas_plans`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `saas_plans_slug_unique` (`slug`);
+
+--
 -- Indexes for table `sessions`
 --
 ALTER TABLE `sessions`
@@ -1232,13 +1379,25 @@ ALTER TABLE `booking_participants`
 -- AUTO_INCREMENT for table `clubs`
 --
 ALTER TABLE `clubs`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `club_saas_subscriptions`
+--
+ALTER TABLE `club_saas_subscriptions`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `club_users`
 --
 ALTER TABLE `club_users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT for table `coach_applications`
+--
+ALTER TABLE `coach_applications`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `courts`
@@ -1268,19 +1427,19 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `packages`
 --
 ALTER TABLE `packages`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `package_subscriptions`
 --
 ALTER TABLE `package_subscriptions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 
 --
 -- AUTO_INCREMENT for table `payment_transactions`
@@ -1295,10 +1454,16 @@ ALTER TABLE `personal_access_tokens`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `saas_plans`
+--
+ALTER TABLE `saas_plans`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- Constraints for dumped tables
@@ -1336,11 +1501,31 @@ ALTER TABLE `booking_participants`
   ADD CONSTRAINT `booking_participants_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `clubs`
+--
+ALTER TABLE `clubs`
+  ADD CONSTRAINT `clubs_approved_by_foreign` FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `club_saas_subscriptions`
+--
+ALTER TABLE `club_saas_subscriptions`
+  ADD CONSTRAINT `club_saas_subscriptions_club_id_foreign` FOREIGN KEY (`club_id`) REFERENCES `clubs` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `club_saas_subscriptions_saas_plan_id_foreign` FOREIGN KEY (`saas_plan_id`) REFERENCES `saas_plans` (`id`) ON DELETE SET NULL;
+
+--
 -- Constraints for table `club_users`
 --
 ALTER TABLE `club_users`
   ADD CONSTRAINT `club_users_club_id_foreign` FOREIGN KEY (`club_id`) REFERENCES `clubs` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `club_users_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `coach_applications`
+--
+ALTER TABLE `coach_applications`
+  ADD CONSTRAINT `coach_applications_academy_session_id_foreign` FOREIGN KEY (`academy_session_id`) REFERENCES `academy_sessions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `coach_applications_coach_user_id_foreign` FOREIGN KEY (`coach_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `courts`
