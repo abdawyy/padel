@@ -8,7 +8,11 @@ use App\Models\AcademySession;
 use App\Models\Booking;
 use App\Models\Club;
 use App\Models\Court;
-use App\Services\PaymobService;
+use App\Models\User;
+use App\Exceptions\BookingCancellationException;
+use App\Services\AcademySessionCancellationService;
+use App\Services\EnrollmentPaymentService;
+use App\Services\PackageConsumptionService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,7 +24,11 @@ class AcademySessionController extends Controller
     {
         $sessions = AcademySession::query()
             ->whereIn('status', ['scheduled', 'active'])
-            ->where('start_time', '>=', now()->subDay())
+            ->where('start_time', '>=', now())
+            ->whereHas('club', function ($query) {
+                $query->where('registration_status', 'approved')
+                    ->whereIn('subscription_status', ['active', 'trial']);
+            })
             ->when($request->filled('club_id'), function ($query) use ($request) {
                 $query->where('club_id', (int) $request->query('club_id'));
             })
@@ -45,7 +53,12 @@ class AcademySessionController extends Controller
     public function mySessions(Request $request)
     {
         $user = $request->user();
-        $type = (string) $request->query('type', 'upcoming');
+
+        $validated = $request->validate([
+            'type' => ['sometimes', 'in:upcoming,past'],
+        ]);
+
+        $type = $validated['type'] ?? 'upcoming';
 
         $sessions = AcademySession::query()
             ->whereHas('players', function ($query) use ($user) {
@@ -72,7 +85,7 @@ class AcademySessionController extends Controller
 
     public function index(Request $request, Club $club)
     {
-        $this->abortIfUnauthorized($request, $club);
+        $this->authorize('viewAny', [$club]);
 
         $sessions = AcademySession::query()
             ->where('club_id', $club->id)
@@ -103,7 +116,7 @@ class AcademySessionController extends Controller
 
     public function store(Request $request, Club $club): AcademySessionResource|JsonResponse
     {
-        $this->abortIfUnauthorized($request, $club);
+        $this->authorize('create', [$club]);
 
         $validated = $request->validate([
             'court_id' => ['required', 'integer', 'exists:courts,id'],
@@ -199,6 +212,83 @@ class AcademySessionController extends Controller
         return new AcademySessionResource($academySession);
     }
 
+    public function update(Request $request, AcademySession $academySession): AcademySessionResource|JsonResponse
+    {
+        $academySession->loadMissing('club');
+        $this->authorize('update', $academySession);
+
+        if ($academySession->status === 'cancelled') {
+            return response()->json(['message' => 'Cancelled sessions cannot be updated.'], 422);
+        }
+
+        $validated = $request->validate([
+            'court_id' => ['sometimes', 'integer', 'exists:courts,id'],
+            'coach_user_id' => ['nullable', 'integer', 'exists:users,id'],
+            'title' => ['sometimes', 'string', 'max:255'],
+            'sport_type' => ['sometimes', 'string', 'max:100'],
+            'session_type' => ['sometimes', 'in:open_match,coached_match,group_training,private_training,academy_class'],
+            'skill_level' => ['nullable', 'string', 'max:100'],
+            'start_time' => ['sometimes', 'date'],
+            'end_time' => ['sometimes', 'date', 'after:start_time'],
+            'max_players' => ['sometimes', 'integer', 'min:1', 'max:32'],
+            'price_per_player' => ['sometimes', 'numeric', 'min:0'],
+            'status' => ['sometimes', 'in:scheduled,active,completed,cancelled'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        $club = $academySession->club;
+
+        if (! empty($validated['coach_user_id']) && ! $club->users()->where('users.id', $validated['coach_user_id'])->exists()) {
+            return response()->json(['message' => 'The selected coach must belong to the club.'], 422);
+        }
+
+        if (isset($validated['court_id'])) {
+            $court = Court::query()->where('club_id', $club->id)->findOrFail($validated['court_id']);
+            $validated['court_id'] = $court->id;
+        }
+
+        $startTime = isset($validated['start_time'])
+            ? Carbon::parse($validated['start_time'])
+            : Carbon::parse($academySession->start_time);
+        $endTime = isset($validated['end_time'])
+            ? Carbon::parse($validated['end_time'])
+            : Carbon::parse($academySession->end_time);
+
+        $courtId = (int) ($validated['court_id'] ?? $academySession->court_id);
+
+        if ($this->hasCourtConflictExcluding($courtId, $startTime, $endTime, $academySession->id)) {
+            return response()->json(['message' => 'This court already has a booking or training session in the selected time range.'], 422);
+        }
+
+        $academySession->update($validated);
+
+        return new AcademySessionResource(
+            $academySession->fresh()->load([
+                'court:id,club_id,name,sport_type,price_per_hour',
+                'coach:id,name,email',
+                'players:id,name,email',
+            ])->loadCount('players')
+        );
+    }
+
+    public function cancel(Request $request, AcademySession $academySession, AcademySessionCancellationService $cancellationService): JsonResponse
+    {
+        try {
+            $session = $cancellationService->cancel(
+                $academySession,
+                $request->user(),
+                $request->input('reason'),
+            );
+        } catch (BookingCancellationException $exception) {
+            return response()->json(['message' => $exception->getMessage()], $exception->status);
+        }
+
+        return response()->json([
+            'message' => 'Session cancelled successfully.',
+            'session' => new AcademySessionResource($session->loadCount('players')),
+        ]);
+    }
+
     public function enroll(Request $request, AcademySession $academySession): JsonResponse
     {
         $validated = $request->validate([
@@ -210,8 +300,8 @@ class AcademySessionController extends Controller
         $playerId = (int) ($validated['player_id'] ?? $user->id);
         $isSelfEnrollment = $playerId === $user->id;
 
-        if (! $isSelfEnrollment && ! $user?->hasAdminAccess($academySession->club)) {
-            return response()->json(['message' => 'You cannot assign another player to this session.'], 403);
+        if (! $isSelfEnrollment) {
+            $this->authorize('enrollOthers', $academySession);
         }
 
         if (! in_array($academySession->status, ['scheduled', 'active'], true)) {
@@ -222,41 +312,55 @@ class AcademySessionController extends Controller
             return response()->json(['message' => 'This session has already started.'], 422);
         }
 
-        $academySession->loadCount('players');
-        if ((int) $academySession->players_count >= (int) $academySession->max_players) {
-            return response()->json(['message' => 'This session is already full.'], 422);
-        }
-
-        $alreadyRegistered = $academySession->players()
-            ->where('users.id', $playerId)
-            ->exists();
-
-        if ($alreadyRegistered) {
-            return response()->json(['message' => 'This player is already assigned to the session.'], 409);
-        }
-
         if ($this->playerHasConflict($playerId, Carbon::parse($academySession->start_time), Carbon::parse($academySession->end_time))) {
             return response()->json(['message' => 'This player already has a conflicting booking or training session.'], 422);
         }
 
-        // If the session has a fee, return a payment link instead of enrolling directly
         $fee = (float) ($academySession->price_per_player ?? 0);
-        if ($isSelfEnrollment && $fee > 0) {
-            $paymob = app(PaymobService::class);
-            $paymentData = $paymob->createPaymentSessionForEnrollment($academySession, $user, $fee);
+        if ($fee > 0) {
+            $capacityError = $this->sessionEnrollmentCapacityError($academySession, $playerId);
+            if ($capacityError !== null) {
+                return $capacityError;
+            }
+
+            $payer = $isSelfEnrollment
+                ? $user
+                : User::query()->findOrFail($playerId);
+
+            try {
+                $paymentData = app(EnrollmentPaymentService::class)->createEnrollmentPayment(
+                    $academySession,
+                    $payer,
+                    $fee,
+                    $request->header('X-Idempotency-Key'),
+                );
+            } catch (\RuntimeException $exception) {
+                return match ($exception->getMessage()) {
+                    'session_closed' => response()->json(['message' => 'This session is not open for registration.'], 422),
+                    default => throw $exception,
+                };
+            }
 
             return response()->json([
-                'message'      => 'Payment required to complete enrollment.',
-                'payment'      => $paymentData,
-                'session_id'   => $academySession->id,
-                'amount_due'   => $fee,
+                'message'    => $isSelfEnrollment
+                    ? 'Payment required to complete enrollment.'
+                    : 'Payment required for the assigned player to complete enrollment.',
+                'payment'    => $paymentData,
+                'session_id' => $academySession->id,
+                'amount_due' => $fee,
+                'player_id'  => $playerId,
             ], 402);
         }
 
-        $academySession->players()->attach($playerId, [
-            'status' => 'registered',
-            'notes' => $validated['notes'] ?? null,
-        ]);
+        try {
+            $this->attachPlayerToSession($academySession, $playerId, $validated['notes'] ?? null);
+        } catch (\RuntimeException $exception) {
+            return match ($exception->getMessage()) {
+                'already_registered' => response()->json(['message' => 'This player is already assigned to the session.'], 409),
+                'session_full' => response()->json(['message' => 'This session is already full.'], 422),
+                default => throw $exception,
+            };
+        }
 
         return response()->json([
             'message' => 'Player assigned successfully.',
@@ -268,6 +372,89 @@ class AcademySessionController extends Controller
                 ])->loadCount('players')
             ),
         ]);
+    }
+
+    private function sessionEnrollmentCapacityError(AcademySession $academySession, int $playerId): ?JsonResponse
+    {
+        try {
+            $this->assertSessionHasCapacity($academySession, $playerId);
+
+            return null;
+        } catch (\RuntimeException $exception) {
+            return match ($exception->getMessage()) {
+                'already_registered' => response()->json(['message' => 'This player is already assigned to the session.'], 409),
+                'session_full' => response()->json(['message' => 'This session is already full.'], 422),
+                default => throw $exception,
+            };
+        }
+    }
+
+    private function assertSessionHasCapacity(AcademySession $academySession, int $playerId): void
+    {
+        DB::transaction(function () use ($academySession, $playerId) {
+            $session = AcademySession::query()
+                ->whereKey($academySession->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($session->players()->where('users.id', $playerId)->exists()) {
+                throw new \RuntimeException('already_registered');
+            }
+
+            if ($session->players()->count() >= (int) $session->max_players) {
+                throw new \RuntimeException('session_full');
+            }
+        });
+    }
+
+    private function attachPlayerToSession(AcademySession $academySession, int $playerId, ?string $notes): void
+    {
+        DB::transaction(function () use ($academySession, $playerId, $notes) {
+            $session = AcademySession::query()
+                ->whereKey($academySession->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($session->players()->where('users.id', $playerId)->exists()) {
+                throw new \RuntimeException('already_registered');
+            }
+
+            if ($session->players()->count() >= (int) $session->max_players) {
+                throw new \RuntimeException('session_full');
+            }
+
+            $session->players()->attach($playerId, [
+                'status' => 'registered',
+                'notes' => $notes,
+            ]);
+
+            $player = User::query()->find($playerId);
+            if ($player && $session->club_id) {
+                app(PackageConsumptionService::class)->consumeSessionForUser($player, (int) $session->club_id);
+            }
+        });
+    }
+
+    private function hasCourtConflictExcluding(int $courtId, Carbon $startTime, Carbon $endTime, int $excludeSessionId): bool
+    {
+        $bookingConflict = Booking::query()
+            ->where('court_id', $courtId)
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->where('start_time', '<', $endTime)
+            ->where('end_time', '>', $startTime)
+            ->exists();
+
+        if ($bookingConflict) {
+            return true;
+        }
+
+        return AcademySession::query()
+            ->where('court_id', $courtId)
+            ->where('id', '!=', $excludeSessionId)
+            ->whereIn('status', ['scheduled', 'active'])
+            ->where('start_time', '<', $endTime)
+            ->where('end_time', '>', $startTime)
+            ->exists();
     }
 
     private function hasCourtConflict(int $courtId, Carbon $startTime, Carbon $endTime): bool
@@ -315,12 +502,4 @@ class AcademySessionController extends Controller
         return $bookingConflict || $academyConflict;
     }
 
-    private function abortIfUnauthorized(Request $request, Club $club): void
-    {
-        abort_if(
-            ! $request->user()?->hasAdminAccess($club),
-            403,
-            'Unauthorized club access.'
-        );
-    }
 }

@@ -7,6 +7,8 @@ use App\Http\Resources\ClubResource;
 use App\Models\Club;
 use App\Models\ClubSaasSubscription;
 use App\Models\SaasPlan;
+use App\Notifications\ClubRegistrationPendingNotification;
+use App\Services\PaymobService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +19,7 @@ class ClubRegistrationController extends Controller
      * Register a new academy/club and subscribe to a SaaS plan.
      * POST /api/register-club
      */
-    public function register(Request $request): JsonResponse
+    public function register(Request $request, PaymobService $paymobService): JsonResponse
     {
         $validated = $request->validate([
             'name'          => ['required', 'string', 'max:255'],
@@ -28,38 +30,54 @@ class ClubRegistrationController extends Controller
             'billing_cycle' => ['required', 'in:monthly,yearly'],
         ]);
 
+        $user = $request->user();
+
+        if ($user->clubs()->where('registration_status', 'pending')->exists()) {
+            return response()->json([
+                'message' => 'You already have a club registration awaiting approval.',
+            ], 422);
+        }
+
         $plan = SaasPlan::query()->where('is_active', true)->findOrFail($validated['plan_id']);
         $cycle = $validated['billing_cycle'];
         $price = $plan->priceFor($cycle);
 
-        $club = DB::transaction(function () use ($validated, $plan, $cycle, $price, $request) {
+        [$club, $subscription] = DB::transaction(function () use ($validated, $plan, $cycle, $price, $user) {
             $club = Club::query()->create([
                 'name'                => $validated['name'],
                 'sport_type'          => $validated['sport_type'] ?? 'padel',
                 'address'             => $validated['address'],
-                'subscription_status' => 'inactive',   // inactive until approved
-                'registration_status' => 'pending',     // awaits super admin approval
+                'subscription_status' => 'inactive',
+                'registration_status' => 'pending',
                 'settings'            => $validated['settings'] ?? null,
             ]);
 
-            // Attach the authenticated user as owner
-            $request->user()->clubs()->attach($club->id, ['role' => 'owner']);
+            $user->clubs()->attach($club->id, ['role' => 'owner']);
 
-            // Create SaaS subscription (starts once approved)
-            $endsAt = $cycle === 'yearly' ? now()->addYear() : now()->addMonth();
-
-            ClubSaasSubscription::query()->create([
+            $subscription = ClubSaasSubscription::query()->create([
                 'club_id'       => $club->id,
                 'saas_plan_id'  => $plan->id,
                 'billing_cycle' => $cycle,
                 'amount_paid'   => $price,
-                'starts_at'     => now()->toDateString(),
-                'ends_at'       => $endsAt->toDateString(),
+                'starts_at'     => null,
+                'ends_at'       => null,
                 'status'        => 'pending',
             ]);
 
-            return $club;
+            return [$club, $subscription];
         });
+
+        $user->notify(new ClubRegistrationPendingNotification($club));
+
+        if ($price > 0) {
+            $payment = $paymobService->createPaymentSessionForSaasSubscription($subscription, $user, $price);
+
+            return response()->json([
+                'message' => 'Club registration submitted. Complete payment to secure your subscription.',
+                'club'    => new ClubResource($club),
+                'payment' => $payment,
+            ], 402);
+        }
 
         return response()->json([
             'message' => 'Club registration submitted. Awaiting super admin approval.',
@@ -73,7 +91,7 @@ class ClubRegistrationController extends Controller
      */
     public function show(Request $request, Club $club): JsonResponse
     {
-        abort_unless($request->user()?->canManageClub($club) || $request->user()?->isSuperAdmin(), 403);
+        $this->authorize('manageSubscription', $club);
 
         $sub = $club->latestSaasSubscription()->with('plan')->first();
 
@@ -91,8 +109,8 @@ class ClubRegistrationController extends Controller
                 ] : null,
                 'billing_cycle'     => $sub->billing_cycle,
                 'amount_paid'       => (float) $sub->amount_paid,
-                'starts_at'         => $sub->starts_at->toDateString(),
-                'ends_at'           => $sub->ends_at->toDateString(),
+                'starts_at'         => $sub->starts_at?->toDateString(),
+                'ends_at'           => $sub->ends_at?->toDateString(),
                 'status'            => $sub->status,
                 'days_remaining'    => $sub->daysRemaining(),
                 'is_active'         => $sub->isActive(),
@@ -104,46 +122,52 @@ class ClubRegistrationController extends Controller
      * Renew or change the SaaS subscription for a club.
      * POST /api/clubs/{club}/saas-subscription
      */
-    public function renew(Request $request, Club $club): JsonResponse
+    public function renew(Request $request, Club $club, PaymobService $paymobService): JsonResponse
     {
-        abort_unless($request->user()?->canManageClub($club) || $request->user()?->isSuperAdmin(), 403);
+        $this->authorize('manageSubscription', $club);
 
         $validated = $request->validate([
-            'plan_id'            => ['required', 'integer', 'exists:saas_plans,id'],
-            'billing_cycle'      => ['required', 'in:monthly,yearly'],
-            'payment_reference'  => ['nullable', 'string', 'max:255'],
+            'plan_id'       => ['required', 'integer', 'exists:saas_plans,id'],
+            'billing_cycle' => ['required', 'in:monthly,yearly'],
         ]);
 
         $plan = SaasPlan::query()->where('is_active', true)->findOrFail($validated['plan_id']);
         $cycle = $validated['billing_cycle'];
         $price = $plan->priceFor($cycle);
-        $endsAt = $cycle === 'yearly' ? now()->addYear() : now()->addMonth();
+        ClubSaasSubscription::query()
+            ->where('club_id', $club->id)
+            ->where('status', 'pending')
+            ->update(['status' => 'cancelled']);
 
         $sub = ClubSaasSubscription::query()->create([
-            'club_id'           => $club->id,
-            'saas_plan_id'      => $plan->id,
-            'billing_cycle'     => $cycle,
-            'amount_paid'       => $price,
-            'starts_at'         => now()->toDateString(),
-            'ends_at'           => $endsAt->toDateString(),
-            'status'            => 'active',
-            'payment_reference' => $validated['payment_reference'] ?? null,
+            'club_id'       => $club->id,
+            'saas_plan_id'  => $plan->id,
+            'billing_cycle' => $cycle,
+            'amount_paid'   => $price,
+            'starts_at'     => null,
+            'ends_at'       => null,
+            'status'        => 'pending',
         ]);
 
-        $sub->syncClubStatus();
+        $payment = $paymobService->createPaymentSessionForSaasSubscription(
+            $sub,
+            $request->user(),
+            $price,
+        );
 
         return response()->json([
-            'message' => 'Subscription renewed successfully.',
+            'message' => 'Payment required to activate subscription.',
             'data'    => [
                 'id'             => $sub->id,
                 'plan'           => ['id' => $plan->id, 'name' => $plan->name],
                 'billing_cycle'  => $sub->billing_cycle,
                 'amount_paid'    => (float) $sub->amount_paid,
-                'starts_at'      => $sub->starts_at->toDateString(),
-                'ends_at'        => $sub->ends_at->toDateString(),
+                'starts_at'      => $sub->starts_at?->toDateString(),
+                'ends_at'        => $sub->ends_at?->toDateString(),
                 'status'         => $sub->status,
                 'days_remaining' => $sub->daysRemaining(),
             ],
-        ]);
+            'payment' => $payment,
+        ], 402);
     }
 }

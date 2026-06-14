@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AcademySession;
 use App\Models\CoachApplication;
+use App\Notifications\CoachApplicationSubmittedNotification;
+use App\Services\CoachApplicationResponseService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CoachApplicationController extends Controller
 {
@@ -18,17 +21,7 @@ class CoachApplicationController extends Controller
     {
         $user = $request->user();
 
-        if ($user->role !== 'coach') {
-            return response()->json(['message' => 'Only coaches can apply to sessions.'], 403);
-        }
-
-        if (! in_array($academySession->status, ['scheduled', 'active'], true)) {
-            return response()->json(['message' => 'This session is not accepting coach applications.'], 422);
-        }
-
-        if ($academySession->coach_user_id !== null) {
-            return response()->json(['message' => 'This session already has an assigned coach.'], 409);
-        }
+        $this->authorize('apply', $academySession);
 
         $validated = $request->validate([
             'message' => ['nullable', 'string', 'max:500'],
@@ -53,6 +46,16 @@ class CoachApplicationController extends Controller
             'message'            => $validated['message'] ?? null,
         ]);
 
+        $application->load('coach');
+        $academySession->load('club');
+
+        $academySession->club?->users()
+            ->wherePivotIn('role', ['owner', 'manager'])
+            ->get()
+            ->each(fn ($manager) => $manager->notify(
+                new CoachApplicationSubmittedNotification($application, $academySession)
+            ));
+
         return response()->json([
             'message' => 'Application submitted successfully.',
             'data'    => [
@@ -71,10 +74,7 @@ class CoachApplicationController extends Controller
     {
         $user = $request->user();
 
-        abort_unless(
-            $user?->hasAdminAccess($academySession->club) || $user?->isSuperAdmin(),
-            403
-        );
+        $this->authorize('viewAny', $academySession);
 
         $applications = $academySession->coachApplications()
             ->with('coach:id,name,email,skill_level')
@@ -103,50 +103,37 @@ class CoachApplicationController extends Controller
      */
     public function respond(Request $request, CoachApplication $coachApplication): JsonResponse
     {
-        $user = $request->user();
-        $session = $coachApplication->session()->with('club')->first();
+        $this->authorize('respond', $coachApplication);
 
-        abort_unless(
-            $user?->hasAdminAccess($session->club) || $user?->isSuperAdmin(),
-            403
-        );
+        $user = $request->user();
 
         $validated = $request->validate([
             'status'        => ['required', 'in:accepted,declined'],
             'response_note' => ['nullable', 'string', 'max:500'],
         ]);
 
-        if (! $coachApplication->isPending()) {
-            return response()->json(['message' => 'This application has already been responded to.'], 409);
-        }
-
-        $coachApplication->update([
-            'status'        => $validated['status'],
-            'response_note' => $validated['response_note'] ?? null,
-            'responded_at'  => now(),
-        ]);
-
-        // If accepted, assign coach to the session and decline all others
-        if ($validated['status'] === 'accepted') {
-            $session->update(['coach_user_id' => $coachApplication->coach_user_id]);
-
-            CoachApplication::query()
-                ->where('academy_session_id', $session->id)
-                ->where('id', '!=', $coachApplication->id)
-                ->where('status', 'pending')
-                ->update([
-                    'status'        => 'declined',
-                    'response_note' => 'Another coach was selected.',
-                    'responded_at'  => now(),
-                ]);
+        try {
+            $result = app(CoachApplicationResponseService::class)->respond(
+                $coachApplication,
+                $user,
+                $validated['status'],
+                $validated['response_note'] ?? null,
+            );
+        } catch (\RuntimeException $exception) {
+            return match ($exception->getMessage()) {
+                'already_responded' => response()->json(['message' => 'This application has already been responded to.'], 409),
+                'coach_already_assigned' => response()->json(['message' => 'This session already has an assigned coach.'], 409),
+                'coach_not_in_club' => response()->json(['message' => 'The selected coach is not a member of this club.'], 422),
+                default => throw $exception,
+            };
         }
 
         return response()->json([
             'message' => "Application {$validated['status']} successfully.",
             'data'    => [
-                'id'            => $coachApplication->id,
-                'status'        => $coachApplication->status,
-                'response_note' => $coachApplication->response_note,
+                'id'            => $result->id,
+                'status'        => $result->status,
+                'response_note' => $result->response_note,
             ],
         ]);
     }
@@ -159,13 +146,7 @@ class CoachApplicationController extends Controller
     {
         $user = $request->user();
 
-        if ($coachApplication->coach_user_id !== $user->id) {
-            return response()->json(['message' => 'You can only withdraw your own applications.'], 403);
-        }
-
-        if (! $coachApplication->isPending()) {
-            return response()->json(['message' => 'Only pending applications can be withdrawn.'], 409);
-        }
+        $this->authorize('withdraw', $coachApplication);
 
         $coachApplication->delete();
 

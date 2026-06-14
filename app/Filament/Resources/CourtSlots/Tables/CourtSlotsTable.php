@@ -2,12 +2,20 @@
 
 namespace App\Filament\Resources\CourtSlots\Tables;
 
+use App\Models\CourtSlot;
+use App\Services\CourtSlotSchedulingService;
+use Carbon\Carbon;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
+use Illuminate\Support\Collection;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class CourtSlotsTable
@@ -60,7 +68,24 @@ class CourtSlotsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('court_id')
+                    ->relationship('court', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('slot_type')
+                    ->options([
+                        'open_match' => 'Open match',
+                        'coached_match' => 'Coached match',
+                        'training' => 'Training',
+                        'academy_class' => 'Academy class',
+                        'private_training' => 'Private training',
+                    ]),
+                SelectFilter::make('is_active')
+                    ->options(['1' => 'Active', '0' => 'Inactive'])
+                    ->query(fn ($query, array $data) => $query->when(
+                        isset($data['value']) && $data['value'] !== '',
+                        fn ($q) => $q->where('is_active', (bool) $data['value'])
+                    )),
             ])
             ->recordActions([
                 ViewAction::make(),
@@ -68,6 +93,47 @@ class CourtSlotsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    BulkAction::make('scheduleAcademySessions')
+                        ->label('Generate academy sessions')
+                        ->icon('heroicon-o-calendar-days')
+                        ->form([
+                            DatePicker::make('date')->required()->native(false),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            $date = Carbon::parse($data['date']);
+                            $service = app(CourtSlotSchedulingService::class);
+                            $created = 0;
+                            $failed = 0;
+
+                            foreach ($records as $courtSlot) {
+                                /** @var CourtSlot $courtSlot */
+                                $courtSlot->loadMissing('court.club');
+
+                                if (! $courtSlot->court?->club) {
+                                    $failed++;
+                                    continue;
+                                }
+
+                                try {
+                                    $service->schedule(
+                                        $courtSlot,
+                                        $courtSlot->court->club,
+                                        auth()->user(),
+                                        $date,
+                                    );
+                                    $created++;
+                                } catch (\Throwable) {
+                                    $failed++;
+                                }
+                            }
+
+                            Notification::make()
+                                ->title("Scheduled {$created} session(s)")
+                                ->body($failed > 0 ? "{$failed} slot(s) could not be scheduled (day mismatch or conflict)." : null)
+                                ->success()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
                     DeleteBulkAction::make(),
                 ]),
             ]);

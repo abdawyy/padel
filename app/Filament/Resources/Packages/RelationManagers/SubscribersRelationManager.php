@@ -31,14 +31,19 @@ class SubscribersRelationManager extends RelationManager
             ->components([
                 Select::make('user_id')
                     ->label('Player')
-                    ->options(fn (): array => User::query()
-                        ->where('role', 'player')
-                        ->orderBy('name')
-                        ->get()
-                        ->mapWithKeys(fn (User $user) => [
-                            $user->id => "#{$user->id} - {$user->name} ({$user->email})",
-                        ])
-                        ->all())
+                    ->options(function (SubscribersRelationManager $livewire): array {
+                        $clubId = $livewire->getOwnerRecord()->club_id;
+
+                        return User::query()
+                            ->where('role', 'player')
+                            ->whereHas('clubs', fn ($query) => $query->where('clubs.id', $clubId))
+                            ->orderBy('name')
+                            ->get()
+                            ->mapWithKeys(fn (User $user) => [
+                                $user->id => "#{$user->id} - {$user->name} ({$user->email})",
+                            ])
+                            ->all();
+                    })
                     ->searchable()
                     ->preload()
                     ->visibleOn('create')

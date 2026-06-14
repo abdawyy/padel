@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Clubs\Schemas;
 
+use App\Support\ClubSubscriptionStatus;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -34,12 +35,7 @@ class ClubForm
                     ->rows(3)
                     ->columnSpanFull(),
                 Select::make('subscription_status')
-                    ->options([
-                        'active' => 'Active',
-                        'trial' => 'Trial',
-                        'paused' => 'Paused',
-                        'cancelled' => 'Cancelled',
-                    ])
+                    ->options(ClubSubscriptionStatus::options())
                     ->default('active')
                     ->required()
                     ->native(false),

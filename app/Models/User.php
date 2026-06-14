@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\ResetPasswordNotification;
+use App\Notifications\VerifyEmailNotification;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
@@ -180,6 +182,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Club::class, 'club_users')->withPivot('role')->withTimestamps();
     }
 
+    public function clubUsers()
+    {
+        return $this->hasMany(ClubUser::class);
+    }
+
     public function ownedBookings()
     {
         return $this->hasMany(Booking::class, 'owner_user_id');
@@ -217,5 +224,24 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Package::class, 'package_subscriptions')
             ->withPivot('starts_at', 'expires_at', 'sessions_remaining', 'status', 'notes')
             ->withTimestamps();
+    }
+
+    public function hasVerifiedEmail(): bool
+    {
+        if (! config('auth.require_email_verification', false)) {
+            return true;
+        }
+
+        return $this->email_verified_at !== null;
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification());
     }
 }

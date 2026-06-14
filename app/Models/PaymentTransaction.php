@@ -11,6 +11,9 @@ class PaymentTransaction extends Model
 
     protected $fillable = [
         'booking_id',
+        'academy_session_id',
+        'club_saas_subscription_id',
+        'package_subscription_id',
         'user_id',
         'paymob_transaction_id',
         'amount',
@@ -26,6 +29,21 @@ class PaymentTransaction extends Model
     public function booking()
     {
         return $this->belongsTo(Booking::class);
+    }
+
+    public function academySession()
+    {
+        return $this->belongsTo(AcademySession::class);
+    }
+
+    public function clubSaasSubscription()
+    {
+        return $this->belongsTo(ClubSaasSubscription::class);
+    }
+
+    public function packageSubscription()
+    {
+        return $this->belongsTo(PackageSubscription::class);
     }
 
     public function user()

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ScopedToAdminClub;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AcademySession extends Model
 {
-    use HasFactory;
+    use HasFactory, ScopedToAdminClub;
 
     protected $fillable = [
         'club_id',
@@ -40,6 +41,22 @@ class AcademySession extends Model
             'price_per_player' => 'decimal:2',
             'video_urls' => 'array',
         ];
+    }
+
+    /**
+     * Status key for player UI CSS (DB "active" → display "ongoing").
+     */
+    public function getDisplayStatusAttribute(): string
+    {
+        return match ($this->status) {
+            'active' => 'ongoing',
+            default => (string) $this->status,
+        };
+    }
+
+    public function getDisplayStatusLabelAttribute(): string
+    {
+        return ucfirst(str_replace('_', ' ', $this->display_status));
     }
 
     public function getTrainingVideoUrlsAttribute(): array

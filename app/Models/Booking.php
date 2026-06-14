@@ -29,6 +29,18 @@ class Booking extends Model
         'notes',
     ];
 
+    /**
+     * Status label/key for player UI (maps past confirmed bookings to "completed").
+     */
+    public function getDisplayStatusAttribute(): string
+    {
+        if ($this->status === 'confirmed' && $this->end_time?->isPast()) {
+            return 'completed';
+        }
+
+        return (string) $this->status;
+    }
+
     public function isSkillCompatible(int $userSkillLevel): bool
     {
         if ($this->skill_min !== null && $userSkillLevel < $this->skill_min) {

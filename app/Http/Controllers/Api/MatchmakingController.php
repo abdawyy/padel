@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OpenMatchResource;
 use App\Models\Booking;
-use App\Services\PaymobService;
+use App\Services\BookingParticipantCapacity;
+use App\Services\BookingPaymentSplit;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,8 @@ class MatchmakingController extends Controller
 {
     public function index(Request $request)
     {
-        $matches = Booking::query()
+        $matches = BookingParticipantCapacity::addCapacityCount(
+            Booking::query()
             ->where('match_type', 'open_match')
             ->whereIn('status', ['pending', 'confirmed'])
             ->where('start_time', '>', now())
@@ -31,7 +33,6 @@ class MatchmakingController extends Controller
                     $courtQuery->where('club_id', $clubId);
                 });
             })
-            // Skill-level filter: only show matches the player is eligible for
             ->when($request->filled('skill_level'), function ($query) use ($request) {
                 $skill = (int) $request->query('skill_level');
                 $query->where(function ($q) use ($skill) {
@@ -43,9 +44,8 @@ class MatchmakingController extends Controller
             ->when($request->filled('sport_type'), function ($query) use ($request) {
                 $query->where('sport_type', (string) $request->query('sport_type'));
             })
-            ->withCount('participants')
-            ->havingRaw('participants_count < max_players')
-            ->with([
+            ->havingRaw('capacity_slots_used < max_players')
+        )->with([
                 'court:id,club_id,name,price_per_hour',
                 'court.club:id,name',
                 'coach:id,name,email',
@@ -57,7 +57,7 @@ class MatchmakingController extends Controller
         return OpenMatchResource::collection($matches);
     }
 
-    public function join(Request $request, Booking $booking, PaymobService $paymobService): JsonResponse
+    public function join(Request $request, Booking $booking): JsonResponse
     {
         $user = $request->user();
 
@@ -73,7 +73,6 @@ class MatchmakingController extends Controller
             return response()->json(['message' => 'This match has already started.'], 422);
         }
 
-        // Skill-level gate
         $userSkill = (int) ($user->skill_level ?? 0);
         if ($userSkill > 0 && ! $booking->isSkillCompatible($userSkill)) {
             return response()->json([
@@ -85,12 +84,11 @@ class MatchmakingController extends Controller
         }
 
         try {
-            $paymentSession = DB::transaction(function () use ($booking, $user, $paymobService) {
-            $freshBooking = Booking::query()
-                ->whereKey($booking->id)
-                ->lockForUpdate()
-                ->withCount('participants')
-                ->firstOrFail();
+            [$freshBooking, $amountDue] = DB::transaction(function () use ($booking, $user) {
+                $freshBooking = Booking::query()
+                    ->whereKey($booking->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
                 $alreadyJoined = DB::table('booking_participants')
                     ->where('booking_id', $freshBooking->id)
@@ -102,12 +100,17 @@ class MatchmakingController extends Controller
                 }
 
                 $maxPlayers = max((int) $freshBooking->max_players, 1);
+                $usedSlots = BookingParticipantCapacity::countForBooking((int) $freshBooking->id);
 
-                if ((int) $freshBooking->participants_count >= $maxPlayers) {
+                if ($usedSlots >= $maxPlayers) {
                     throw new \RuntimeException('full');
                 }
 
-                $amountDue = round(((float) $freshBooking->total_price) / $maxPlayers, 2);
+                $amountDue = BookingPaymentSplit::amountForSlot(
+                    (float) $freshBooking->total_price,
+                    $maxPlayers,
+                    $usedSlots,
+                );
 
                 DB::table('booking_participants')->insert([
                     'booking_id' => $freshBooking->id,
@@ -118,7 +121,7 @@ class MatchmakingController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                return $paymobService->createPaymentSessionForParticipant($freshBooking, $user, $amountDue);
+                return [$freshBooking, $amountDue];
             });
         } catch (\RuntimeException $exception) {
             if ($exception->getMessage() === 'already_joined') {
@@ -128,6 +131,22 @@ class MatchmakingController extends Controller
             if ($exception->getMessage() === 'full') {
                 return response()->json(['message' => 'This match is already full.'], 422);
             }
+
+            throw $exception;
+        }
+
+        try {
+            $paymentSession = app(\App\Services\BookingPaymentService::class)->createParticipantPayment(
+                $freshBooking,
+                $user,
+                $request->header('X-Idempotency-Key'),
+            );
+        } catch (\Throwable $exception) {
+            DB::table('booking_participants')
+                ->where('booking_id', $freshBooking->id)
+                ->where('user_id', $user->id)
+                ->where('payment_status', 'pending')
+                ->delete();
 
             throw $exception;
         }

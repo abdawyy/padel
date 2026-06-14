@@ -2,12 +2,16 @@
 
 namespace App\Filament\Resources\Bookings\Pages;
 
+use App\Exceptions\BookingCancellationException;
 use App\Filament\Resources\Bookings\BookingResource;
 use App\Models\Booking;
+use App\Services\BookingCancellationService;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
@@ -21,11 +25,38 @@ class EditBooking extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            $this->cancelBookingAction(),
             ViewAction::make(),
             DeleteAction::make(),
             ForceDeleteAction::make(),
             RestoreAction::make(),
         ];
+    }
+
+    private function cancelBookingAction(): Action
+    {
+        return Action::make('cancelBooking')
+            ->label('Cancel Booking')
+            ->icon('heroicon-o-x-circle')
+            ->color('danger')
+            ->requiresConfirmation()
+            ->visible(fn (): bool => in_array($this->record->status, ['pending', 'confirmed'], true))
+            ->action(function (): void {
+                try {
+                    app(BookingCancellationService::class)->cancel($this->record, auth()->user());
+
+                    Notification::make()
+                        ->title('Booking cancelled')
+                        ->success()
+                        ->send();
+                } catch (BookingCancellationException $exception) {
+                    Notification::make()
+                        ->title('Cancellation failed')
+                        ->body($exception->getMessage())
+                        ->danger()
+                        ->send();
+                }
+            });
     }
 
     protected function mutateFormDataBeforeFill(array $data): array

@@ -16,8 +16,8 @@
 
         <h1 class="text-2xl font-extrabold text-gray-900 mb-3">Registration Submitted!</h1>
         <p class="text-gray-500 mb-6 leading-relaxed">
-            Your academy has been submitted for review. Our team will verify your details and
-            <strong>approve your account within 24 hours</strong>. You'll receive an email notification once approved.
+            Your academy has been submitted for review. Our team typically verifies details and
+            <strong>responds within 1–2 business days</strong>. You'll receive an email once your registration is approved or if we need more information.
         </p>
 
         <div class="bg-brand-50 border border-brand-200 rounded-xl p-4 mb-8 text-left text-sm text-brand-800">
@@ -34,6 +34,12 @@
            class="block w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl transition mb-3">
             Go to Academy Portal Login
         </a>
+        <p class="text-sm text-gray-500 mb-4">
+            Questions? Email
+            <a href="mailto:{{ config('mail.from.address', 'support@example.com') }}" class="text-brand-600 font-medium hover:underline">
+                {{ config('mail.from.address', 'support@example.com') }}
+            </a>
+        </p>
         <a href="{{ route('home') }}" class="text-sm text-gray-400 hover:text-brand-600 transition">
             ← Back to home
         </a>

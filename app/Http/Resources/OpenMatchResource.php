@@ -14,7 +14,7 @@ class OpenMatchResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $participantsCount = (int) ($this->participants_count ?? $this->participants->count());
+        $participantsCount = (int) ($this->capacity_slots_used ?? $this->participants_count ?? $this->participants->count());
         $maxPlayers = (int) ($this->max_players ?? 4);
 
         return [

@@ -2,17 +2,21 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Player\Pages\BookCourt;
+use App\Filament\Player\Pages\BrowseAcademy;
 use App\Filament\Player\Pages\MyMatches;
 use App\Filament\Player\Pages\MyPackages;
 use App\Filament\Player\Pages\MyTraining;
+use App\Filament\Player\Pages\OpenMatches;
 use App\Filament\Player\Pages\PlayerDashboard;
+use App\Filament\Player\Pages\PlayerProfile;
+use App\Http\Middleware\SetPlayerLocale;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -22,21 +26,24 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class PlayerPanelProvider extends PanelProvider
 {
+    use SharedPanelConfiguration;
+
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel = $panel
             ->id('player')
             ->path('player')
             ->login()
-            ->colors([
-                'primary' => Color::Blue,
-            ])
-            ->brandName(config('app.name') . ' — Player Portal')
+            ->brandName(config('app.name').' — Player Portal')
             ->pages([
                 PlayerDashboard::class,
+                BookCourt::class,
                 MyPackages::class,
                 MyTraining::class,
                 MyMatches::class,
+                OpenMatches::class,
+                BrowseAcademy::class,
+                PlayerProfile::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -44,6 +51,7 @@ class PlayerPanelProvider extends PanelProvider
                 StartSession::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
+                SetPlayerLocale::class,
                 PreventRequestForgery::class,
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
@@ -52,5 +60,7 @@ class PlayerPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+
+        return $this->applyBrand($panel);
     }
 }

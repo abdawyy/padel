@@ -1,4 +1,5 @@
 <x-filament-panels::page>
+@include('filament.player.partials.theme')
 @php
     $sessions = $this->getSessions();
 
@@ -37,8 +38,8 @@
             'type' => ucwords(str_replace('_', ' ', $session->session_type ?? '')),
             'sport' => ucfirst($session->sport_type ?? 'padel'),
             'level' => $session->skill_level ? 'Level ' . $session->skill_level : 'All levels',
-            'status' => ucfirst($session->status),
-            'status_key' => $session->status,
+            'status' => $session->display_status_label,
+            'status_key' => $session->display_status,
             'start' => $session->start_time?->format('D d M Y · H:i'),
             'end' => $session->end_time?->format('H:i'),
             'max_players' => $session->max_players,
@@ -46,7 +47,8 @@
             'price' => number_format((float) $session->price_per_player, 2),
             'session_plan' => $session->session_plan,
             'notes' => $session->notes,
-            'can_withdraw' => $session->status === 'scheduled',
+            'can_withdraw' => in_array($session->status, ['scheduled', 'active'], true)
+            && ($session->start_time?->isFuture() ?? false),
             'is_today' => $session->start_time?->isToday() ?? false,
             'is_this_week' => ($session->start_time?->isFuture() ?? false) && (($session->start_time?->diffInDays(now()) ?? 99) <= 7) && !($session->start_time?->isToday() ?? false),
             'videos' => $videos->all(),
@@ -63,6 +65,12 @@
     })->values();
 @endphp
 
+<div class="player-filter-bar">
+    @foreach(['upcoming' => 'Upcoming', 'past' => 'Past', 'all' => 'All'] as $key => $label)
+        <button type="button" wire:click="setTimeFilter('{{ $key }}')" class="player-filter-btn {{ $timeFilter === $key ? 'active' : '' }}">{{ $label }}</button>
+    @endforeach
+</div>
+
 <style>
 .tr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; }
 .tr-card { background: #fff; border-radius: 18px; border: 1px solid #e5e7eb; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 1px 6px rgba(0,0,0,.06); transition: transform .15s, box-shadow .15s; }
@@ -77,7 +85,8 @@
 .dark .tr-row { color: #d1d5db; }
 .tr-chip { display: inline-flex; align-items: center; border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 700; }
 .tr-status-scheduled { background: #dbeafe; color: #1e40af; }
-.tr-status-ongoing { background: #fef3c7; color: #92400e; }
+.tr-status-ongoing,
+.tr-status-active { background: #fef3c7; color: #92400e; }
 .tr-status-completed { background: #d1fae5; color: #065f46; }
 .tr-status-cancelled { background: #ffe4e6; color: #9f1239; }
 .tr-plan-snippet { padding: 12px 14px; background: #f8fafc; border-radius: 12px; font-size: 12px; color: #334155; line-height: 1.6; }
@@ -119,13 +128,17 @@
 .tr-video-thumb-btn img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
 .tr-video-thumb-btn span { display: block; padding: 8px 10px; font-size: 12px; font-weight: 700; color: #374151; }
 .dark .tr-video-thumb-btn span { color: #e5e7eb; }
+.tr-confirm-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:10000; align-items:center; justify-content:center; padding:16px; }
+.tr-confirm-backdrop.open { display:flex; }
+.tr-confirm { background:#fff; border-radius:14px; width:100%; max-width:420px; padding:18px; }
+.tr-confirm-actions { display:flex; gap:8px; margin-top:14px; }
 </style>
 
 <div class="tr-modal-backdrop" id="trModal" onclick="if (event.target === this) closeTrModal()">
-    <div class="tr-modal">
+    <div class="tr-modal" role="dialog" aria-modal="true" aria-labelledby="trModalTitle">
         <div class="tr-mhead">
             <div class="tr-mtitle" id="trModalTitle"></div>
-            <button class="tr-mclose" type="button" onclick="closeTrModal()">&#x2715;</button>
+            <button class="tr-mclose" type="button" onclick="closeTrModal()" id="trModalCloseBtn">&#x2715;</button>
         </div>
         <div class="tr-mbody">
             <div id="trVideoWrap"></div>
@@ -137,12 +150,23 @@
     </div>
 </div>
 
-@if ($sessionCards->isEmpty())
-    <div class="tr-empty">
-        <div style="font-size: 44px;">🎓</div>
-        <div style="font-weight: 800; font-size: 17px; margin-top: 10px;">No training sessions yet</div>
-        <div style="font-size: 13px; margin-top: 4px;">You have not been enrolled in any training sessions.</div>
+<div class="tr-confirm-backdrop" id="trConfirm" onclick="if (event.target === this) closeTrConfirm()">
+    <div class="tr-confirm" role="dialog" aria-modal="true" aria-labelledby="trConfirmTitle">
+        <div id="trConfirmTitle" class="tr-mtitle" style="font-size: 16px;">Withdraw from session</div>
+        <p id="trConfirmBody" style="font-size: 14px; color: #4b5563; margin-top: 6px;"></p>
+        <div class="tr-confirm-actions">
+            <button type="button" class="tr-btn tr-btn-outline" onclick="closeTrConfirm()">Keep session</button>
+            <button type="button" class="tr-btn tr-btn-danger" id="trConfirmActionBtn">Withdraw</button>
+        </div>
     </div>
+</div>
+
+@if ($sessionCards->isEmpty())
+    @include('filament.player.partials.empty-state', [
+        'icon' => '🎓',
+        'title' => 'No training sessions in this view',
+        'body' => 'Browse academy sessions to enroll, or check another filter.',
+    ])
 @else
     <div class="tr-grid">
         @foreach ($sessionCards as $card)
@@ -211,6 +235,27 @@
 const trData = @js($sessionCards);
 let trCurrentSessionId = null;
 let trCurrentVideoIndex = 0;
+let trConfirmAction = null;
+let trLastFocused = null;
+
+function escHtml(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
+
+function textBlock(title, value, emptyText) {
+    const safeTitle = escHtml(title);
+    const normalized = String(value ?? '').trim();
+    if (!normalized) {
+        return `<div style="font-size: 12px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px;">${safeTitle}</div><div class="tr-mnotes">${escHtml(emptyText)}</div>`;
+    }
+
+    return `<div style="font-size: 12px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px;">${safeTitle}</div><div class="tr-mnotes">${escHtml(normalized).replaceAll('\n', '<br>')}</div>`;
+}
 
 function renderTrVideo(session, index) {
     const current = session.videos[index] ?? null;
@@ -223,7 +268,7 @@ function renderTrVideo(session, index) {
         return;
     }
 
-    videoWrap.innerHTML = `<div class="tr-mvideo"><iframe src="${current.embed_url}" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe></div>`;
+    videoWrap.innerHTML = `<div class="tr-mvideo"><iframe src="${current.embed_url}" title="Training video for session" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe></div>`;
 
     videoStrip.innerHTML = session.videos.length > 1
         ? `<div class="tr-video-strip">${session.videos.map((video, videoIndex) => `
@@ -261,18 +306,16 @@ function openTrModal(id) {
     ];
 
     document.getElementById('trInfoRows').innerHTML = rows
-        .map(([label, value]) => `<div class="tr-mrow"><span class="tr-mlabel">${label}</span><span class="tr-mval">${value}</span></div>`)
+        .map(([label, value]) => `<div class="tr-mrow"><span class="tr-mlabel">${escHtml(label)}</span><span class="tr-mval">${escHtml(value)}</span></div>`)
         .join('');
 
-    document.getElementById('trPlanWrap').innerHTML = session.session_plan
-        ? `<div style="font-size: 12px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px;">Session Plan</div><div class="tr-mnotes">${String(session.session_plan).replace(/\n/g, '<br>')}</div>`
-        : '<div style="font-size: 12px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px;">Session Plan</div><div class="tr-mnotes">No session plan added yet.</div>';
+    document.getElementById('trPlanWrap').innerHTML = textBlock('Session Plan', session.session_plan, 'No session plan added yet.');
 
-    document.getElementById('trNotesWrap').innerHTML = session.notes
-        ? `<div style="font-size: 12px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px;">Coach Notes</div><div class="tr-mnotes">${String(session.notes).replace(/\n/g, '<br>')}</div>`
-        : '';
+    document.getElementById('trNotesWrap').innerHTML = textBlock('Coach Notes', session.notes, 'No notes added yet.');
 
     document.getElementById('trModal').classList.add('open');
+    trLastFocused = document.activeElement;
+    document.getElementById('trModalCloseBtn')?.focus();
 }
 
 function switchTrVideo(sessionId, videoIndex) {
@@ -292,14 +335,36 @@ function closeTrModal() {
     document.getElementById('trVideoStrip').innerHTML = '';
     trCurrentSessionId = null;
     trCurrentVideoIndex = 0;
+    trLastFocused?.focus?.();
 }
 
 function confirmWithdraw(id, title) {
-    if (!confirm(`Withdraw from "${title}"?\nThis cannot be undone.`)) {
-        return;
-    }
-
-    @this.withdraw(id);
+    document.getElementById('trConfirmBody').textContent = `Withdraw from "${title}"? This cannot be undone.`;
+    trConfirmAction = () => @this.withdraw(id);
+    document.getElementById('trConfirm').classList.add('open');
+    document.getElementById('trConfirmActionBtn')?.focus();
 }
+
+function closeTrConfirm() {
+    document.getElementById('trConfirm').classList.remove('open');
+    trConfirmAction = null;
+}
+
+document.getElementById('trConfirmActionBtn')?.addEventListener('click', () => {
+    if (typeof trConfirmAction === 'function') trConfirmAction();
+    closeTrConfirm();
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        if (document.getElementById('trConfirm')?.classList.contains('open')) {
+            closeTrConfirm();
+            return;
+        }
+        if (document.getElementById('trModal')?.classList.contains('open')) {
+            closeTrModal();
+        }
+    }
+});
 </script>
 </x-filament-panels::page>

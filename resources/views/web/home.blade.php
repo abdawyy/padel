@@ -14,8 +14,13 @@
             Run your sports academy<br class="hidden md:block"/> like a pro
         </h1>
         <p class="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto">
-            {{ config('app.name') }} gives padel, tennis and squash academies everything they need —
-            court bookings, coach management, player matchmaking and payments in one place.
+            {{ config('app.name') }} gives padel, tennis and squash academies court bookings, coach sessions,
+            player matchmaking, academy packages, and Paymob payments (EGP) — with dedicated player, coach, and admin portals.
+        </p>
+        <p class="text-sm text-white/70 mb-6">
+            <a href="{{ url('/player/login') }}" class="underline hover:text-white">Players</a> ·
+            <a href="{{ url('/coach/login') }}" class="underline hover:text-white">Coaches</a> ·
+            <a href="{{ url('/admin/login') }}" class="underline hover:text-white">Academy admins</a>
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="{{ route('register.academy') }}"
@@ -37,12 +42,12 @@
         <h2 class="text-3xl font-bold text-center mb-12 text-gray-900">Everything your academy needs</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             @foreach([
-                ['🎾', 'Court Bookings',       'Manage court slots, accept bookings and handle open-match matchmaking automatically.'],
-                ['👨‍🏫', 'Coach Management',      'Coaches apply to sessions, track their assignments and view player skill levels.'],
-                ['💳', 'Integrated Payments',   'Paymob-powered payments for bookings, session enrollments and subscriptions.'],
-                ['📊', 'Analytics Dashboard',   'Track revenue, occupancy rates and player retention from a single panel.'],
-                ['🏅', 'Skill Matchmaking',     'Filter open matches by skill bracket so players always find the right game.'],
-                ['🔔', 'Smart Notifications',   'Automated emails for bookings, approvals, subscription renewals and more.'],
+                ['🎾', 'Court Bookings',       'Players book courts in the player portal; admins manage slots and pricing per club.'],
+                ['👨‍🏫', 'Academy Sessions',      'Schedule training, coaches apply or get assigned, players enroll and pay online.'],
+                ['💳', 'Paymob Payments (EGP)', 'Split booking payments, session fees, packages, and SaaS subscriptions.'],
+                ['📊', 'Admin & SaaS Panels',   'Club staff run day-to-day ops; platform owners approve academies and plans.'],
+                ['🏅', 'Open Matchmaking',      'Players discover and join open matches filtered by skill and club.'],
+                ['🔔', 'Email Notifications',   'Booking confirmations, academy approval, subscription expiry reminders.'],
             ] as [$icon, $title, $desc])
             <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
                 <div class="text-4xl mb-3">{{ $icon }}</div>
@@ -76,13 +81,13 @@
                         <p class="text-gray-400 text-sm mt-1 mb-6">{{ $plan->description }}</p>
 
                         <div class="mb-2">
-                            <span class="text-4xl font-extrabold text-gray-900">${{ number_format($plan->monthly_price, 0) }}</span>
+                            <span class="text-4xl font-extrabold text-gray-900">{{ \App\Support\Money::format($plan->monthly_price) }}</span>
                             <span class="text-gray-400 text-sm">/month</span>
                         </div>
                         <p class="text-gray-400 text-xs mb-6">
-                            or ${{ number_format($plan->yearly_price, 0) }}/year
+                            or {{ \App\Support\Money::format($plan->yearly_price) }}/year
                             <span class="text-green-600 font-semibold">
-                                (save ${{ number_format(($plan->monthly_price * 12) - $plan->yearly_price, 0) }})
+                                (save {{ \App\Support\Money::format(max(0, ($plan->monthly_price * 12) - $plan->yearly_price)) }})
                             </span>
                         </p>
 

@@ -14,6 +14,8 @@ class MyTraining extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
 
+    public string $timeFilter = 'upcoming';
+
     public function getView(): string
     {
         return 'filament.player.pages.my-training';
@@ -29,18 +31,29 @@ class MyTraining extends Page
     {
         return AcademySession::query()
             ->whereHas('players', fn (Builder $q) => $q->where('users.id', auth()->id()))
+            ->when($this->timeFilter === 'upcoming', fn (Builder $q) => $q->where('start_time', '>=', now()))
+            ->when($this->timeFilter === 'past', fn (Builder $q) => $q->where('start_time', '<', now()))
             ->with(['club', 'court', 'coach'])
             ->withCount('players')
-            ->orderByRaw("FIELD(status,'scheduled','ongoing','completed','cancelled')")
-            ->orderBy('start_time')
+            ->orderByRaw("FIELD(status,'scheduled','active','completed','cancelled')")
+            ->orderBy('start_time', $this->timeFilter === 'past' ? 'desc' : 'asc')
             ->get();
+    }
+
+    public function setTimeFilter(string $filter): void
+    {
+        if (! in_array($filter, ['upcoming', 'past', 'all'], true)) {
+            return;
+        }
+
+        $this->timeFilter = $filter;
     }
 
     public function withdraw(int $sessionId): void
     {
         $session = AcademySession::query()
             ->whereHas('players', fn (Builder $q) => $q->where('users.id', auth()->id()))
-            ->whereIn('status', ['scheduled'])
+            ->whereIn('status', ['scheduled', 'active'])
             ->findOrFail($sessionId);
 
         $session->players()->detach(auth()->id());

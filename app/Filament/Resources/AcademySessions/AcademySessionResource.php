@@ -10,6 +10,7 @@ use App\Filament\Resources\AcademySessions\Schemas\AcademySessionForm;
 use App\Filament\Resources\AcademySessions\Schemas\AcademySessionInfolist;
 use App\Filament\Resources\AcademySessions\Tables\AcademySessionsTable;
 use App\Models\AcademySession;
+use App\Support\AdminClubQuery;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -52,7 +53,7 @@ class AcademySessionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\PlayersRelationManager::class,
         ];
     }
 
@@ -79,15 +80,7 @@ class AcademySessionResource extends Resource
             return $query->whereRaw('1 = 0');
         }
 
-        if ($user->isSuperAdmin()) {
-            return $query;
-        }
-
-        $clubIds = $user->accessibleClubIds();
-
-        return empty($clubIds)
-            ? $query->whereRaw('1 = 0')
-            : $query->whereIn('academy_sessions.club_id', $clubIds);
+        return AdminClubQuery::forUser($query, $user, 'club_id');
     }
 
     public static function getRecordRouteBindingEloquentQuery(): Builder

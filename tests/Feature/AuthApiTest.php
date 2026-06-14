@@ -12,7 +12,7 @@ class AuthApiTest extends TestCase
 
     public function test_user_can_register_and_receive_api_token(): void
     {
-        $response = $this->postJson('/api/register', [
+        $response = $this->postJson('/api/v1/register', [
             'name' => 'Test Player',
             'email' => 'player@example.com',
             'password' => 'password123',
@@ -33,7 +33,7 @@ class AuthApiTest extends TestCase
             'password' => 'password123',
         ]);
 
-        $loginResponse = $this->postJson('/api/login', [
+        $loginResponse = $this->postJson('/api/v1/login', [
             'email' => $user->email,
             'password' => 'password123',
         ]);
@@ -48,7 +48,7 @@ class AuthApiTest extends TestCase
         $token = $loginResponse->json('token');
 
         $this->withHeader('Authorization', 'Bearer '.$token)
-            ->postJson('/api/logout')
+            ->postJson('/api/v1/logout')
             ->assertOk();
     }
 }

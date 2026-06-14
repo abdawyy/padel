@@ -38,7 +38,7 @@ class ClubStaffController extends Controller
             'name' => ['required_without:user_id', 'string', 'max:255'],
             'email' => ['required_without:user_id', 'string', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:30'],
-            'password' => ['nullable', 'string', 'min:8'],
+            'password' => ['required_without:user_id', 'nullable', 'string', 'min:8'],
             'role' => ['required', 'in:'.implode(',', $allowedRoles)],
             'club_role' => ['nullable', 'in:owner,manager,staff'],
             'is_active' => ['nullable', 'boolean'],
@@ -59,10 +59,6 @@ class ClubStaffController extends Controller
 
             if (! empty($validated['password'])) {
                 $user->password = $validated['password'];
-            }
-
-            if (! $user->exists && empty($validated['password'])) {
-                $user->password = 'password123';
             }
 
             $user->save();
@@ -141,7 +137,7 @@ class ClubStaffController extends Controller
 
     private function authorizeManagement(?User $user, Club $club): void
     {
-        abort_unless($user?->canManageClub($club), 403, 'You are not allowed to manage club staff.');
+        $this->authorize('manageStaff', $club);
     }
 
     private function defaultClubRole(string $role): string

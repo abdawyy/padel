@@ -1,7 +1,14 @@
 <x-filament-panels::page>
+@include('filament.player.partials.theme')
 @php
     $subs = $this->getSubscriptions();
 @endphp
+
+<div class="player-filter-bar">
+    @foreach(['all' => 'All', 'active' => 'Active', 'expired' => 'Expired'] as $key => $label)
+        <button type="button" wire:click="setStatusFilter('{{ $key }}')" class="player-filter-btn {{ $statusFilter === $key ? 'active' : '' }}">{{ $label }}</button>
+    @endforeach
+</div>
 
 <style>
 .pkg-grid {
@@ -93,11 +100,11 @@
 </style>
 
 @if($subs->isEmpty())
-    <div class="pkg-empty">
-        <div style="font-size:40px;">📦</div>
-        <div style="font-weight:700; font-size:16px; margin-top:8px;">No packages yet</div>
-        <div style="font-size:13px; margin-top:4px;">Contact your club to get a package assigned to your account.</div>
-    </div>
+    @include('filament.player.partials.empty-state', [
+        'icon' => '📦',
+        'title' => 'No packages in this view',
+        'body' => 'Contact your club to get a package assigned to your account.',
+    ])
 @else
     <div class="pkg-grid">
         @foreach($subs as $sub)

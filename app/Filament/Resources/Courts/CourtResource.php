@@ -10,6 +10,7 @@ use App\Filament\Resources\Courts\Schemas\CourtForm;
 use App\Filament\Resources\Courts\Schemas\CourtInfolist;
 use App\Filament\Resources\Courts\Tables\CourtsTable;
 use App\Models\Court;
+use App\Support\AdminClubQuery;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -79,15 +80,7 @@ class CourtResource extends Resource
             return $query->whereRaw('1 = 0');
         }
 
-        if ($user->isSuperAdmin()) {
-            return $query;
-        }
-
-        $clubIds = $user->accessibleClubIds();
-
-        return empty($clubIds)
-            ? $query->whereRaw('1 = 0')
-            : $query->whereIn('courts.club_id', $clubIds);
+        return AdminClubQuery::forUser($query, $user, 'club_id');
     }
 
     public static function getRecordRouteBindingEloquentQuery(): Builder

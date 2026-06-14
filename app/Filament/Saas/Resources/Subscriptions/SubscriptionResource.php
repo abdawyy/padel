@@ -19,8 +19,10 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class SubscriptionResource extends Resource
 {
@@ -95,6 +97,18 @@ class SubscriptionResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
+                Filter::make('expiring_within_days')
+                    ->form([\Filament\Forms\Components\Select::make('value')
+                        ->label('Expiring within')
+                        ->options(['7' => '7 days', '14' => '14 days', '30' => '30 days'])
+                        ->default('7')])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $days = (int) ($data['value'] ?? 7);
+
+                        return $query
+                            ->where('status', 'active')
+                            ->whereBetween('ends_at', [now()->toDateString(), now()->addDays($days)->toDateString()]);
+                    }),
                 SelectFilter::make('status')
                     ->options(['trial' => 'Trial', 'active' => 'Active', 'past_due' => 'Past Due', 'cancelled' => 'Cancelled', 'expired' => 'Expired']),
                 SelectFilter::make('billing_cycle')

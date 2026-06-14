@@ -10,8 +10,9 @@ use Illuminate\Support\Collection;
 
 class MyPackages extends Page
 {
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTicket;
+
+    public string $statusFilter = 'all';
 
     public function getView(): string
     {
@@ -28,10 +29,21 @@ class MyPackages extends Page
     {
         return PackageSubscription::query()
             ->where('user_id', auth()->id())
+            ->when($this->statusFilter === 'active', fn ($q) => $q->where('status', 'active'))
+            ->when($this->statusFilter === 'expired', fn ($q) => $q->whereIn('status', ['expired', 'cancelled']))
             ->with('package.club')
             ->orderByRaw("FIELD(status,'active','suspended','expired','cancelled')")
             ->orderBy('expires_at')
             ->get();
+    }
+
+    public function setStatusFilter(string $filter): void
+    {
+        if (! in_array($filter, ['all', 'active', 'expired'], true)) {
+            return;
+        }
+
+        $this->statusFilter = $filter;
     }
 
     public function typeColor(string $type): string

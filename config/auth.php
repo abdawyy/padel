@@ -114,4 +114,15 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Email Verification
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, new users must verify their email before sensitive API
+    | actions (bookings, payments, club registration). Disabled by default.
+    |
+    */
+    'require_email_verification' => (bool) env('REQUIRE_EMAIL_VERIFICATION', false),
+
 ];
